@@ -12,10 +12,42 @@
 	"activationEvents": [],
 	"main": "./out/extension.js",
 	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "entry-explorer",
+					"title": "Entry",
+					"icon": "$(pencil)"
+				}
+			]
+		},
+		"views": {
+			"entry-explorer": [
+				{
+					"id": "entry-get-started",
+					"name": "Getting Started",
+					"type": "tree"
+				},
+				{
+					"id": "entry-documentation",
+					"name": "Documentation"
+				}
+			]
+		},
+		"viewsWelcome": [
+            {
+                "view": "entry-get-started",
+                "contents": "Take notes the easy and intuitive way. \n[View Entries](command:codenote.codenote)"
+            },
+            {
+                "view": "entry-documentation",
+                "contents": "Entry was built to supercharge the notetaking experience in VSCode. \nLearn more about the project on [GitHub](https://github.com/Chri704r/codenote)."
+            }
+        ],
 		"commands": [
 			{
 				"command": "codenote.codenote",
-				"title": "Code note"
+				"title": "Code Note"
 			}
 		]
 	},

@@ -9,7 +9,7 @@ import * as fs from "fs";
 export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand("codenote.codenote", () => {
 		// Create and show panel
-		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, { enableScripts: true });
+		const panel = vscode.window.createWebviewPanel("Code Note", "Entry", vscode.ViewColumn.One, { enableScripts: true });
 
 		// render html file as panel html
 		const filePath: vscode.Uri = vscode.Uri.file(path.join(context.extensionPath, "src/components/start", "file.html"));
