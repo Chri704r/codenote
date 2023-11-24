@@ -12,7 +12,7 @@ export function getWebviewOverview(webview: vscode.Webview, context: any) {
 		<body>
 			<h1>Overview</h1>
             <button>Go to subfolder</button>
-
+			
 			<h2>All folders</h2>
 			<div class="folders-container">
 				<div class="folder-item">
