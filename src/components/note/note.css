@@ -1,0 +1,22 @@
+.ql-toolbar.ql-snow, .ql-container.ql-snow {
+    border: none;
+}
+
+.ql-editor.ql-blank::before {
+    color: white;
+}
+
+.ql-snow .ql-picker {
+    color: white;
+}
+
+.ql-snow .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) svg, .ql-snow.ql-toolbar button svg, .ql-snow .ql-toolbar button svg {
+    filter: invert(100%) sepia(1%) saturate(2230%) hue-rotate(216deg) brightness(119%) contrast(98%);
+}
+
+/* .ql-toolbar.ql-snow {
+    display: flex;
+    justify-content: center;
+    background-color: #181818;
+    border-radius: 8px;
+} */
