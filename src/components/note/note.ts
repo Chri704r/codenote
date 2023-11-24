@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 export function getWebviewNote(webview: vscode.Webview, context: any) {
 	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/note", "note.css");
 	const styles = webview.asWebviewUri(onDiskPathStyles);
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
 
 	return `<!DOCTYPE html>
 	<html lang="en">
@@ -12,9 +13,10 @@ export function getWebviewNote(webview: vscode.Webview, context: any) {
 			<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 			<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 			<link rel="stylesheet" href="${styles}">
+			<link rel="stylesheet" href="${codiconsUri}">
 		</head>
 		<body>
-            <button>Go to overview</button>
+            <button class="codicon codicon-chevron-left">Go to overview</button>
 			<div id="editor"></div>
             <script>
 			let toolbarOptions = [
