@@ -9,13 +9,9 @@ import { getWebviewNewNote } from "./components/newNote/newNote";
 export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand("codenote.codenote", () => {
 		// Create and show panel
-<<<<<<< HEAD
-		const panel = vscode.window.createWebviewPanel("Code Note", "Entry", vscode.ViewColumn.One, { enableScripts: true });
-=======
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {
 			enableScripts: true,
 		});
->>>>>>> dev
 
 		panel.webview.html = getWebviewOverview(panel.webview, context);
 

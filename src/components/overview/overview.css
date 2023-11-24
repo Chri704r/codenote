@@ -1,3 +1,69 @@
-h1 {
-	color: hotpink;
+* {
+    color: #fff;
+    font-family: sans-serif;
+}
+
+body {
+    padding: 2em;
+    background-color: #1e1e1e;
+}
+
+#search {
+    width: 100%;
+    padding: 12px 10px;
+    background-color: #262626;
+    border: 2px solid #2F2F2F;
+    border-radius: 8px;
+    font-size: medium;
+}
+
+svg {
+    width: 2.5em;
+    height: 2.5em;
+    fill: #8D95E6;
+}
+
+.folders-container {
+    width: 100%;
+    display: flex;
+    flex-direction: container;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 10px;
+    align-items: center;
+}
+
+.folder-item {
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #262626;
+    border: 2px solid #2F2F2F;
+    border-radius: 8px;
+}
+
+.left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.folder-name {
+    padding-left: 10px;
+}
+
+.right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.mtime {
+    padding-right: 10px;
+    font-size: smaller;
+    color: #b0b0b0;
 }
