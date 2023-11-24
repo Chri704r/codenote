@@ -35,15 +35,15 @@
 			]
 		},
 		"viewsWelcome": [
-            {
-                "view": "entry-get-started",
-                "contents": "Take notes the easy and intuitive way. \n[View Entries](command:codenote.codenote)"
-            },
-            {
-                "view": "entry-documentation",
-                "contents": "Entry was built to supercharge the notetaking experience in VSCode. \nLearn more about the project on [GitHub](https://github.com/Chri704r/codenote)."
-            }
-        ],
+			{
+				"view": "entry-get-started",
+				"contents": "Take notes the easy and intuitive way. \n[View Entries](command:codenote.codenote)"
+			},
+			{
+				"view": "entry-documentation",
+				"contents": "Entry was built to supercharge the notetaking experience in VSCode. \nLearn more about the project on [GitHub](https://github.com/Chri704r/codenote)."
+			}
+		],
 		"commands": [
 			{
 				"command": "codenote.codenote",
@@ -60,15 +60,16 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.84.0",
 		"@types/mocha": "^10.0.3",
 		"@types/node": "18.x",
+		"@types/vscode": "^1.84.0",
 		"@typescript-eslint/eslint-plugin": "^6.9.0",
 		"@typescript-eslint/parser": "^6.9.0",
+		"@vscode/test-electron": "^2.3.6",
 		"eslint": "^8.52.0",
 		"glob": "^10.3.10",
 		"mocha": "^10.2.0",
-		"typescript": "^5.2.2",
-		"@vscode/test-electron": "^2.3.6"
+		"tailwindcss": "^3.3.5",
+		"typescript": "^5.2.2"
 	}
 }

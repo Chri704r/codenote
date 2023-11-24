@@ -2,12 +2,15 @@ import * as vscode from "vscode";
 export function getWebviewOverview(webview: vscode.Webview, context: any) {
 	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
 	const styles = webview.asWebviewUri(onDiskPathStyles);
+	const onDiskPathTailwind = vscode.Uri.joinPath(context.extensionUri, "dist", "output.css");
+	const tailwindStyles = webview.asWebviewUri(onDiskPathTailwind);
 	return `<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <link rel="stylesheet" href="${styles}">
+			<link href="${tailwindStyles}" rel="stylesheet">
 		</head>
 		<body>
 			<h1>Overview</h1>
