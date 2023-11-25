@@ -14,9 +14,18 @@
     filter: invert(100%) sepia(1%) saturate(2230%) hue-rotate(216deg) brightness(119%) contrast(98%);
 }
 
-/* .ql-toolbar.ql-snow {
-    display: flex;
-    justify-content: center;
+.ql-toolbar.ql-snow {
     background-color: #181818;
-    border-radius: 8px;
-} */
+    border-radius: 0 0 8px 8px;
+}
+
+.ql-editor.ql-blank::before {
+    left: 0px;
+    right: 0px;
+}
+
+.ql-editor {
+    padding: 0;
+    padding-top: 1rem;
+}
+/* #0078d7 */
