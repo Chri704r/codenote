@@ -36,8 +36,10 @@ ul li:last-child {
 }
 
 a {
-	display: block;
-	line-height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	line-height: 5px;
 	color: #efefef;
 	text-decoration: none;
 	padding: 0 10px;

@@ -1,10 +1,8 @@
 import * as vscode from "vscode";
 export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
-	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
-	const styles = webview.asWebviewUri(onDiskPathStyles);
-	const onDiskPathStylesfolder = vscode.Uri.joinPath(context.extensionUri, "src/components/subfolder", "subfolder.css");
-	const subfolderstyles = webview.asWebviewUri(onDiskPathStylesfolder);
-	const onDiskPathTailwind = vscode.Uri.joinPath(context.extensionUri, "dist", "output.css");
+	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
+	const subfolderstyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/subfolder", "subfolder.css"));
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
 	return `<!DOCTYPE html>
     <html lang="en">
         <head>
@@ -12,6 +10,7 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <link rel="stylesheet" href="${styles}" />
             <link rel="stylesheet" href="${subfolderstyles}" />
+            <link rel="stylesheet" href="${codiconsUri}">
         </head>
         <body>
             <h1>Subfolder</h1>
@@ -38,8 +37,14 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
 
                             <div id="container" class="hidden">
 	                            <ul>
-    	                            <li class="move"><a>Move</a></li>
-    	                            <li><a>Delete</a></li>
+    	                            <li class="move"><a>
+                                        <p>Move</p>
+                                        <span class="codicon codicon-chevron-right"></span>
+                                    </a></li>
+    	                            <li><a>
+                                        <p>Delete</p>
+                                        <span class="codicon codicon-trash"></span>
+                                    </a></li>
 	                            </ul>
                             </div>
 
@@ -76,8 +81,16 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
                         data.forEach((folder) => {
                             const li = document.createElement("li");
                             const a = document.createElement("a");
-                            a.textContent = folder.name;
-                            li.appendChild(a);
+                            const p = document.createElement("p");
+                            p.textContent = folder.name;
+                            a.appendChild(p);
+                            if(folder.subfolder && folder.subfolder.length > 0){
+                                const icon = document.createElement("span");
+                                icon.classList.add("codicon")
+                                icon.classList.add("codicon-chevron-right")
+                                a.appendChild(icon)
+                            }
+                            li.appendChild(a)
                             listenForMouseOver(li, folder.subfolder);
                             ul.appendChild(li);
                         });
