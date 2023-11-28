@@ -10,6 +10,7 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
 			<h1>Subfolder</h1>
             <button id="goToNote">Go to note</button>
             <button id="goToNewNote">Go to new note</button>
+            <button id="createFolderAndFile">Create folder and file</button>
             <script>
             const vscode = acquireVsCodeApi();
             document.querySelector("#goToNote").addEventListener("click", () => {
@@ -21,6 +22,20 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
                 vscode.postMessage({
                     page: "newNote",
                 });
+            });
+            document.querySelector("#createFolderAndFile").addEventListener("click", () => {
+                vscode.postMessage({
+                    page: "createFolderAndFile",
+                });
+            });
+
+            window.addEventListener('message', (event) => {
+                const message = event.data;
+    
+                // Perform actions based on the received message
+                if (message.command === 'createFolderAndFile') {
+                    console.log(message.filePath);  // Display a message or perform other actions
+                }
             });
             </script>
 		</body>

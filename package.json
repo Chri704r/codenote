@@ -75,5 +75,6 @@
 	},
 	"dependencies": {
 		"@vscode/codicons": "^0.0.35"
-	}
+	},
+	"enabledApiProposals": ["tunnels"]
 }

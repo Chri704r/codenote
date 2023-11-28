@@ -4,6 +4,23 @@ import { getWebviewSubfolder } from "./components/subfolder/subfolder";
 import { getWebviewNote } from "./components/note/note";
 import { getWebviewNewNote } from "./components/newNote/newNote";
 
+const path = require('path');
+const fs = require('fs');
+
+function createFolderAndFile(folderName: string, fileName: string, fileContent: string, context: vscode.ExtensionContext) {
+	const globalStorageUri = context.globalStorageUri;
+    const folderPath = path.join(globalStorageUri.fsPath, folderName);
+    const filePath = path.join(folderPath, fileName);
+
+	if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath, { recursive: true });
+    }
+
+	fs.writeFileSync(filePath, fileContent);
+
+    return filePath;
+}
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -30,6 +47,10 @@ export function activate(context: vscode.ExtensionContext) {
 					case "newNote":
 						panel.webview.html = getWebviewNewNote(panel.webview, context);
 						return;
+					case "createFolderAndFile":
+						const fileContent = 'This is a sample content.';
+						const filePath = createFolderAndFile('webviewFolder', 'webviewFile.txt', fileContent, context);
+						panel.webview.postMessage({ command: 'createFolderAndFile', filePath });
 				}
 			},
 			undefined,
