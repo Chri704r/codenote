@@ -46,13 +46,6 @@ export function getWebviewNote(webview: vscode.Webview, context: any) {
 			</div>
 			<div id="editor"></div>
             <script>
-			let toolbarOptions = [
-				[{ 'header': [1, 2, 3, false] }],
-				['bold', 'italic', 'underline', 'strike'], 
-				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
-				[{ 'indent': '-1'}, { 'indent': '+1' }],
-				['blockquote', 'code-block'],
-			];
 			let options = {
 				modules: {
 					toolbar: '#toolbar'
