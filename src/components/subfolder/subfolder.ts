@@ -121,9 +121,16 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
                         document.querySelector("#container").classList.toggle("hidden");
                     });
                 });
+
+                document.addEventListener('click', e => {
+                    const isClickInside = document.querySelector(".settings-container").contains(event.target)
+                    if (!isClickInside) {
+                        document.querySelector("#container").classList.toggle("hidden")
+                    }
+                })
+
                 document.querySelectorAll(".left").forEach((folder) => {
                     folder.addEventListener("click", (e) => {
-                        console.log(e.target);
                         vscode.postMessage({
                             page: "note",
                         });
