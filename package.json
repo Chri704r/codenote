@@ -74,6 +74,7 @@
 		"typescript": "^5.2.2"
 	},
 	"dependencies": {
-		"@vscode/codicons": "^0.0.35"
+		"@vscode/codicons": "^0.0.35",
+		"highlight.js": "^11.9.0"
 	}
 }

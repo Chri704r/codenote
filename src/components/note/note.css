@@ -37,3 +37,20 @@
     color: #8D95E6;
     filter: brightness(0) saturate(100%) invert(59%) sepia(48%) saturate(450%) hue-rotate(197deg) brightness(94%) contrast(91%);
 }
+
+.code-block-container {
+    position: relative;
+    border: 1px solid #ccc; /* Add border for visibility */
+    padding: 10px;
+    margin-bottom: 10px;
+}
+/* Style for the language label */
+.language-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #f1f1f1;
+    padding: 3px;
+    font-size: 12px;
+    color: #333;
+}
