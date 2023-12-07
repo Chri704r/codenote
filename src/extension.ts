@@ -33,11 +33,6 @@ export function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = getWebviewNewNote(panel.webview, context);
 						return;
 				}
-				switch (message.buttonClick) {
-					case "createDecorator":
-						addDecoratorToLine(context);
-						return;
-				}
 			},
 			undefined,
 			context.subscriptions
