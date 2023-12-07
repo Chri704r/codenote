@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
 	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
 	const subfolderstyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/subfolder", "subfolder.css"));
+	const deleteModalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "deleteModal.css"));
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
 	return `<!DOCTYPE html>
     <html lang="en">
@@ -9,6 +10,7 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <link rel="stylesheet" href="${styles}" />
+            <link rel="stylesheet" href="${deleteModalStyles}" />
             <link rel="stylesheet" href="${subfolderstyles}" />
             <link rel="stylesheet" href="${codiconsUri}">
         </head>
@@ -41,7 +43,7 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
                                         <p>Move</p>
                                         <span class="codicon codicon-chevron-right"></span>
                                     </a></li>
-    	                            <li><a>
+    	                            <li><a class="delete-button">
                                         <p>Delete</p>
                                         <span class="codicon codicon-trash"></span>
                                     </a></li>
@@ -51,6 +53,22 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
                         </div>
 
                     </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="delete-container" class="hidden">
+                <div id="delete-wrapper">
+                    <div id="delete-modal">
+                        <p>Are you sure you want to delete?</p>
+                        <p>Once you click delete you will not be able to get it back.</p>
+                        <div id="button-container">
+                            <button class="secondary-button">Cancel</button>
+                            <button id="delete-button-perm">
+                                <p>Delete</p>
+                                <span class="codicon codicon-trash"></span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -116,6 +134,17 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
                     { once: true }
                 );
 
+                document.querySelectorAll(".delete-button").forEach((deleteButton)=> {
+                    deleteButton.addEventListener("click", () => {
+                        console.log("delete clicked")
+                        document.querySelector("#delete-container").classList.remove("hidden");
+                    });
+                })
+
+                document.querySelector(".secondary-button").addEventListener("click", ()=>{
+                    document.querySelector("#delete-container").classList.add("hidden");
+                })
+
                 document.querySelectorAll(".settings-container").forEach((button) => {
                     button.addEventListener("click", () => {
                         document.querySelector("#container").classList.toggle("hidden");
@@ -125,7 +154,7 @@ export function getWebviewSubfolder(webview: vscode.Webview, context: any) {
                 document.addEventListener('click', e => {
                     const isClickInside = document.querySelector(".settings-container").contains(event.target)
                     if (!isClickInside) {
-                        document.querySelector("#container").classList.toggle("hidden")
+                        document.querySelector("#container").classList.add("hidden")
                     }
                 })
 
