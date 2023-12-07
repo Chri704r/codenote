@@ -96,7 +96,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		
 			try {
 				if (!fs.existsSync(folderPath)) {
-					fs.mkdirSync(folderPath);
+					fs.mkdirSync(folderPath, { recursive: true });
 				}
 		
 				fs.writeFileSync(filePath, 'Hello, world!');
