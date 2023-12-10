@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-export function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
+export async function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
 	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
 	const subfolderstyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/subfolder", "subfolder.css"));
 	const deleteModalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "deleteModal.css"));
@@ -161,14 +161,14 @@ export function getWebviewSubfolder(folderData: any, webview: vscode.Webview, co
                     });
                 });
            
-                window.addEventListener('message', function (event) {
+                /* window.addEventListener('message', function (event) {
                     const subfolderHeader = document.querySelector('.subfolder-header');
                 
                     if (event.data.command === 'updateFolderDetails') {
                         const fileData = event.data.data;
                         console.log(fileData);
                         subfolderHeader.innerHTML = fileData.subfolder.folderName;
-                        /* const folderContents = event.data.data;
+                        const folderContents = event.data.data;
                 
                         contentDiv.innerHTML = '<h2>Folder Contents</h2>';
              
@@ -185,14 +185,14 @@ export function getWebviewSubfolder(folderData: any, webview: vscode.Webview, co
                             });
     
                             contentDiv.appendChild(folderDiv);
-                        }); */
+                        });
                     } 
-                   /*  else if (event.data.command === 'updateFolderDetails') {
+                   else if (event.data.command === 'updateFolderDetails') {
                         const folderData = event.data.data;
     
                         contentDiv.innerHTML = '<h2>Details for ' + folderData.data.files[0] + '</h2>';
-                    } */
-                });
+                    }
+                }); */
             </script>
         </body>
     </html>

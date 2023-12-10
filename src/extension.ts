@@ -6,23 +6,32 @@ import { getWebviewNote } from "./components/note/note";
 import { getWebviewNewNote } from "./components/newNote/newNote";
 import { displayDecorators } from "./displayDecorators";
 import { addDecoratorToLine } from "./addDecoratorToLine";
+import { extensionState } from "./ExtensionState";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
+	const folders = await getFolderContents(context);
+
 	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
+		extensionState.setGlobalStorageUri(context.globalStorageUri);
 		// Create and show panel
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {
 			enableScripts: true,
 		});
 
-		panel.webview.html = getWebviewOverview(panel.webview, context);
+		panel.webview.postMessage({
+			command: 'updateFolderContents',
+			data: folders
+		});
+
+		panel.webview.html =  await getWebviewOverview(panel.webview, context, folders);
 
 		panel.webview.onDidReceiveMessage(
-			(message) => {
+			async (message) => {
 				switch (message.page) {
 					case "overview":
-						panel.webview.html = getWebviewOverview(panel.webview, context);
+						panel.webview.html = await getWebviewOverview(panel.webview, context, folders);
 						return;
 					/* case "subfolder":
 						panel.webview.html = getWebviewSubfolder(panel.webview, context);
@@ -68,15 +77,15 @@ export async function activate(context: vscode.ExtensionContext) {
 					}
 					break;
 				case 'openFolder':
-					const folderName = message.data.value;
+					const folderName = message.folderName;
 					const folderData = await getDataForFolder(folderName);
 
-					panel.webview.html = getWebviewSubfolder(folderData, panel.webview, context);
+					panel.webview.html = await getWebviewSubfolder(folderData, panel.webview, context);
 
-					panel.webview.postMessage({
+					/* panel.webview.postMessage({
 						command: 'updateFolderDetails',
 						data: folderData
-					});
+					}); */
 
 					break;
 			}
@@ -106,15 +115,39 @@ export async function activate(context: vscode.ExtensionContext) {
 				console.error(`Error creating folder and file: ${error.message}`);
 			}
 		}
+
+		function createFolderWithFile2() {
+			const globalStorageUri = context.globalStorageUri;
+		
+			const folderName = 'myFolder2';
+			const fileName = 'example.txt';
+		
+			const folderPath = path.join(globalStorageUri.fsPath, folderName);
+			const filePath = path.join(folderPath, fileName);
+		
+			try {
+				if (!fs.existsSync(folderPath)) {
+					fs.mkdirSync(folderPath, { recursive: true });
+				}
+		
+				fs.writeFileSync(filePath, 'Hello, world!');
+		
+				console.log(`Folder '${folderName}' with file '${fileName}' created successfully.`);
+			} catch (error: any) {
+				console.error(`Error creating folder and file: ${error.message}`);
+			}
+		}
 		
 		createFolderWithFile();
+		createFolderWithFile2();
 
-		const folders = await getFolderContents(context);
+
+		/* const folders = await getFolderContents(context);
 
 		panel.webview.postMessage({
 			command: 'updateFolderContents',
 			data: folders
-		});
+		}); */
 
 	});
 
