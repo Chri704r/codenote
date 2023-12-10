@@ -1,9 +1,13 @@
 import * as vscode from "vscode";
-export function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
+import { getAllFolderContents } from "../../getAllFolders";
+export async function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
 	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
 	const subfolderstyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/subfolder", "subfolder.css"));
 	const deleteModalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "deleteModal.css"));
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
+
+	const allFolders = await getAllFolderContents(context);
+
 	return `<!DOCTYPE html>
     <html lang="en">
         <head>
@@ -71,23 +75,6 @@ export function getWebviewSubfolder(folderData: any, webview: vscode.Webview, co
             <script>
                 const vscode = acquireVsCodeApi();
 
-                data = [
-                    {
-                        name: "subfolder 1",
-                        subfolder: [
-                            { name: "subfolder 1.1" },
-                            { name: "subfolder 1.2" },
-                        ],
-                    },
-                    {
-                        name: "subfolder 2",
-                        subfolder: [
-                            { name: "subfolder 3", subfolder: [{ name: "subfolder 3.1" }, { name: "subfolder 3.2" }] },
-                            { name: "subfolder 4", subfolder: [{ name: "subfolder 4.1" }, { name: "subfolder 4.2" }] },
-                        ],
-                    },
-                ];
-
                 function list(data = []) {
                     if (data.length > 0) {
                         const ul = document.createElement("ul");
@@ -95,16 +82,16 @@ export function getWebviewSubfolder(folderData: any, webview: vscode.Webview, co
                             const li = document.createElement("li");
                             const a = document.createElement("a");
                             const p = document.createElement("p");
-                            p.textContent = folder.name;
+                            p.textContent = folder.folderName;
                             a.appendChild(p);
-                            if(folder.subfolder && folder.subfolder.length > 0){
+                            if(folder.subfolders && folder.subfolders.length > 0){
                                 const icon = document.createElement("span");
                                 icon.classList.add("codicon")
                                 icon.classList.add("codicon-chevron-right")
                                 a.appendChild(icon)
                             }
                             li.appendChild(a)
-                            listenForMouseOver(li, folder.subfolder);
+                            listenForMouseOver(li, folder.subfolders);
                             ul.appendChild(li);
                         });
                         return ul;
@@ -124,6 +111,7 @@ export function getWebviewSubfolder(folderData: any, webview: vscode.Webview, co
                 document.querySelector(".move").addEventListener(
                     "mouseover",
                     (button) => {
+                        const data = ${JSON.stringify(allFolders)}
                         button.target.parentElement.appendChild(list(data));
                     },
                     { once: true }
