@@ -48,6 +48,10 @@
 			{
 				"command": "codenote.codenote",
 				"title": "Code Note"
+			},
+			{
+				"command": "codenote.addDecorator",
+				"title": "addDecorator"
 			}
 		]
 	},

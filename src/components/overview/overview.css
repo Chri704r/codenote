@@ -8,6 +8,15 @@ body {
     background-color: #1e1e1e;
 }
 
+button {
+    background-color: #262626;
+    border: 2px solid #7379b8;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: smaller;
+    cursor: pointer;
+}
+
 #search {
     width: 100%;
     padding: 12px 10px;
@@ -23,19 +32,22 @@ svg {
     fill: #8D95E6;
 }
 
-.folders-container {
+.container {
     width: 100%;
     display: flex;
-    flex-direction: container;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: space-between;
     row-gap: 10px;
     align-items: center;
+    padding-top: 30px;
 }
 
-.folder-item {
+.item {
     width: 100%;
-    padding: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 5px;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -44,12 +56,26 @@ svg {
     background-color: #262626;
     border: 2px solid #2F2F2F;
     border-radius: 8px;
+
+}
+
+.plain {
+    width: 100%;
+    max-width: 600px;
+    padding: 0;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .left {
     display: flex;
     flex-direction: row;
     align-items: center;
+    row-gap: 10px;
 }
 
 .folder-name {
@@ -66,4 +92,12 @@ svg {
     padding-right: 10px;
     font-size: smaller;
     color: #b0b0b0;
+}
+
+#add-container {
+    width: 100%;
+    position: sticky;
+    bottom: 0px;
+    background-color: #1e1e1e;
+    padding-top: 20px;
 }
