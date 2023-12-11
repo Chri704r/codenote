@@ -1,11 +1,12 @@
 import * as vscode from "vscode";
-import * as path from 'path';
+import * as path from "path";
 import { getWebviewOverview } from "./components/overview/overview";
 import { getWebviewSubfolder } from "./components/subfolder/subfolder";
 import { getWebviewNote } from "./components/note/note";
 import { getWebviewNewNote } from "./components/newNote/newNote";
 import { displayDecorators } from "./displayDecorators";
 import { addDecoratorToLine } from "./addDecoratorToLine";
+import { isDarkTheme } from "./lightOrDarkMode";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -15,6 +16,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {
 			enableScripts: true,
 		});
+
+		const themeMode = isDarkTheme() ? "dark" : "light";
+		console.log(`The current theme mode is: ${themeMode}`);
 
 		panel.webview.html = getWebviewOverview(panel.webview, context);
 
@@ -41,81 +45,80 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		panel.webview.onDidReceiveMessage(async (message) => {
 			switch (message.command) {
-				case 'fetchFolders':
-					const foldersPath = path.join(context.extensionPath, 'src/components/overview', 'folders.json');
+				case "fetchFolders":
+					const foldersPath = path.join(context.extensionPath, "src/components/overview", "folders.json");
 					const foldersUri = vscode.Uri.file(foldersPath);
 
 					try {
 						const folderContent = await vscode.workspace.fs.readFile(foldersUri);
 						const folderData = JSON.parse(new TextDecoder().decode(folderContent));
 
-						panel.webview.postMessage({ command: 'updateFolders', folderData });
+						panel.webview.postMessage({ command: "updateFolders", folderData });
 					} catch (error) {
-						console.error('Error reading or parsing folders.json:', error);
+						console.error("Error reading or parsing folders.json:", error);
 					}
 					break;
-				case 'fetchNotes':
-					const notesPath = path.join(context.extensionPath, 'src/components/overview', 'notes.json');
+				case "fetchNotes":
+					const notesPath = path.join(context.extensionPath, "src/components/overview", "notes.json");
 					const notesUri = vscode.Uri.file(notesPath);
 
 					try {
 						const noteContent = await vscode.workspace.fs.readFile(notesUri);
 						const noteData = JSON.parse(new TextDecoder().decode(noteContent));
 
-						panel.webview.postMessage({ command: 'updateNotes', noteData });
+						panel.webview.postMessage({ command: "updateNotes", noteData });
 					} catch (error) {
-						console.error('Error reading or parsing notes.json:', error);
+						console.error("Error reading or parsing notes.json:", error);
 					}
 					break;
-				case 'openFolder':
+				case "openFolder":
 					const folderName = message.data.value;
 					const folderData = await getDataForFolder(folderName);
 
 					panel.webview.html = getWebviewSubfolder(folderData, panel.webview, context);
 
 					panel.webview.postMessage({
-						command: 'updateFolderDetails',
-						data: folderData
+						command: "updateFolderDetails",
+						data: folderData,
 					});
 
 					break;
 			}
 		});
 
-		const fs = require('fs');
-		const path = require('path');
+		const fs = require("fs");
+		const path = require("path");
 
 		function createFolderWithFile() {
 			const globalStorageUri = context.globalStorageUri;
-		
-			const folderName = 'myFolder';
-			const fileName = 'example.txt';
-		
+
+			const folderName = "myFolder";
+			const fileName = "example.txt";
+
 			const folderPath = path.join(globalStorageUri.fsPath, folderName);
 			const filePath = path.join(folderPath, fileName);
-		
+
 			try {
 				if (!fs.existsSync(folderPath)) {
 					fs.mkdirSync(folderPath, { recursive: true });
 				}
-		
-				fs.writeFileSync(filePath, 'Hello, world!');
-		
+
+				fs.writeFileSync(filePath, "Hello, world!");
+
 				console.log(`Folder '${folderName}' with file '${fileName}' created successfully.`);
 			} catch (error: any) {
 				console.error(`Error creating folder and file: ${error.message}`);
 			}
 		}
-		
+
 		createFolderWithFile();
 
 		const folders = await getFolderContents(context);
 
 		panel.webview.postMessage({
-			command: 'updateFolderContents',
-			data: folders
+			command: "updateFolderContents",
+			data: folders,
 		});
-
 	});
 
 	let displayDecoratorsInEditor = vscode.commands.registerCommand("extension.onDidChangeActiveTextEditor", () => {
@@ -135,34 +138,33 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 async function getFolderContents(context: vscode.ExtensionContext) {
-	const fsp = require('fs').promises;
+	const fsp = require("fs").promises;
 
-    try {
-        const globalStorageUri = context.globalStorageUri;
-        const folders = await fsp.readdir(globalStorageUri.fsPath);
-        const folderContents = [];
+	try {
+		const globalStorageUri = context.globalStorageUri;
+		const folders = await fsp.readdir(globalStorageUri.fsPath);
+		const folderContents = [];
 
-        for (const folderName of folders) {
-            const folderPath = path.join(globalStorageUri.fsPath, folderName);
-            const stats = await fsp.stat(folderPath);
+		for (const folderName of folders) {
+			const folderPath = path.join(globalStorageUri.fsPath, folderName);
+			const stats = await fsp.stat(folderPath);
 
-            if (stats.isDirectory()) {
-                const files = await fsp.readdir(folderPath);
-                folderContents.push({ folderName, files });
-            }
-        }
+			if (stats.isDirectory()) {
+				const files = await fsp.readdir(folderPath);
+				folderContents.push({ folderName, files });
+			}
+		}
 
-        return folderContents;
-    } catch (error) {
-        console.error(`Error reading global storage directory`);
-        return [];
-    }
+		return folderContents;
+	} catch (error) {
+		console.error(`Error reading global storage directory`);
+		return [];
+	}
 }
 
 async function getDataForFolder(subfolder: string) {
-    return { subfolder };
+	return { subfolder };
 }
-
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
