@@ -6,6 +6,7 @@ import { getWebviewNote } from "./components/note/note";
 import { getWebviewNewNote } from "./components/newNote/newNote";
 import { displayDecorators } from "./displayDecorators";
 import { addDecoratorToLine } from "./addDecoratorToLine";
+import { moveToFolder } from "./moveToFolder";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -32,6 +33,11 @@ export async function activate(context: vscode.ExtensionContext) {
 						return;
 					case "newNote":
 						panel.webview.html = getWebviewNewNote(panel.webview, context);
+						return;
+				}
+				switch (message.move) {
+					case "moveFile":
+						moveToFolder(message.pathTo, message.pathFrom);
 						return;
 				}
 			},

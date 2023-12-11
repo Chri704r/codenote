@@ -8,20 +8,20 @@ async function exploreFolder(folderName: string, globalStorageUri: vscode.Uri, f
 
 	await Promise.all(
 		files.map(async (file: any) => {
-			const newPath = path.join(folderPath, file);
-			const newStats = await fsp.stat(newPath);
+			const uriPath = path.join(folderPath, file);
+			const newStats = await fsp.stat(uriPath);
 
 			if (newStats.isDirectory()) {
-				const subfolderData = await exploreFolder(file, globalStorageUri, newPath);
+				const subfolderData = await exploreFolder(file, globalStorageUri, uriPath);
 				subfolders.push(subfolderData);
 			}
 		})
 	);
 
 	if (subfolders.length) {
-		return { folderName, subfolders };
+		return { folderName, subfolders, uriPath: folderPath };
 	} else {
-		return { folderName };
+		return { folderName, uriPath: folderPath };
 	}
 }
 

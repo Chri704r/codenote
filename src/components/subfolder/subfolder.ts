@@ -40,7 +40,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
 
                         <div id="container" class="hidden">
                             <ul>
-                                <li class="move"><a>
+                                <li class="move" value="/Users/christinepiilmann/"><a>
                                     <p>Move</p>
                                     <span class="codicon codicon-chevron-right"></span>
                                 </a></li>
@@ -75,7 +75,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
             <script>
                 const vscode = acquireVsCodeApi();
 
-                function list(data = []) {
+                function list(data = [], sourcePath = "") {
                     if (data.length > 0) {
                         const ul = document.createElement("ul");
                         data.forEach((folder) => {
@@ -92,17 +92,33 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                             }
                             li.appendChild(a)
                             listenForMouseOver(li, folder.subfolders);
+                            clickOnFolder(li, folder, sourcePath);
                             ul.appendChild(li);
                         });
                         return ul;
                     }
                 }
 
+                function clickOnFolder(option, folder, sourcePath){
+                    option.addEventListener(
+                        "click",
+                        () => {
+                            vscode.postMessage({
+                                move: "moveFile",
+                                pathTo: folder.uriPath,
+                                pathFrom: sourcePath,
+                            });
+                        },
+                    );
+                }
+
                 function listenForMouseOver(option, subfolders) {
                     option.addEventListener(
                         "mouseover",
                         () => {
-                            option.appendChild(list(subfolders));
+                            if(subfolders !== undefined){
+                                option.appendChild(list(subfolders));
+                            }
                         },
                         { once: true }
                     );
@@ -112,7 +128,9 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                     "mouseover",
                     (button) => {
                         const data = ${JSON.stringify(allFolders)}
-                        button.target.parentElement.appendChild(list(data));
+                        const sourcePath = button.target.getAttribute("value")
+                        button.target.parentElement.appendChild(list(data, sourcePath));
+                        
                     },
                     { once: true }
                 );
