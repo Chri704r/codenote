@@ -6,7 +6,6 @@ import { getWebviewNote } from "./components/note/note";
 import { getWebviewNewNote } from "./components/newNote/newNote";
 import { displayDecorators } from "./displayDecorators";
 import { addDecoratorToLine } from "./addDecoratorToLine";
-import { extensionState } from "./ExtensionState";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -14,7 +13,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	const folders = await getFolderContents(context);
 
 	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
-		extensionState.setGlobalStorageUri(context.globalStorageUri);
 		// Create and show panel
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {
 			enableScripts: true,
