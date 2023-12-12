@@ -189,17 +189,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         });
                     });
                 });
-
-                const folderItems = document.querySelectorAll('.item');
-                    folderItems.forEach(item => {
-                        item.addEventListener('click', function () {
-                            const folderName = item.getAttribute('data-folder-name');
-                            vscode.postMessage({
-                                page: 'subfolder',
-                                folderName: folderName
-                            });
-                        });
-                    });
             </script>
         </body>
     </html>
