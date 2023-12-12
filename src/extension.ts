@@ -41,32 +41,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		panel.webview.onDidReceiveMessage(async (message) => {
 			switch (message.command) {
-				case 'fetchFolders':
-					const foldersPath = path.join(context.extensionPath, 'src/components/overview', 'folders.json');
-					const foldersUri = vscode.Uri.file(foldersPath);
-
-					try {
-						const folderContent = await vscode.workspace.fs.readFile(foldersUri);
-						const folderData = JSON.parse(new TextDecoder().decode(folderContent));
-
-						panel.webview.postMessage({ command: 'updateFolders', folderData });
-					} catch (error) {
-						console.error('Error reading or parsing folders.json:', error);
-					}
-					break;
-				case 'fetchNotes':
-					const notesPath = path.join(context.extensionPath, 'src/components/overview', 'notes.json');
-					const notesUri = vscode.Uri.file(notesPath);
-
-					try {
-						const noteContent = await vscode.workspace.fs.readFile(notesUri);
-						const noteData = JSON.parse(new TextDecoder().decode(noteContent));
-
-						panel.webview.postMessage({ command: 'updateNotes', noteData });
-					} catch (error) {
-						console.error('Error reading or parsing notes.json:', error);
-					}
-					break;
 				case 'openFolder':
 					const folderName = message.data.value;
 					const folderData = await getDataForFolder(folderName);
@@ -145,10 +119,13 @@ async function getFolderContents(context: vscode.ExtensionContext) {
         for (const folderName of folders) {
             const folderPath = path.join(globalStorageUri.fsPath, folderName);
             const stats = await fsp.stat(folderPath);
+			// const nameWithoutExtension = path.basename(folderName, path.extname(folderName)); // CAN'T GET THIS TO WORK, TRIED MANY SYNTAXES
+			const mtime = stats.mtime;
 
             if (stats.isDirectory()) {
                 const files = await fsp.readdir(folderPath);
-                folderContents.push({ folderName, files });
+                // folderContents.push({ folderName, files, nameWithoutExtension, mtime }); // COMMENTED OUT UNTIL IT WORKS
+                folderContents.push({ folderName, files, mtime });
             }
         }
 

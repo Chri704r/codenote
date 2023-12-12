@@ -15,11 +15,11 @@ export function getWebviewOverview(webview: vscode.Webview, context: any) {
 		</head>
 		<body>
 			<div class="plain">
-			<h1>Overview</h1>
-            <button>View Subfolder</button>
+                <h1>Overview</h1>
+                <button>View Subfolder</button>
 			</div>
+            <div id="notes-container" class="container"></div>
             <div id="folders-container" class="container"></div>
-
 			<div id="add-container" class="container">
 				<div class="plain">
 					<div class="left">
@@ -36,6 +36,7 @@ export function getWebviewOverview(webview: vscode.Webview, context: any) {
 					</div>
 				</div>
 			</div>
+
             <script>
             const vscode = acquireVsCodeApi();
 
@@ -44,19 +45,45 @@ export function getWebviewOverview(webview: vscode.Webview, context: any) {
             });
 
             window.addEventListener('message', function (event) {
-                const contentDiv = document.getElementById('folders-container');
+                const foldersContainer = document.getElementById('folders-container');
+                const notesContainer = document.getElementById('notes-container');
             
                 if (event.data.command === 'updateFolderContents') {
                     const folderContents = event.data.data;
-            
-                    contentDiv.innerHTML = '<h2>Folder Contents</h2>';
+
+                    notesContainer.innerHTML = '<div class="plain"><h2>Notes</h2><div>';
+                    foldersContainer.innerHTML = '<div class="plain"><h2>Folders</h2><div>';
          
                     Object.keys(folderContents).forEach(key => {
-                        const folderDiv = document.createElement('div');
-                        folderDiv.classList.add('item')
-                        const value = folderContents[key];
+                        const folderItem = document.createElement('div');
+                        folderItem.classList.add('item');
+                        const folderValue = folderContents[key];
 
-                        folderDiv.innerHTML = \`
+		                folderContents[key].files.forEach(file => {
+                            const noteItem = document.createElement('div');
+                            noteItem.classList.add('item');
+                            // const noteValue = folderContents[key].file;
+
+                            // console.log(folderContents[key].nameWithoutExtension); // DELETE
+                            // console.log(folderContents[key].files); // DELETE
+                            // console.log(folderContents[key].mtime); // DELETE
+
+                            noteItem.innerHTML = \`
+                                <div class="left">
+                                <p class="folder-name">\${folderContents[key].files}</p>
+                                    </div>
+                                    <div class="right">
+                                        <p class="mtime">\${folderContents[key].mtime}</p>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
+                                            <path
+                                                d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
+                                        </svg>
+                                    </div>
+                                            \`;
+                            notesContainer.appendChild(noteItem);
+                        })
+
+                        folderItem.innerHTML = \`
                         <div class="left">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
                                 <path
@@ -72,19 +99,19 @@ export function getWebviewOverview(webview: vscode.Webview, context: any) {
                         </div>
                             \`;
                             
-                        folderDiv.addEventListener('click', function () {
+                        folderItem.addEventListener('click', function () {
                             vscode.postMessage({
                                 command: 'openFolder',
-                                data: { value }
+                                data: { folderValue }
                             });
                         });
 
-                        contentDiv.appendChild(folderDiv);
+                        foldersContainer.appendChild(folderItem);
                     });
                 } else if (event.data.command === 'updateFolderDetails') {
                     const folderData = event.data.data;
 
-                    contentDiv.innerHTML = '<h2>Details for ' + folderData.data.files[0] + '</h2>';
+                    foldersContainer.innerHTML = '<h2>Details for ' + folderData.data.files[0] + '</h2>';
                 }
             });
 
@@ -93,69 +120,6 @@ export function getWebviewOverview(webview: vscode.Webview, context: any) {
                     page: "subfolder",
                 });
             });
-
-window.onload = () => {
-    vscode.postMessage({ command: 'fetchFolders' });
-    vscode.postMessage({ command: 'fetchNotes' });
-};
-
-window.addEventListener('message', (event) => {
-    const message = event.data;
-    switch (message.command) {
-        case 'updateFolders':
-            const foldersContainer = document.querySelector('#folders-container');
-            const folderData = message.folderData;
-
-            folderData.forEach(folder => {
-                const folderElement = document.createElement('div');
-                folderElement.classList.add('item');
-
-                folderElement.innerHTML = \`
-                        <div class="left">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                                <path
-                                    d="M194.28-217q-24.218 0-40.749-16.531Q137-250.062 137-274.363v-411.274q0-24.301 16.531-40.832Q170.062-743 194.5-743h187l77.5 77.5h306.72q24.218 0 40.749 16.531Q823-632.438 823-608v333.5q0 24.438-16.531 40.969Q789.938-217 765.72-217H194.28Zm.22-25.5h571q14 0 23-9t9-23V-608q0-14-9-23t-23-9H449l-77.5-77.5h-177q-14 0-23 9t-9 23v411q0 14 9 23t23 9Zm-32 0v-475 475Z" />
-                            </svg>
-                            <p class="folder-name">\${folder.title}</p>
-                        </div>
-                        <div class="right">
-                            <!-- <p class="mtime">\${folder.mtime}</p> -->
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                                <path
-                                    d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
-                            </svg>
-                        </div>
-                            \`;
-
-                foldersContainer.appendChild(folderElement);
-            });
-            break;
-        case 'updateNotes':
-        /*     const notesContainer = document.querySelector('#notes-container');
-            const noteData = message.noteData;
-
-            noteData.forEach(note => {
-                const noteElement = document.createElement('div');
-                noteElement.classList.add('item');
-
-                noteElement.innerHTML = \`
-                <div class="left">
-                <p class="folder-name">\${note.title}</p>
-                    </div>
-                    <div class="right">
-                        <p class="mtime">\${note.mtime}</p>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                            <path
-                                d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
-                        </svg>
-                    </div>
-                            \`;
-
-                notesContainer.appendChild(noteElement);
-            });
-            break; */
-            }
-        });
             </script>
 		</body>
 	</html>`;
