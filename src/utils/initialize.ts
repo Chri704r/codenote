@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as vscode from "vscode";
 const fs = require("fs");
+const fsp = require("fs").promises;
 
 export async function initializeFileAndFolder(context: vscode.ExtensionContext) {
 	const globalStorageUri = context.globalStorageUri;
@@ -33,8 +34,6 @@ function isDirectoryEmpty(directoryPath: string): boolean {
 }
 
 export async function getFolderContents(context: vscode.ExtensionContext) {
-	const fsp = require("fs").promises;
-
 	try {
 		const globalStorageUri = context.globalStorageUri;
 		const folders = await fsp.readdir(globalStorageUri.fsPath);
@@ -58,8 +57,6 @@ export async function getFolderContents(context: vscode.ExtensionContext) {
 }
 
 export async function getContentInFolder(context: vscode.ExtensionContext, folderName: string) {
-	const fsp = require("fs").promises;
-
 	try {
 		const globalStorageUri = context.globalStorageUri;
 		const mainFolderPath = path.join(globalStorageUri.fsPath, folderName);

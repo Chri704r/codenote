@@ -2,9 +2,9 @@ import * as vscode from "vscode";
 import { getWebviewOverview } from "./components/overview/overview";
 import { getWebviewSubfolder } from "./components/subfolder/subfolder";
 import { getWebviewNote } from "./components/note/note";
-import { displayDecorators } from "./displayDecorators";
-import { addDecoratorToLine } from "./addDecoratorToLine";
-import { moveToFolder } from "./moveToFolder";
+import { displayDecorators } from "./utils/displayDecorators";
+import { addDecoratorToLine } from "./utils/addDecoratorToLine";
+import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -31,8 +31,8 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = getWebviewNote(panel.webview, context);
 						return;
 				}
-				switch (message.move) {
-					case "moveFile":
+				switch (message.command) {
+					case "move":
 						moveToFolder(message.pathTo, message.pathFrom);
 						return;
 				}
