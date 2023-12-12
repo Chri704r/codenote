@@ -6,6 +6,7 @@ import { getWebviewNote } from "./components/note/note";
 import { getWebviewNewNote } from "./components/newNote/newNote";
 import { displayDecorators } from "./displayDecorators";
 import { addDecoratorToLine } from "./addDecoratorToLine";
+import { error } from "console";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -79,34 +80,76 @@ export async function activate(context: vscode.ExtensionContext) {
 					});
 
 					break;
+				case 'addFolder':
+
+					const newFolderData = await addFolder();
+
+					panel.webview.postMessage({
+						command: 'updateFolderDetails',
+						// data: newFolderData
+					});
+					break;
 			}
 		});
 
-		const fs = require('fs');
+		const fs = require('fs').promises;
 		const path = require('path');
+
+
+		async function addFolder() {
+
+			const globalStorageUri = context.globalStorageUri;
+
+			const newFolderName = await vscode.window.showInputBox({
+				placeHolder: 'Enter folder name',
+				prompt: 'Provide a name for the new folder'
+			});
+
+			if (!newFolderName) {
+				// User canceled or entered an empty name
+				return;
+			}
+
+			const folderPath = path.join(globalStorageUri.fsPath, newFolderName);
+
+			try {
+				await fs.mkdir(folderPath, error);
+				vscode.window.showInformationMessage(`Folder "${newFolderName}" created successfully.`);
+				console.log(`Folder '${newFolderName}' created successfully.`);
+			} catch (error: any) {
+				if (error.code === 'EEXIST') {
+					vscode.window.showWarningMessage(`Folder "${newFolderName}" already exists.`);
+					console.error(`Folder already exists: ${error.message}`);
+				} else {
+					vscode.window.showErrorMessage(`Error creating folder: ${error.message}`);
+					console.error(`Error creating folder: ${error.message}`);
+
+				}
+			}
+		}
 
 		function createFolderWithFile() {
 			const globalStorageUri = context.globalStorageUri;
-		
+
 			const folderName = 'myFolder';
 			const fileName = 'example.txt';
-		
+
 			const folderPath = path.join(globalStorageUri.fsPath, folderName);
 			const filePath = path.join(folderPath, fileName);
-		
+
 			try {
 				if (!fs.existsSync(folderPath)) {
 					fs.mkdirSync(folderPath, { recursive: true });
 				}
-		
+
 				fs.writeFileSync(filePath, 'Hello, world!');
-		
+
 				console.log(`Folder '${folderName}' with file '${fileName}' created successfully.`);
 			} catch (error: any) {
 				console.error(`Error creating folder and file: ${error.message}`);
 			}
 		}
-		
+
 		createFolderWithFile();
 
 		const folders = await getFolderContents(context);
@@ -137,32 +180,32 @@ export async function activate(context: vscode.ExtensionContext) {
 async function getFolderContents(context: vscode.ExtensionContext) {
 	const fsp = require('fs').promises;
 
-    try {
-        const globalStorageUri = context.globalStorageUri;
-        const folders = await fsp.readdir(globalStorageUri.fsPath);
-        const folderContents = [];
+	try {
+		const globalStorageUri = context.globalStorageUri;
+		const folders = await fsp.readdir(globalStorageUri.fsPath);
+		const folderContents = [];
 
-        for (const folderName of folders) {
-            const folderPath = path.join(globalStorageUri.fsPath, folderName);
-            const stats = await fsp.stat(folderPath);
+		for (const folderName of folders) {
+			const folderPath = path.join(globalStorageUri.fsPath, folderName);
+			const stats = await fsp.stat(folderPath);
 
-            if (stats.isDirectory()) {
-                const files = await fsp.readdir(folderPath);
-                folderContents.push({ folderName, files });
-            }
-        }
+			if (stats.isDirectory()) {
+				const files = await fsp.readdir(folderPath);
+				folderContents.push({ folderName, files });
+			}
+		}
 
-        return folderContents;
-    } catch (error) {
-        console.error(`Error reading global storage directory`);
-        return [];
-    }
+		return folderContents;
+	} catch (error) {
+		console.error(`Error reading global storage directory`);
+		return [];
+	}
 }
 
 async function getDataForFolder(subfolder: string) {
-    return { subfolder };
+	return { subfolder };
 }
 
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
