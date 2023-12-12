@@ -1,7 +1,7 @@
 .settings-container {
 	position: relative;
 }
-#container {
+.dropdown {
 	position: absolute;
 	right: 35px;
 	top: -1px;
