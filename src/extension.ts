@@ -121,6 +121,14 @@ async function getFolderContents(context: vscode.ExtensionContext) {
             const stats = await fsp.stat(folderPath);
 			// const nameWithoutExtension = path.basename(folderName, path.extname(folderName)); // CAN'T GET THIS TO WORK, TRIED MANY SYNTAXES
 			const mtime = stats.mtime;
+			const currentDate = new Date();
+  			const pastDate = new Date(mtime);
+			const timeDifference = currentDate.getTime() - pastDate.getTime();
+			const minutes = Math.floor(timeDifference / (1000 * 60));
+			const hours = Math.floor(minutes / 60);
+			const days = Math.floor(hours / 24);
+			const months = Math.floor(days / 30);
+			console.log(days, "hejsa");
 
             if (stats.isDirectory()) {
                 const files = await fsp.readdir(folderPath);
