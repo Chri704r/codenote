@@ -71,7 +71,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                         item.addEventListener('click', function () {
                             const folderName = item.getAttribute('data-folder-name');
                             vscode.postMessage({
-                                command: 'openFolder',
+                                page: 'subfolder',
                                 folderName: folderName
                             });
                         });
