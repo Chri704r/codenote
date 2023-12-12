@@ -9,7 +9,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
 
 	const allFolders = await getAllFolderContents(context);
 	const folderContent = await getContentInFolder(context, folderData);
-	console.log(folderContent);
 	const folderContentsHTML = await renderFolderContent(folderContent);
 
 	async function renderFolderContent(folderContent: any) {
@@ -32,7 +31,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                             </svg>
                             <div class="dropdown hidden">
                                 <ul>
-                                    <li class="move" value=${folder.uriPath}><a>
+                                    <li class="move" value="${folder.uriPath}" path-value="hejsa"><a>
                                         <p>Move</p>
                                         <span class="codicon codicon-chevron-right"></span>
                                     </a></li>
@@ -87,14 +86,20 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
             <script>
                 const vscode = acquireVsCodeApi();
 
-                function list(data = [], sourcePath = "") {
+                function list(data = [], sourcePath) {
+                    
                     if (data.length > 0) {
                         const ul = document.createElement("ul");
                         data.forEach((folder) => {
                             const li = document.createElement("li");
+                            li.id = folder.folderName;
                             const a = document.createElement("a");
                             const p = document.createElement("p");
                             p.textContent = folder.folderName;
+                            if(folder.uriPath === sourcePath){
+                                p.style.color = "#747474"
+                                li.style.cursor = "not-allowed"
+                            }
                             a.appendChild(p);
                             if(folder.subfolders && folder.subfolders.length > 0){
                                 const icon = document.createElement("span");
@@ -103,8 +108,10 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                                 a.appendChild(icon)
                             }
                             li.appendChild(a)
-                            listenForMouseOver(li, folder.subfolders);
-                            clickOnFolder(li, folder, sourcePath);
+                            listenForMouseOver(li, folder.subfolders, sourcePath);
+                            if(folder.uriPath !== sourcePath){
+                                clickOnFolder(li, folder, sourcePath);
+                            }
                             ul.appendChild(li);
                         });
                         return ul;
@@ -124,27 +131,25 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                     );
                 }
 
-                function listenForMouseOver(option, subfolders) {
+                function listenForMouseOver(option, subfolders, sourcePath) {
                     option.addEventListener(
                         "mouseover",
                         () => {
                             if(subfolders !== undefined){
-                                option.appendChild(list(subfolders));
+                                option.appendChild(list(subfolders, sourcePath));
                             }
                         },
                         { once: true }
                     );
                 }
 
-                document.querySelector(".move").addEventListener(
-                    "mouseover",
-                    (button) => {
+                document.querySelectorAll(".move").forEach((moveButton)=>{
+                    moveButton.addEventListener("mouseover", (button)=>{
                         const data = ${JSON.stringify(allFolders)}
-                        const sourcePath = button.target.getAttribute("value")
-                        button.target.parentElement.appendChild(list(data, sourcePath));
-                    },
-                    { once: true }
-                );
+                        const sourcePath = moveButton.getAttribute("value")
+                        moveButton.appendChild(list(data, sourcePath));
+                    }, { once: true })
+                })
 
                 document.querySelectorAll(".delete-button").forEach((deleteButton)=> {
                     deleteButton.addEventListener("click", () => {
@@ -184,6 +189,17 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         });
                     });
                 });
+
+                const folderItems = document.querySelectorAll('.item');
+                    folderItems.forEach(item => {
+                        item.addEventListener('click', function () {
+                            const folderName = item.getAttribute('data-folder-name');
+                            vscode.postMessage({
+                                page: 'subfolder',
+                                folderName: folderName
+                            });
+                        });
+                    });
             </script>
         </body>
     </html>
