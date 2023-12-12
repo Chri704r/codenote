@@ -89,6 +89,15 @@ export async function activate(context: vscode.ExtensionContext) {
 						// data: newFolderData
 					});
 					break;
+				case 'addNote':
+
+					const newNoteData = await addNote();
+
+					panel.webview.postMessage({
+						command: 'updateFolderDetails',
+						// data: newNoteData
+					});
+					break;
 			}
 		});
 
@@ -126,6 +135,42 @@ export async function activate(context: vscode.ExtensionContext) {
 
 				}
 			}
+		}
+
+
+		async function addNote() {
+
+			const globalStorageUri = context.globalStorageUri;
+
+			const newNoteName = await vscode.window.showInputBox({
+				placeHolder: 'Enter note name',
+				prompt: 'Provide a name for the new note'
+			});
+
+			if (!newNoteName) {
+				// User canceled or entered an empty name
+				return;
+			}
+
+			const notePath = path.join(globalStorageUri.fsPath, `${newNoteName}.json`);
+			console.log(notePath);
+
+			try {
+				// Check if the note already exists
+				await fs.access(notePath);
+
+				vscode.window.showWarningMessage(`Note "${newNoteName}.json" already exists.`);
+				console.error(`Note already exists`);
+			} catch {
+				// Note does not exist, proceed to create it
+				try {
+					await fs.writeFile(notePath, '{}');
+					vscode.window.showInformationMessage(`Note "${newNoteName}.json" created successfully.`);
+				} catch (error: any) {
+					vscode.window.showErrorMessage(`Error creating note: ${error.message}`);
+				}
+			}
+
 		}
 
 		function createFolderWithFile() {
