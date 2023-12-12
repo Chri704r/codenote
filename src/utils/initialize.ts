@@ -2,7 +2,6 @@ import * as path from "path";
 import * as vscode from "vscode";
 const fs = require("fs");
 
-//TODO: Only create folder and file if folder is empty
 export async function initializeFileAndFolder(context: vscode.ExtensionContext) {
 	const globalStorageUri = context.globalStorageUri;
 
@@ -14,13 +13,23 @@ export async function initializeFileAndFolder(context: vscode.ExtensionContext) 
 
 	try {
 		if (!fs.existsSync(folderPath)) {
-			fs.mkdirSync(folderPath, { recursive: true });
+			if (isDirectoryEmpty(globalStorageUri.fsPath)) {
+				fs.mkdirSync(folderPath, { recursive: true });
+				fs.writeFileSync(filePath, "Hello, world!");
+			} else {
+				return;
+			}
+		} else {
+			return;
 		}
-
-		fs.writeFileSync(filePath, "Hello, world!");
 	} catch (error: any) {
 		console.error(`Error creating folder and file: ${error.message}`);
 	}
+}
+
+function isDirectoryEmpty(directoryPath: string): boolean {
+	const files = fs.readdirSync(directoryPath);
+	return files.length === 0;
 }
 
 export async function getFolderContents(context: vscode.ExtensionContext) {
