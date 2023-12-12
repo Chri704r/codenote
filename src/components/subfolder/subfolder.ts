@@ -167,14 +167,14 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                     });
                 });
            
-                window.addEventListener('message', function (event) {
+                /* window.addEventListener('message', function (event) {
                     const subfolderHeader = document.querySelector('.subfolder-header');
                 
                     if (event.data.command === 'updateFolderDetails') {
                         const fileData = event.data.data;
                         console.log(fileData);
                         subfolderHeader.innerHTML = fileData.subfolder.folderName;
-                        /* const folderContents = event.data.data;
+                        const folderContents = event.data.data;
                 
                         contentDiv.innerHTML = '<h2>Folder Contents</h2>';
              
@@ -191,14 +191,14 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                             });
     
                             contentDiv.appendChild(folderDiv);
-                        }); */
+                        });
                     } 
-                   /*  else if (event.data.command === 'updateFolderDetails') {
+                   else if (event.data.command === 'updateFolderDetails') {
                         const folderData = event.data.data;
     
                         contentDiv.innerHTML = '<h2>Details for ' + folderData.data.files[0] + '</h2>';
-                    } */
-                });
+                    }
+                }); */
             </script>
         </body>
     </html>
