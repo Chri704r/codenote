@@ -44,7 +44,6 @@ export async function getFolderContents(context: vscode.ExtensionContext) {
             const folderPath = path.join(globalStorageUri.fsPath, folderName);
             
             try {
-                //await fsp.access(folderPath, fs.constants.F_OK);
                 await fsp.readdir(folderPath);
                 const stats = await fsp.stat(folderPath);
 
@@ -52,16 +51,14 @@ export async function getFolderContents(context: vscode.ExtensionContext) {
                     const files = await fsp.readdir(folderPath);
                     folderContents.push({ folderName, files });
                 }
-            } catch(error) {
+            } catch (error) {
                 console.error(`Error reading folder: ${folderPath}`);
-                console.error(error);
             }
         }
 
         return folderContents;
     } catch (error) {
         console.error(`Error reading global storage directory`);
-        console.error(error);
         return [];
     }
 }
