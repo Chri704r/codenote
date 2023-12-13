@@ -37,7 +37,6 @@ export async function activate(context: vscode.ExtensionContext) {
 						moveToFolder(message.pathTo, message.pathFrom);
 						return;
 					case "deleteFolder":
-						console.log("delete");
 						const folderToDelete = message.folderName;
 						await deleteFolder(folderToDelete, context, panel);
 						const updatedFolders = await getFolderContents(context);
