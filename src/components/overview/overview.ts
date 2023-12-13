@@ -3,6 +3,8 @@ import * as vscode from "vscode";
 export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any) {
     const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
     const styles = webview.asWebviewUri(onDiskPathStyles);
+    const deleteModalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "deleteModal.css"));
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
 
     //TODO: Move to utils folder/file
     async function renderFolderContent(folders: any) {
@@ -22,10 +24,28 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                                     d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
                             </svg>
                         </div>
+                        <button class="delete-folder" data-folder-name="${folders[key].folderName}">Delete</button>
                     </div>
                 `;
         }).join('');
-    }
+    };
+
+    const deleteModal = `
+    <div id="delete-container" class="hidden">
+        <div id="delete-wrapper">
+            <div id="delete-modal">
+                <p>Are you sure you want to delete?</p>
+                <p>Once you click delete you will not be able to get it back.</p>
+                <div id="button-container">
+                    <button class="secondary-button">Cancel</button>
+                    <button id="delete-button-perm">
+                        <p>Delete</p>
+                        <span class="codicon codicon-trash"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>`
 
     const folderContentsHTML = await renderFolderContent(folders);
 
@@ -36,6 +56,8 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 			<meta charset="UTF-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <link rel="stylesheet" href="${styles}">
+            <link rel="stylesheet" href="${deleteModalStyles}" />
+            <link rel="stylesheet" href="${codiconsUri}">
 		</head>
 		<body>
             <div>
@@ -44,6 +66,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                     ${folderContentsHTML}
                 </div>
             </div>
+            ${deleteModal}
 
         <!-- TODO: Move to utils folder/file -->			
             <div id="add-container" class="container">
@@ -67,14 +90,38 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 
                 document.addEventListener('DOMContentLoaded', function () {
                     const folderItems = document.querySelectorAll('.item');
+                    const deleteContainer = document.getElementById('delete-container');
+
                     folderItems.forEach(item => {
                         item.addEventListener('click', function () {
                             const folderName = item.getAttribute('data-folder-name');
-                            vscode.postMessage({
-                                page: 'subfolder',
-                                folderName: folderName
-                            });
+
+                            if (event.target.classList.contains("delete-folder")) {
+                                event.stopPropagation();
+
+                                deleteContainer.classList.remove('hidden');
+                                const deleteFolderConfirm = document.getElementById("delete-button-perm");
+                                deleteFolderConfirm.addEventListener('click', function () {
+                                    deleteContainer.classList.add('hidden');
+
+                                    vscode.postMessage({
+                                        command: 'deleteFolder',
+                                        folderName: folderName
+                                    });
+                                });
+                            } else {
+                                vscode.postMessage({
+                                    page: 'subfolder',
+                                    folderName: folderName
+                                });
+                            }
                         });
+                    });
+
+                    const cancelButton = document.querySelector(".secondary-button");
+            
+                    cancelButton.addEventListener('click', function () {
+                        deleteContainer.classList.add('hidden');
                     });
                 });
             </script>

@@ -27,9 +27,6 @@ export async function deleteFolder(folderName: string, context: vscode.Extension
         const globalStorageUri = context.globalStorageUri;
         const folderPath = path.join(globalStorageUri.fsPath, folderName);
 
-        const shouldFolderBeDeleted = await confirmDeleteModal();
-
-        if (shouldFolderBeDeleted) {
             if (await fse.pathExists(folderPath)) {
                 await fse.remove(folderPath);
             } else {
@@ -38,9 +35,6 @@ export async function deleteFolder(folderName: string, context: vscode.Extension
 
             const updateOverview = await updateWebviewContent(panel.webview, context);
             panel.webview.html = updateOverview;
-        } else {
-            vscode.window.showInformationMessage(`Deletion of ${folderName} cancelled`);
-        }
     } catch (error: any) {
         vscode.window.showErrorMessage(`Error deleting folder: ${error.message}`);
     }

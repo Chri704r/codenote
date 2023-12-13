@@ -2,8 +2,9 @@ import * as vscode from "vscode";
 import { getWebviewOverview } from "./components/overview/overview";
 import { getWebviewSubfolder } from "./components/subfolder/subfolder";
 import { getWebviewNote } from "./components/note/note";
-import { displayDecorators } from "./displayDecorators";
-import { addDecoratorToLine } from "./addDecoratorToLine";
+import { displayDecorators } from "./utils/displayDecorators";
+import { addDecoratorToLine } from "./utils/addDecoratorToLine";
+import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
 import { deleteFolder } from "./utils/deleteFolder";
 
@@ -15,7 +16,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			enableScripts: true,
 		});
 
-		panel.webview.html =  await getWebviewOverview(panel.webview, context, folders);
+		panel.webview.html = await getWebviewOverview(panel.webview, context, folders);
 
 		panel.webview.onDidReceiveMessage(
 			async (message) => {
@@ -23,14 +24,20 @@ export async function activate(context: vscode.ExtensionContext) {
 					case "overview":
 						panel.webview.html = await getWebviewOverview(panel.webview, context, folders);
 						return;
-					 case "subfolder":
+					case "subfolder":
 						const folderName = message.folderName;
 						panel.webview.html = await getWebviewSubfolder(folderName, panel.webview, context);
 						return;
 					case "note":
 						panel.webview.html = getWebviewNote(panel.webview, context);
 						return;
+				}
+				switch (message.command) {
+					case "move":
+						moveToFolder(message.pathTo, message.pathFrom);
+						return;
 					case "deleteFolder":
+						console.log("delete");
 						const folderToDelete = message.folderName;
 						await deleteFolder(folderToDelete, context, panel);
 						const updatedFolders = await getFolderContents(context);
@@ -41,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			undefined,
 			context.subscriptions
 		);
-		
+
 		await initializeFileAndFolder(context);
 	});
 
