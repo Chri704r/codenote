@@ -31,12 +31,9 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = getWebviewNote(panel.webview, context);
 						return;
 					case "deleteFolder":
-						console.log("before deletion");
 						const folderToDelete = message.folderName;
 						await deleteFolder(folderToDelete, context, panel);
-						console.log("after deletion");
 						const updatedFolders = await getFolderContents(context);
-						console.log("updated deletion");
 						panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders);
 						return;
 				}
