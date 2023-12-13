@@ -5,6 +5,7 @@ import { getWebviewNote } from "./components/note/note";
 import { displayDecorators } from "./displayDecorators";
 import { addDecoratorToLine } from "./addDecoratorToLine";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
+import { deleteFolder } from "./utils/deleteFolder";
 
 export async function activate(context: vscode.ExtensionContext) {
 	const folders = await getFolderContents(context);
@@ -28,6 +29,15 @@ export async function activate(context: vscode.ExtensionContext) {
 						return;
 					case "note":
 						panel.webview.html = getWebviewNote(panel.webview, context);
+						return;
+					case "deleteFolder":
+						console.log("before deletion");
+						const folderToDelete = message.folderName;
+						await deleteFolder(folderToDelete, context, panel);
+						console.log("after deletion");
+						const updatedFolders = await getFolderContents(context);
+						console.log("updated deletion");
+						panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders);
 						return;
 				}
 			},
