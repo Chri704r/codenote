@@ -1,13 +1,17 @@
 import * as vscode from "vscode";
+import { searchInput } from "../search/searchInput";
 
 export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any) {
-    const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
-    const styles = webview.asWebviewUri(onDiskPathStyles);
+	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
+	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
+	const styles = webview.asWebviewUri(onDiskPathStyles);
 
-    //TODO: Move to utils folder/file
-    async function renderFolderContent(folders: any) {
-        return Object.keys(folders).map(key => {
-            return `
+	//TODO: Move to utils folder/file
+	async function renderFolderContent(folders: any) {
+		return Object.keys(folders)
+			.map((key) => {
+				return `
                 <div class="item" data-folder-name="${folders[key].folderName}">
                     <div class="left">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
@@ -24,20 +28,23 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                         </div>
                     </div>
                 `;
-        }).join('');
-    }
+			})
+			.join("");
+	}
 
-    const folderContentsHTML = await renderFolderContent(folders);
+	const folderContentsHTML = await renderFolderContent(folders);
 
-
-    return `<!DOCTYPE html>
+	return `<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <link rel="stylesheet" href="${styles}">
+            <link rel="stylesheet" href="${generalStyles}">
+            <link rel="stylesheet" href="${codiconsUri}">
 		</head>
 		<body>
+            ${searchInput()}
             <div>
                 <h1>All folders</h1>
                 <div id="folders-container" class="container">

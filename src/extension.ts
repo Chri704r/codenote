@@ -6,6 +6,7 @@ import { displayDecorators } from "./utils/displayDecorators";
 import { addDecoratorToLine } from "./utils/addDecoratorToLine";
 import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
+import { search } from "./components/search/search";
 
 export async function activate(context: vscode.ExtensionContext) {
 	const folders = await getFolderContents(context);
@@ -34,6 +35,9 @@ export async function activate(context: vscode.ExtensionContext) {
 				switch (message.command) {
 					case "move":
 						moveToFolder(message.pathTo, message.pathFrom);
+						return;
+					case "search":
+						panel.webview.html = await search(message.searchTerm, panel.webview, context);
 						return;
 				}
 			},
