@@ -3,7 +3,6 @@ import * as path from 'path';
 import { getWebviewOverview } from "./components/overview/overview";
 import { getWebviewSubfolder } from "./components/subfolder/subfolder";
 import { getWebviewNote } from "./components/note/note";
-import { getWebviewNewNote } from "./components/newNote/newNote";
 import { displayDecorators } from "./displayDecorators";
 import { addDecoratorToLine } from "./addDecoratorToLine";
 import { error } from "console";
@@ -30,9 +29,6 @@ export async function activate(context: vscode.ExtensionContext) {
 						return; */
 					case "note":
 						panel.webview.html = getWebviewNote(panel.webview, context);
-						return;
-					case "newNote":
-						panel.webview.html = getWebviewNewNote(panel.webview, context);
 						return;
 				}
 			},
