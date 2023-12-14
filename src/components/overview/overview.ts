@@ -70,8 +70,6 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 				</div>
 			</div>
             <script>
-                const vscode = acquireVsCodeApi();
-
                 document.addEventListener('DOMContentLoaded', function () {
                     const folderItems = document.querySelectorAll('.item');
                     folderItems.forEach(item => {

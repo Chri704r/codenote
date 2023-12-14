@@ -12,8 +12,6 @@ document.querySelector(".secondary-button").addEventListener("click", () => {
 
 // ------ extension - redirect view ------
 
-const vscode = acquireVsCodeApi();
-
 document.querySelectorAll(".left").forEach((folder) => {
 	folder.addEventListener("click", (e) => {
 		vscode.postMessage({
