@@ -1,26 +1,52 @@
 import * as vscode from "vscode";
 
-export function getWebviewOverview(webview: vscode.Webview, context: any) {
+export async function getWebviewOverview(webview: vscode.Webview, context: any, files: any) {
     const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
     const styles = webview.asWebviewUri(onDiskPathStyles);
-    const onDiskPathTailwind = vscode.Uri.joinPath(context.extensionUri, "dist", "output.css");
-    const tailwindStyles = webview.asWebviewUri(onDiskPathTailwind);
+
+    async function renderFiles(files: any) {
+        return Object.keys(files).map(key => {
+            return `
+                <div class="item">
+                    <div class="left">
+                        <p class="folder-name">${files[key].nameWithoutExtension}</p>
+                    </div>
+                    <div class="right">
+                        <p class="mtime">${files[key].lastModified}</p>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
+                        <path
+                            d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
+                        </svg>
+                    </div>
+                </div>
+                `;
+        }).join('');
+    }
+
+    const notesHTML = await renderFiles(files);
+
     return `<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <link rel="stylesheet" href="${styles}">
-			<link href="${tailwindStyles}" rel="stylesheet">
 		</head>
 		<body>
-			<div class="plain">
-                <h1>Overview</h1>
-                <button>View Subfolder</button>
-			</div>
-            <div id="notes-container" class="container"></div>
-            <div id="folders-container" class="container"></div>
-			<div id="add-container" class="container">
+            <div>
+                <h1>Last edited</h1>
+                <div id="folders-container" class="container">
+                    ${notesHTML}
+                </div>
+            </div>
+            <div>
+                <h1>All folders</h1>
+                <div id="folders-container" class="container">
+                </div>
+            </div>
+
+        <!-- TODO: Move to utils folder/file -->			
+            <div id="add-container" class="container">
 				<div class="plain">
 					<div class="left">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
@@ -36,90 +62,22 @@ export function getWebviewOverview(webview: vscode.Webview, context: any) {
 					</div>
 				</div>
 			</div>
-
-            <script>
-            const vscode = acquireVsCodeApi();
-
-            document.addEventListener('DOMContentLoaded', function () {
-                vscode.postMessage({ command: 'getFolderContents' });
-            });
-
-            window.addEventListener('message', function (event) {
-                const foldersContainer = document.getElementById('folders-container');
-                const notesContainer = document.getElementById('notes-container');
             
-                if (event.data.command === 'updateFolderContents') {
-                    const folderContents = event.data.data;
+            <script>
+                const vscode = acquireVsCodeApi();
 
-                    notesContainer.innerHTML = '<div class="plain"><h2>Notes</h2><div>';
-                    foldersContainer.innerHTML = '<div class="plain"><h2>Folders</h2><div>';
-         
-                    Object.keys(folderContents).forEach(key => {
-                        const folderItem = document.createElement('div');
-                        folderItem.classList.add('item');
-                        const folderValue = folderContents[key];
-
-		                folderContents[key].files.forEach(file => {
-                            const noteItem = document.createElement('div');
-                            noteItem.classList.add('item');
-                            // const noteValue = folderContents[key].file;
-
-                            // console.log(folderContents[key].nameWithoutExtension); // DELETE
-                            // console.log(folderContents[key].files); // DELETE
-                            // console.log(folderContents[key].mtime); // DELETE
-
-                            noteItem.innerHTML = \`
-                                <div class="left">
-                                <p class="folder-name">\${folderContents[key].files}</p>
-                                    </div>
-                                    <div class="right">
-                                        <p class="mtime">\${folderContents[key].mtime}</p>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                                            <path
-                                                d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
-                                        </svg>
-                                    </div>
-                                            \`;
-                            notesContainer.appendChild(noteItem);
-                        })
-
-                        folderItem.innerHTML = \`
-                        <div class="left">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                                <path
-                                    d="M194.28-217q-24.218 0-40.749-16.531Q137-250.062 137-274.363v-411.274q0-24.301 16.531-40.832Q170.062-743 194.5-743h187l77.5 77.5h306.72q24.218 0 40.749 16.531Q823-632.438 823-608v333.5q0 24.438-16.531 40.969Q789.938-217 765.72-217H194.28Zm.22-25.5h571q14 0 23-9t9-23V-608q0-14-9-23t-23-9H449l-77.5-77.5h-177q-14 0-23 9t-9 23v411q0 14 9 23t23 9Zm-32 0v-475 475Z" />
-                            </svg>
-                            <p class="folder-name">\${folderContents[key].folderName}</p>
-                        </div>
-                        <div class="right">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                                <path
-                                    d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
-                            </svg>
-                        </div>
-                            \`;
-                            
-                        folderItem.addEventListener('click', function () {
+                document.addEventListener('DOMContentLoaded', function () {
+                    const folderItems = document.querySelectorAll('.item');
+                    folderItems.forEach(item => {
+                        item.addEventListener('click', function () {
+                            const folderName = item.getAttribute('data-folder-name');
                             vscode.postMessage({
-                                command: 'openFolder',
-                                data: { folderValue }
+                                page: 'subfolder',
+                                folderName: folderName
                             });
                         });
-
-                        foldersContainer.appendChild(folderItem);
                     });
-                } else if (event.data.command === 'updateFolderDetails') {
-                    const folderData = event.data.data;
-
-                    foldersContainer.innerHTML = '<h2>Details for ' + folderData.data.files[0] + '</h2>';
-                }
-            });
-
-            document.querySelector("button").addEventListener("click", () => {
-                vscode.postMessage({
-                    page: "subfolder",
                 });
-            });
             </script>
 		</body>
 	</html>`;
