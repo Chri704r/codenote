@@ -10,18 +10,6 @@ document.querySelector(".secondary-button").addEventListener("click", () => {
 	document.querySelector("#delete-container").classList.add("hidden");
 });
 
-// ------ extension - redirect view ------
-
-const vscode = acquireVsCodeApi();
-
-document.querySelectorAll(".left").forEach((folder) => {
-	folder.addEventListener("click", (e) => {
-		vscode.postMessage({
-			page: "note",
-		});
-	});
-});
-
 // ------ dropdown ------
 function list(data = [], sourcePath, sourceFoldername) {
 	if (data.length > 0) {

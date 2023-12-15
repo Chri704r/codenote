@@ -44,8 +44,7 @@ export async function getFolderContents(context: vscode.ExtensionContext) {
 			const stats = await fsp.stat(folderPath);
 
 			if (stats.isDirectory()) {
-				const files = await fsp.readdir(folderPath);
-				folderContents.push({ folderName, files });
+				folderContents.push({ folderName, uriPath: folderPath });
 			}
 		}
 
@@ -56,10 +55,16 @@ export async function getFolderContents(context: vscode.ExtensionContext) {
 	}
 }
 
-export async function getContentInFolder(context: vscode.ExtensionContext, folderName: string) {
+interface Folder {
+	files: [];
+	folderName: string;
+	folders: [];
+	uriPath: string;
+}
+
+export async function getContentInFolder(folder: any): Promise<any> {
 	try {
-		const globalStorageUri = context.globalStorageUri;
-		const mainFolderPath = path.join(globalStorageUri.fsPath, folderName);
+		const mainFolderPath = folder.uriPath;
 		const stats = await fsp.stat(mainFolderPath);
 
 		let folderContent = {};
@@ -81,7 +86,7 @@ export async function getContentInFolder(context: vscode.ExtensionContext, folde
 					}
 				})
 			);
-			folderContent = { folderName, uriPath: mainFolderPath, folders, files };
+			folderContent = { folderName: folder.folderName, uriPath: mainFolderPath, folders, files };
 		}
 		return folderContent;
 	} catch (error) {
