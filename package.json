@@ -53,6 +53,12 @@
 				"command": "codenote.addDecorator",
 				"title": "addDecorator"
 			}
+		],
+		"search": [
+			{
+				"scheme": "vscode-userdata",
+				"pattern": "**/*"
+			}
 		]
 	},
 	"scripts": {

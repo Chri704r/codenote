@@ -1,23 +1,6 @@
 import { renderSettingsDropdown } from "../components/dropdown/dropdown";
 
-export async function renderFolderContent(folders: any) {
-    const deleteModal = `
-        <div id="delete-container" class="hidden">
-            <div id="delete-wrapper">
-                <div id="delete-modal">
-                    <p>Are you sure you want to delete?</p>
-                    <p>Once you click delete you will not be able to get it back.</p>
-                    <div id="button-container">
-                        <button class="secondary-button">Cancel</button>
-                        <button id="delete-button-perm">
-                            <p>Delete</p>
-                            <span class="codicon codicon-trash"></span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>`
-    
+export async function renderFolderContent(folders: any) { 
     return Object.keys(folders).map(key => {
         const dropdownHtml = renderSettingsDropdown(folders[key]);
         return `
