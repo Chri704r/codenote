@@ -46,7 +46,7 @@ svg {
     align-items: center;
 }
 
-.item {
+.item, .file-item {
     width: 100%;
     max-width: 600px;
     margin: 0 auto;
@@ -81,7 +81,7 @@ svg {
     row-gap: 10px;
 }
 
-.folder-name {
+.folder-name, .file-name {
     padding-left: 10px;
 }
 

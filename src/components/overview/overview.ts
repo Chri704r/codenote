@@ -11,9 +11,9 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 		return Object.keys(files)
 			.map((key) => {
 				return `
-                <div class="item">
+                <div class="file-item" data-file-name="${files[key].nameWithoutExtension}">
                     <div class="left">
-                        <p class="folder-name">${files[key].nameWithoutExtension}</p>
+                        <p class="file-name">${files[key].nameWithoutExtension}</p>
                     </div>
                     <div class="right">
                         <p class="mtime">${files[key].lastModified}</p>
@@ -111,6 +111,17 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                             vscode.postMessage({
                                 page: 'subfolder',
                                 folderName: folderName
+                            });
+                        });
+                    });
+
+                    const fileItems = document.querySelectorAll('.file-item');
+                    fileItems.forEach(item => {
+                        item.addEventListener("click", function () {
+                            const fileName = item.getAttribute("data-file-name");
+                            vscode.postMessage({
+                                page: 'note',
+                                fileName: fileName
                             });
                         });
                     });
