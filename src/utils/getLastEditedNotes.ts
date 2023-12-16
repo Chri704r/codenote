@@ -31,23 +31,24 @@ export async function getFiles(context: vscode.ExtensionContext) {
     try {
         const globalStorageUri = context.globalStorageUri;
         const files = await fsp.readdir(globalStorageUri.fsPath, { withFileTypes: true });
-        const allFiles = [];
+        let allFiles: any = [];
 
         for (const file of files) {
-            if (file.isFile() && path.extname(file.name) === '.json') {
+            if (file.isDirectory()) {
+                allFiles = allFiles.concat(await fsp.readdir((path.join(globalStorageUri.fsPath, file.name))));
+                console.log('test', file.name);
+            }
+            else if (file.isFile() && path.extname(file.name) === '.json') {
                 const nameWithoutExtension = path.basename(file.name, path.extname(file.name));
                 const filePath = path.join(globalStorageUri.fsPath, file.name);
                 const stats = await fsp.stat(filePath);
                 const mtime = stats.mtimeMs;
                 const lastModified = timeAgo(mtime);
                 allFiles.push({ file, nameWithoutExtension, mtime, lastModified });
-
-                const lastEditedNotes = allFiles.sort((b, a) => a.mtime - b.mtime);
-                console.log('Last:', lastEditedNotes);
             }
         }
 
-        return allFiles.slice(0,5);
+        return allFiles.sort((b: Record<string, number>, a: Record<string, number>) => a.mtime - b.mtime).slice(0, 5);
 
     } catch (error: any) {
         console.error(`Error reading global storage directory ${error.message}`);
