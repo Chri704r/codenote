@@ -26,6 +26,7 @@ function timeAgo(mtime: EpochTimeStamp) {
     }
 }
 
+
 export async function getFiles(context: vscode.ExtensionContext) {
     try {
         const globalStorageUri = context.globalStorageUri;
@@ -40,9 +41,14 @@ export async function getFiles(context: vscode.ExtensionContext) {
                 const mtime = stats.mtimeMs;
                 const lastModified = timeAgo(mtime);
                 allFiles.push({ file, nameWithoutExtension, mtime, lastModified });
+
+                const lastEditedNotes = allFiles.sort((b, a) => a.mtime - b.mtime);
+                console.log('Last:', lastEditedNotes);
             }
         }
-        return allFiles;
+
+        return allFiles.slice(0,5);
+
     } catch (error: any) {
         console.error(`Error reading global storage directory ${error.message}`);
         return [];
