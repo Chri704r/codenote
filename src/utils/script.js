@@ -44,7 +44,7 @@ function list(data = [], sourcePath, sourceFoldername) {
 
 function clickOnFolder(option, folder, sourcePath, sourceFoldername) {
 	option.addEventListener("click", () => {
-		document.querySelector(`[data-folder-name="${sourceFoldername}"]`).classList.add("hidden");
+		document.querySelector(`[data-folder-name="${sourceFoldername}"]`).parentElement.classList.add("hidden");
 		vscode.postMessage({
 			command: "move",
 			pathTo: folder.uriPath,

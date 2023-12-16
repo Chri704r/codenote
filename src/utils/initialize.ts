@@ -82,7 +82,11 @@ export async function getContentInFolder(folder: any): Promise<any> {
 					if (stats.isDirectory()) {
 						folders.push({ folderName: file, uriPath: folderPath });
 					} else {
-						files.push({ fileName: file, uriPath: folderPath });
+						let date = new Date(stats.mtimeMs);
+						let dateStr = date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
+						if (!file.startsWith(".")) {
+							files.push({ fileName: file, uriPath: folderPath, date: dateStr });
+						}
 					}
 				})
 			);

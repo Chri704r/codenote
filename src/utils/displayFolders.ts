@@ -5,12 +5,14 @@ export async function displayFolders(folders: any) {
 			const dropdownHtml = renderSettingsDropdown(folder);
 			return `
                 <div class="item">
-                    <div class="left" data-folder-name="${folder.folderName}" folder-path="${folder.uriPath}">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                            <path
-                                d="M194.28-217q-24.218 0-40.749-16.531Q137-250.062 137-274.363v-411.274q0-24.301 16.531-40.832Q170.062-743 194.5-743h187l77.5 77.5h306.72q24.218 0 40.749 16.531Q823-632.438 823-608v333.5q0 24.438-16.531 40.969Q789.938-217 765.72-217H194.28Zm.22-25.5h571q14 0 23-9t9-23V-608q0-14-9-23t-23-9H449l-77.5-77.5h-177q-14 0-23 9t-9 23v411q0 14 9 23t23 9Zm-32 0v-475 475Z" />
+                    <div class="left folder-item" data-folder-name="${folder.folderName}" folder-path="${folder.uriPath}">
+                        <div class="foldername-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
+                                <path
+                                    d="M194.28-217q-24.218 0-40.749-16.531Q137-250.062 137-274.363v-411.274q0-24.301 16.531-40.832Q170.062-743 194.5-743h187l77.5 77.5h306.72q24.218 0 40.749 16.531Q823-632.438 823-608v333.5q0 24.438-16.531 40.969Q789.938-217 765.72-217H194.28Zm.22-25.5h571q14 0 23-9t9-23V-608q0-14-9-23t-23-9H449l-77.5-77.5h-177q-14 0-23 9t-9 23v411q0 14 9 23t23 9Zm-32 0v-475 475Z" />
                             </svg>
-                        <p class="folder-name">${folder.folderName}</p>
+                            <p class="folder-name">${folder.folderName}</p>
+                        </div>
                     </div>
                     <div class="right">
                         <div class="settings-container">
