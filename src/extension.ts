@@ -7,8 +7,10 @@ import { addDecoratorToLine } from "./utils/addDecoratorToLine";
 import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
 import { search } from "./components/search/search";
+import { getFiles } from "./utils/getLastEditedNotes";
 
 export async function activate(context: vscode.ExtensionContext) {
+	const files = await getFiles(context);
 	const folders = await getFolderContents(context);
 
 	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
@@ -16,13 +18,13 @@ export async function activate(context: vscode.ExtensionContext) {
 			enableScripts: true,
 		});
 
-		panel.webview.html = await getWebviewOverview(panel.webview, context, folders);
+		panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 
 		panel.webview.onDidReceiveMessage(
 			async (message) => {
 				switch (message.page) {
 					case "overview":
-						panel.webview.html = await getWebviewOverview(panel.webview, context, folders);
+						panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 						return;
 					case "subfolder":
 						const folderName = message.folderName;

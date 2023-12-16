@@ -13,7 +13,7 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
 	console.log(results);
 
 	let folderContentsHTML;
-	if (results?.files?.length === 0 && results?.folders?.length === 0) {
+	if (results?.files?.length !== 0 || results?.folders?.length !== 0) {
 		folderContentsHTML = await renderFolderContent(results);
 	} else {
 		folderContentsHTML = `<p>No matching results..</p>`;
