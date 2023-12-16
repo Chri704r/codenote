@@ -1,7 +1,6 @@
 // ------ delete modal ------
 document.querySelectorAll(".delete-button").forEach((deleteButton) => {
 	deleteButton.addEventListener("click", () => {
-		console.log("delete clicked");
 		document.querySelector("#delete-container").classList.remove("hidden");
 	});
 });

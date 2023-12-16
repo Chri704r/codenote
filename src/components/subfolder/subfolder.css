@@ -5,6 +5,7 @@
 	position: absolute;
 	right: 35px;
 	top: -1px;
+	z-index: 1;
 }
 ul {
 	padding: 0;

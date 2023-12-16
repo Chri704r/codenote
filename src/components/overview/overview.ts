@@ -1,54 +1,36 @@
 import * as vscode from "vscode";
+import { renderSettingsDropdown } from "../dropdown/dropdown";
+import { renderFolderContent } from "../../utils/renderFolderContent";
+import { getAllFolderContents } from "../../utils/getAllFolders";
 
 export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any) {
     const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
     const styles = webview.asWebviewUri(onDiskPathStyles);
     const deleteModalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "deleteModal.css"));
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
+    const subfolderstyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/subfolder", "subfolder.css"));
 
-    //TODO: Move to utils folder/file
-    async function renderFolderContent(folders: any) {
-        return Object.keys(folders).map(key => {
-            return `
-                <div class="item" data-folder-name="${folders[key].folderName}">
-                    <div class="left">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                            <path
-                                d="M194.28-217q-24.218 0-40.749-16.531Q137-250.062 137-274.363v-411.274q0-24.301 16.531-40.832Q170.062-743 194.5-743h187l77.5 77.5h306.72q24.218 0 40.749 16.531Q823-632.438 823-608v333.5q0 24.438-16.531 40.969Q789.938-217 765.72-217H194.28Zm.22-25.5h571q14 0 23-9t9-23V-608q0-14-9-23t-23-9H449l-77.5-77.5h-177q-14 0-23 9t-9 23v411q0 14 9 23t23 9Zm-32 0v-475 475Z" />
-                            </svg>
-                        <p class="folder-name">${folders[key].folderName}</p>
+    const deleteModal = 
+    Object.keys(folders).map(key => {
+        return `<div id="delete-container" class="hidden" data-folder-name="${folders[key].folderName}">
+            <div id="delete-wrapper">
+                <div id="delete-modal">
+                    <p>Are you sure you want to delete?</p>
+                    <p>Once you click delete you will not be able to get it back.</p>
+                    <div id="button-container">
+                        <button class="secondary-button">Cancel</button>
+                        <button id="delete-button-perm">
+                            <p>Delete</p>
+                            <span class="codicon codicon-trash"></span>
+                        </button>
                     </div>
-                        <div class="right">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                                <path
-                                    d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
-                            </svg>
-                        </div>
-                        <button class="delete-folder" data-folder-name="${folders[key].folderName}">Delete</button>
-                    </div>
-                `;
-        }).join('');
-    };
-
-    const deleteModal = `
-    <div id="delete-container" class="hidden">
-        <div id="delete-wrapper">
-            <div id="delete-modal">
-                <p>Are you sure you want to delete?</p>
-                <p>Once you click delete you will not be able to get it back.</p>
-                <div id="button-container">
-                    <button class="secondary-button">Cancel</button>
-                    <button id="delete-button-perm">
-                        <p>Delete</p>
-                        <span class="codicon codicon-trash"></span>
-                    </button>
                 </div>
             </div>
-        </div>
-    </div>`
+        </div>`;
+}).join('');
 
     const folderContentsHTML = await renderFolderContent(folders);
-
+    const allFolders = await getAllFolderContents(context);
 
     return `<!DOCTYPE html>
 	<html lang="en">
@@ -58,6 +40,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
             <link rel="stylesheet" href="${styles}">
             <link rel="stylesheet" href="${deleteModalStyles}" />
             <link rel="stylesheet" href="${codiconsUri}">
+            <link rel="stylesheet" href="${subfolderstyles}" />
 		</head>
 		<body>
             <div>
@@ -89,6 +72,38 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                 const vscode = acquireVsCodeApi();
 
                 document.addEventListener('DOMContentLoaded', function () {
+                    document.querySelectorAll(".settings-container").forEach((button) => {
+                        button.addEventListener("click", () => {
+                            event.stopPropagation();
+                            button.querySelector(".dropdown").classList.toggle("hidden");
+                        });
+                    });
+
+                    document.querySelectorAll(".delete-button").forEach((deleteButton) => {
+                        deleteButton.addEventListener("click", () => {
+                            const deleteContainer = document.querySelector("#delete-container");
+                            deleteContainer.classList.remove("hidden");
+
+                            const folderName = deleteContainer.getAttribute('data-folder-name');
+                            
+                            const deleteButton = document.querySelector(".secondary-button");
+                            deleteButton.addEventListener("click", function () {
+                                deleteContainer.classList.add("hidden");
+                            })
+                            const deleteFolderConfirm = document.getElementById("delete-button-perm");
+
+                            deleteFolderConfirm.addEventListener('click', function () {
+                                deleteContainer.classList.add('hidden');
+
+                                vscode.postMessage({
+                                    command: 'deleteFolder',
+                                    folderName: folderName
+                                });
+                            });
+
+                        });
+                    });
+
                     const folderItems = document.querySelectorAll('.item');
                     const deleteContainer = document.getElementById('delete-container');
 
@@ -96,32 +111,81 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                         item.addEventListener('click', function () {
                             const folderName = item.getAttribute('data-folder-name');
 
-                            if (event.target.classList.contains("delete-folder")) {
-                                event.stopPropagation();
-
-                                deleteContainer.classList.remove('hidden');
-                                const deleteFolderConfirm = document.getElementById("delete-button-perm");
-                                deleteFolderConfirm.addEventListener('click', function () {
-                                    deleteContainer.classList.add('hidden');
-
-                                    vscode.postMessage({
-                                        command: 'deleteFolder',
-                                        folderName: folderName
-                                    });
-                                });
-                            } else {
-                                vscode.postMessage({
-                                    page: 'subfolder',
-                                    folderName: folderName
-                                });
-                            }
+                            vscode.postMessage({
+                                page: 'subfolder',
+                                folderName: folderName
+                            });
                         });
                     });
 
-                    const cancelButton = document.querySelector(".secondary-button");
-            
-                    cancelButton.addEventListener('click', function () {
-                        deleteContainer.classList.add('hidden');
+                    document.querySelectorAll(".move").forEach((moveButton)=>{
+                        moveButton.addEventListener("mouseover", (button)=>{
+                            const data = ${JSON.stringify(allFolders)}
+                            const sourcePath = moveButton.getAttribute("value")
+                            const sourceFoldername = moveButton.getAttribute("name")
+                            moveButton.appendChild(list(data, sourcePath, sourceFoldername));
+                        }, { once: true })
+                    })
+
+                    function list(data = [], sourcePath, sourceFoldername) {
+                        if (data.length > 0) {
+                            const ul = document.createElement("ul");
+                            data.forEach((folder) => {
+                                const li = document.createElement("li");
+                                li.id = folder.folderName;
+                                const a = document.createElement("a");
+                                const p = document.createElement("p");
+                                p.textContent = folder.folderName;
+                                if (folder.uriPath === sourcePath) {
+                                    p.style.color = "#747474";
+                                    li.style.cursor = "not-allowed";
+                                }
+                                a.appendChild(p);
+                                if (folder.subfolders && folder.subfolders.length > 0) {
+                                    const icon = document.createElement("span");
+                                    icon.classList.add("codicon");
+                                    icon.classList.add("codicon-chevron-right");
+                                    a.appendChild(icon);
+                                }
+                                li.appendChild(a);
+                                listenForMouseOver(li, folder.subfolders, sourcePath);
+                                if (folder.uriPath !== sourcePath) {
+                                    clickOnFolder(li, folder, sourcePath, sourceFoldername);
+                                }
+                                ul.appendChild(li);
+                            });
+                            return ul;
+                        }
+                    }
+
+                    function clickOnFolder(option, folder, sourcePath, sourceFolderName) {
+                        option.addEventListener("click", () => {
+                            //document.querySelector('[data-folder-name="sourceFolderName"').classList.add("hidden");
+                        })
+                    }
+    
+                    function listenForMouseOver(option, subfolders, sourcePath) {
+                        option.addEventListener(
+                            "mouseover",
+                            () => {
+                                if (subfolders !== undefined) {
+                                    option.appendChild(list(subfolders, sourcePath));
+                                }
+                            },
+                            { once: true }
+                        );
+                    }
+    
+                    document.addEventListener("click", (e) => {
+                        let isClickInside = false;
+                        document.querySelectorAll(".settings-container").forEach((container) => {
+                            if (container.contains(event.target)) {
+                                isClickInside = true;
+                            }
+                        });
+                        if (!isClickInside) {
+                            document.querySelectorAll(".dropdown").forEach((dropdown) => dropdown.classList.add("hidden"));
+                        }
                     });
                 });
             </script>
