@@ -20,7 +20,6 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
 	}
 
 	async function renderFolderContent(folderContent: any) {
-		console.log("er det her?", folderContent);
 		return folderContent.folders
 			.map((folder: any) => {
 				const dropdownHtml = renderSettingsDropdown(folder);
