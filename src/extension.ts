@@ -6,8 +6,8 @@ import { displayDecorators } from "./utils/displayDecorators";
 import { addDecoratorToLine } from "./utils/addDecoratorToLine";
 import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
+import { search } from "./components/search/search";
 import { getFiles } from "./utils/getLastEditedNotes";
-
 
 export async function activate(context: vscode.ExtensionContext) {
 	const files = await getFiles(context);
@@ -17,7 +17,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {
 			enableScripts: true,
 		});
-
 
 		panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 
@@ -38,6 +37,9 @@ export async function activate(context: vscode.ExtensionContext) {
 				switch (message.command) {
 					case "move":
 						moveToFolder(message.pathTo, message.pathFrom);
+						return;
+					case "search":
+						panel.webview.html = await search(message.searchTerm, panel.webview, context);
 						return;
 				}
 			},
