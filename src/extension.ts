@@ -43,7 +43,11 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await search(message.searchTerm, panel.webview, context);
 						return;
 					case 'addFolder':
-						await addFolder(context);
+						// const currentFolder = message.folderName;
+						const folderToAdd = message.newFolderName;
+						await addFolder(folderToAdd, context, panel);
+						const updatedFolders = await getFolderContents(context);
+						panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders, files);
 						return;
 				}
 			},

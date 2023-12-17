@@ -1,9 +1,19 @@
 import * as vscode from "vscode";
 const fs = require('fs').promises;
 const path = require('path');
+import { getWebviewOverview } from '../components/overview/overview';
+import { getFolderContents } from './initialize';
+import { getFiles } from './getLastEditedNotes';
 
-export async function addFolder(context: any) {
+async function updateWebviewContent(panel: vscode.Webview, context: vscode.ExtensionContext) {
+	const folders = await getFolderContents(context);
+	const files = await getFiles(context);
+	return getWebviewOverview(panel, context, folders, files);
+}
+
+export async function addFolder(folderToAdd: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel): Promise<void> {
 	const globalStorageUri = context.globalStorageUri;
+	// const currentFolder = path.join(globalStorageUri.fsPath, folderName);
 
 	const newFolderName = await vscode.window.showInputBox({
 		placeHolder: 'Enter folder name',
@@ -15,12 +25,16 @@ export async function addFolder(context: any) {
 		return;
 	}
 
-	const folderPath = path.join(globalStorageUri.fsPath, newFolderName);
+	// const currentFolderPath = path.join(globalStorageUri.fsPath, currentFolder);
+	const newFolderPath = path.join(globalStorageUri.fsPath, newFolderName);
 
 	try {
-		await fs.mkdir(folderPath, Error);
+		await fs.mkdir(newFolderPath, Error);
 		vscode.window.showInformationMessage(`Folder "${newFolderName}" created successfully.`);
 		console.log(`Folder '${newFolderName}' created successfully.`);
+
+		const updateOverview = await updateWebviewContent(panel.webview, context);
+		panel.webview.html = updateOverview;
 	} catch (error: any) {
 		if (error.code === 'EEXIST') {
 			vscode.window.showWarningMessage(`Folder "${newFolderName}" already exists.`);
