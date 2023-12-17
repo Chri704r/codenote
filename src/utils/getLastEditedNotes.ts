@@ -1,6 +1,6 @@
-import * as path from "path";
 import * as vscode from "vscode";
 const fsp = require("fs").promises;
+const path = require('path');
 
 
 function timeAgo(mtime: EpochTimeStamp) {
@@ -34,16 +34,22 @@ export async function getFiles(context: vscode.ExtensionContext) {
         let allFiles: any = [];
 
         for (const file of files) {
-            if (file.isDirectory()) {
-                allFiles = allFiles.concat(await fsp.readdir((path.join(globalStorageUri.fsPath, file.name))));
-                console.log('test', file.name);
-            }
-            else if (file.isFile() && path.extname(file.name) === '.json') {
-                const nameWithoutExtension = path.basename(file.name, path.extname(file.name));
+            const nameWithoutExtension = path.basename(file.name, path.extname(file.name));
                 const filePath = path.join(globalStorageUri.fsPath, file.name);
                 const stats = await fsp.stat(filePath);
                 const mtime = stats.mtimeMs;
                 const lastModified = timeAgo(mtime);
+                console.log('Start');
+
+            if (file.isDirectory()) {
+                console.log('If is directory');
+                allFiles = allFiles.concat(
+                    await getFiles(filePath));
+                console.log('Concat', allFiles);
+
+            }
+            else if (file.isFile() && path.extname(file.name) === '.json') {
+                console.log('If is file');
                 allFiles.push({ file, nameWithoutExtension, mtime, lastModified });
             }
         }
@@ -54,4 +60,32 @@ export async function getFiles(context: vscode.ExtensionContext) {
         console.error(`Error reading global storage directory ${error.message}`);
         return [];
     }
+}
+
+export async function getNotes(folderName: string) {
+    let folderContents: any = [];
+
+    const folderItems = await fsp.readdir(folderName, { withFileTypes: true });
+
+    for (const folderItem of folderItems) {
+
+        const nameWithoutExtension = path.basename(folderItem.name, path.extname(folderItem.name));
+        const filePath = path.join(folderName, folderItem.name);
+        const stats = await fsp.stat(filePath);
+        const mtime = stats.mtimeMs;
+        const lastModified = timeAgo(mtime);
+
+
+        if (folderItem.isDirectory()) {
+            folderContents = folderContents.concat(
+                await getNotes(filePath)
+            );
+        } else if (folderItem.isFile() && path.extname(folderItem.name) === '.json' && !folderItem.name.startsWith('.')) {
+            folderContents.push({ folderItem, nameWithoutExtension, mtime, lastModified });
+        }
+    }
+
+    console.log('All JSON Files:', folderContents);
+    return folderContents.sort((b: Record<string, number>, a: Record<string, number>) => a.mtime - b.mtime).slice(0, 5);
+
 }
