@@ -44,8 +44,8 @@ export async function activate(context: vscode.ExtensionContext) {
 						return;
 					case 'addFolder':
 						// const currentFolder = message.folderName;
-						const folderToAdd = message.newFolderName;
-						await addFolder(folderToAdd, context, panel);
+						// const folderToAdd = message.newFolderName;
+						await addFolder(message.destinationFolder, context, panel);
 						const updatedFolders = await getFolderContents(context);
 						panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders, files);
 						return;

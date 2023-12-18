@@ -39,7 +39,7 @@ export async function getFiles(context: vscode.ExtensionContext) {
                 const stats = await fsp.stat(filePath);
                 const mtime = stats.mtimeMs;
                 const lastModified = timeAgo(mtime);
-                allFiles.push({ file, nameWithoutExtension, mtime, lastModified });
+                allFiles.push({ fileName: file, nameWithoutExtension, mtime, lastModified, uriPath: filePath });
             }
         }
         return allFiles;

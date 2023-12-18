@@ -11,7 +11,7 @@ async function updateWebviewContent(panel: vscode.Webview, context: vscode.Exten
 	return getWebviewOverview(panel, context, folders, files);
 }
 
-export async function addFolder(folderToAdd: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel): Promise<void> {
+export async function addFolder(destinationFolder: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel): Promise<void> {
 	const globalStorageUri = context.globalStorageUri;
 	// const currentFolder = path.join(globalStorageUri.fsPath, folderName);
 
@@ -26,7 +26,7 @@ export async function addFolder(folderToAdd: string, context: vscode.ExtensionCo
 	}
 
 	// const currentFolderPath = path.join(globalStorageUri.fsPath, currentFolder);
-	const newFolderPath = path.join(globalStorageUri.fsPath, newFolderName);
+	const newFolderPath = path.join(destinationFolder, newFolderName);
 
 	try {
 		await fs.mkdir(newFolderPath, Error);
@@ -35,6 +35,7 @@ export async function addFolder(folderToAdd: string, context: vscode.ExtensionCo
 
 		const updateOverview = await updateWebviewContent(panel.webview, context);
 		panel.webview.html = updateOverview;
+		
 	} catch (error: any) {
 		if (error.code === 'EEXIST') {
 			vscode.window.showWarningMessage(`Folder "${newFolderName}" already exists.`);
