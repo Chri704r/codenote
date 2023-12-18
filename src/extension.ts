@@ -10,9 +10,8 @@ import { getFiles, getNotes } from "./utils/getLastEditedNotes";
 
 
 export async function activate(context: vscode.ExtensionContext) {
-	// const files = await getFiles(context);
 	const folders = await getFolderContents(context);
-	const files = await getNotes('/Users/nannalea/Library/Application Support/Code/User/globalStorage/undefined_publisher.codenote');
+	const files = await getNotes(context.globalStorageUri.fsPath);
 
 	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {

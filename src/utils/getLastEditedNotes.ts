@@ -26,42 +26,6 @@ function timeAgo(mtime: EpochTimeStamp) {
     }
 }
 
-
-export async function getFiles(context: vscode.ExtensionContext) {
-    try {
-        const globalStorageUri = context.globalStorageUri;
-        const files = await fsp.readdir(globalStorageUri.fsPath, { withFileTypes: true });
-        let allFiles: any = [];
-
-        for (const file of files) {
-            const nameWithoutExtension = path.basename(file.name, path.extname(file.name));
-                const filePath = path.join(globalStorageUri.fsPath, file.name);
-                const stats = await fsp.stat(filePath);
-                const mtime = stats.mtimeMs;
-                const lastModified = timeAgo(mtime);
-                console.log('Start');
-
-            if (file.isDirectory()) {
-                console.log('If is directory');
-                allFiles = allFiles.concat(
-                    await getFiles(filePath));
-                console.log('Concat', allFiles);
-
-            }
-            else if (file.isFile() && path.extname(file.name) === '.json') {
-                console.log('If is file');
-                allFiles.push({ file, nameWithoutExtension, mtime, lastModified });
-            }
-        }
-
-        return allFiles.sort((b: Record<string, number>, a: Record<string, number>) => a.mtime - b.mtime).slice(0, 5);
-
-    } catch (error: any) {
-        console.error(`Error reading global storage directory ${error.message}`);
-        return [];
-    }
-}
-
 export async function getNotes(folderName: string) {
     let folderContents: any = [];
 
