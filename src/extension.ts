@@ -7,6 +7,8 @@ import { addDecoratorToLine } from "./utils/addDecoratorToLine";
 import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
 import { getNotes } from "./utils/getLastEditedNotes";
+import { search } from "./components/search/search";
+import { saveFile } from "./utils/saveFile";
 
 export async function activate(context: vscode.ExtensionContext) {
 	const folders = await getFolderContents(context);
@@ -17,7 +19,6 @@ export async function activate(context: vscode.ExtensionContext) {
 			enableScripts: true,
 		});
 
-
 		panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 
 		panel.webview.onDidReceiveMessage(
@@ -27,16 +28,25 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 						return;
 					case "subfolder":
-						const folderName = message.folderName;
-						panel.webview.html = await getWebviewSubfolder(folderName, panel.webview, context);
+						const folder = { folderName: message.folderName, uriPath: message.folderPath };
+						panel.webview.html = await getWebviewSubfolder(folder, panel.webview, context);
 						return;
 					case "note":
-						panel.webview.html = getWebviewNote(panel.webview, context);
+						const fileName = message.fileName;
+						panel.webview.html = await getWebviewNote(panel.webview, context, fileName);
 						return;
 				}
 				switch (message.command) {
 					case "move":
 						moveToFolder(message.pathTo, message.pathFrom);
+						return;
+					case "search":
+						panel.webview.html = await search(message.searchTerm, panel.webview, context);
+						return;
+					case "save":
+						const fileName = message.data.fileName;
+						const fileContent = message.data.fileContent;
+						await saveFile(fileName, fileContent, context);
 						return;
 				}
 			},
