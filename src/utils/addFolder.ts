@@ -1,10 +1,6 @@
 import * as vscode from "vscode";
 const fs = require('fs').promises;
 const path = require('path');
-import { getWebviewOverview } from '../components/overview/overview';
-import { getWebviewSubfolder } from '../components/subfolder/subfolder';
-import { getFolderContents, getContentInFolder } from './initialize';
-import { getFiles } from './getLastEditedNotes';
 
 export async function addFolder(destinationFolderName: string, destinationFolderUri: string, webviewToRender: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel): Promise<void> {
 

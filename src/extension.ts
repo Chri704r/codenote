@@ -48,6 +48,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						// const updatedFolder = await getContentInFolder(message.destinationFolder);
 						const updatedFolder = { folderName: message.destinationFolderName, uriPath: message.destinationFolderUri };
 
+						// TODO: Move to it's own function.ts in utils?
 						if (message.webviewToRender === 'subfolder') {
 							panel.webview.html = await getWebviewSubfolder(updatedFolder, panel.webview, context);
 						} else if (message.webviewToRender === 'overview') {
