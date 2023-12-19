@@ -1,8 +1,5 @@
-import * as vscode from "vscode";
 const fsp = require("fs").promises;
 const path = require('path');
-// import { createReadStream } from "fs";
-// import { createInterface } from "readline";
 
 function timeAgo(mtime: EpochTimeStamp) {
     const currentDate = new Date();
@@ -29,10 +26,7 @@ function timeAgo(mtime: EpochTimeStamp) {
 
 async function readFirstLine(filePath: string): Promise<string> {
     try {
-        // Read the file content
         const fileContent = await fsp.readFile(filePath, 'utf-8');
-
-        // Parse the Delta JSON
         const deltaContent = JSON.parse(fileContent);
 
         // Check if the Delta contains any operations
@@ -40,33 +34,18 @@ async function readFirstLine(filePath: string): Promise<string> {
             // Extract the first operation (assuming it's a text operation)
             const firstOperation = deltaContent.ops[0];
 
-            if (typeof firstOperation.insert === 'string') {
+            if (typeof firstOperation.insert === 'string' && firstOperation.insert.match(/^[0-9A-z!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
                 // Extract the first line of text
                 const firstLine = firstOperation.insert.split('\n')[0];
                 return firstLine;
             }
         }
 
-        // If the file is empty or doesn't contain text
-        return 'The file is empty.';
+        return 'This note is empty.';
     } catch (error: any) {
-        // Handle errors, e.g., file not found, invalid JSON format
         return `Error reading file: ${error.message}`;
     }
 }
-
-// async function readFirstLine(pathToFile: string) {
-//     const inputStream = createReadStream(pathToFile);
-//     try {
-//         for await (const line of createInterface(inputStream)){
-//             return line;
-//         }
-//         return 'Nothing in here.'; // If the file is empty.
-//     }
-//     finally {
-//         inputStream.destroy(); // Destroy file stream.
-//     }
-// }
 
 export async function getNotes(folderName: string) {
     let folderContents: any = [];

@@ -1,18 +1,18 @@
 import * as vscode from "vscode";
 
-export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, lastEditedNotes: any) {
+export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, files: any) {
     const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
     const styles = webview.asWebviewUri(onDiskPathStyles);
 
-    async function renderFiles(lastEditedNotes: any) {
-        return Object.keys(lastEditedNotes).map(key => {
+    async function renderFiles(files: any) {
+        return Object.keys(files).map(key => {
             return `
                 <div class="item">
                     <div class="left">
-                        <p class="folder-name">${lastEditedNotes[key].firstLine}</p>
+                        <p class="folder-name">${files[key].firstLine}</p>
                     </div>
                     <div class="right">
-                        <p class="mtime">${lastEditedNotes[key].lastModified}</p>
+                        <p class="mtime">${files[key].lastModified}</p>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
                         <path
                             d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
@@ -23,7 +23,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
         }).join('');
     }
 
-    const notesHTML = await renderFiles(lastEditedNotes);
+    const notesHTML = await renderFiles(files);
 
     //TODO: Move to utils folder/file
     async function renderFolderContent(folders: any) {
