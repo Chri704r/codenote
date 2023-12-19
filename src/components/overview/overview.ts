@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+//import { displayFolders } from "../../utils/displayFolders";
 import { renderFolderContent } from "../../utils/renderFolderContent";
 import { getAllFolderContents } from "../../utils/getAllFolders";
 import { searchInput } from "../search/searchInput";
@@ -10,6 +11,8 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
     const subfolderstyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/subfolder", "subfolder.css"));
 	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+    const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
+
     console.log(folders);
     const deleteModal = 
     Object.keys(folders).map(key => {
@@ -108,6 +111,18 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
             
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
+                    document.querySelectorAll(".left").forEach((folder) => {
+                        folder.addEventListener("click", () => {
+                            const folderName = folder.getAttribute('data-folder-name');
+                            const path = folder.getAttribute('folder-path');
+                            vscode.postMessage({
+                                page: 'subfolder',
+                                folderName: folderName,
+                                folderPath: path
+                            });
+                        });
+                    });
+
                     document.querySelectorAll(".settings-container").forEach((button) => {
                         button.addEventListener("click", () => {
                             event.stopPropagation();
@@ -225,6 +240,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                     });
                 });
             </script>
+            <script src="${script}"></script>
 		</body>
 	</html>`;
 }

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getAllFolderContents } from "../../utils/getAllFolders";
 import { getContentInFolder } from "../../utils/initialize";
 import { renderSettingsDropdown } from "../dropdown/dropdown";
+//import { displayFolders } from "../../utils/displayFolders";
 import { searchInput } from "../search/searchInput";
 import path from "path";
 
