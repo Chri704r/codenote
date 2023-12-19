@@ -1,6 +1,6 @@
 import { renderSettingsDropdown } from "../components/dropdown/dropdown";
 
-export async function renderFolderContent(folders: any) { 
+export async function renderFolderContent(folders: any) {
     return Object.keys(folders).map(key => {
         const dropdownHtml = renderSettingsDropdown(folders[key]);
         return `

@@ -10,7 +10,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
     const subfolderstyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/subfolder", "subfolder.css"));
 	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
-
+    console.log(folders);
     const deleteModal = 
     Object.keys(folders).map(key => {
         return `<div id="delete-container" class="hidden" data-folder-name="${folders[key].folderName}">

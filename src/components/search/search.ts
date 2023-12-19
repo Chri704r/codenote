@@ -10,7 +10,7 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
 	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 
 	const results = await searchFiles(searchTerm, context);
-	console.log(results);
+	//console.log(results);
 
 	let folderContentsHTML;
 	if (results?.files?.length !== 0 || results?.folders?.length !== 0) {
