@@ -8,6 +8,7 @@ import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
 import { search } from "./components/search/search";
 import { getFiles } from "./utils/getLastEditedNotes";
+import { saveFile } from "./utils/saveFile";
 
 export async function activate(context: vscode.ExtensionContext) {
 	const files = await getFiles(context);
@@ -31,7 +32,8 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await getWebviewSubfolder(folder, panel.webview, context);
 						return;
 					case "note":
-						panel.webview.html = getWebviewNote(panel.webview, context);
+						const fileName = message.fileName;
+						panel.webview.html = await getWebviewNote(panel.webview, context, fileName);
 						return;
 				}
 				switch (message.command) {
@@ -40,6 +42,11 @@ export async function activate(context: vscode.ExtensionContext) {
 						return;
 					case "search":
 						panel.webview.html = await search(message.searchTerm, panel.webview, context);
+						return;
+					case "save":
+						const fileName = message.data.fileName;
+						const fileContent = message.data.fileContent;
+						await saveFile(fileName, fileContent, context);
 						return;
 				}
 			},
