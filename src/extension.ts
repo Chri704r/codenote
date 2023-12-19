@@ -28,8 +28,8 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 						return;
 					case "subfolder":
-						const folderName = message.folderName;
-						panel.webview.html = await getWebviewSubfolder(folderName, panel.webview, context);
+						const folder = { folderName: message.folderName, uriPath: message.folderPath };
+						panel.webview.html = await getWebviewSubfolder(folder, panel.webview, context);
 						return;
 					case "note":
 						const fileName = message.fileName;
