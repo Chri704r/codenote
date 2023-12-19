@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 const fsp = require("fs").promises;
 const path = require('path');
-
+// import { createReadStream } from "fs";
+// import { createInterface } from "readline";
 
 function timeAgo(mtime: EpochTimeStamp) {
     const currentDate = new Date();
@@ -26,6 +27,47 @@ function timeAgo(mtime: EpochTimeStamp) {
     }
 }
 
+async function readFirstLine(filePath: string): Promise<string> {
+    try {
+        // Read the file content
+        const fileContent = await fsp.readFile(filePath, 'utf-8');
+
+        // Parse the Delta JSON
+        const deltaContent = JSON.parse(fileContent);
+
+        // Check if the Delta contains any operations
+        if (Array.isArray(deltaContent.ops) && deltaContent.ops.length > 0) {
+            // Extract the first operation (assuming it's a text operation)
+            const firstOperation = deltaContent.ops[0];
+
+            if (typeof firstOperation.insert === 'string') {
+                // Extract the first line of text
+                const firstLine = firstOperation.insert.split('\n')[0];
+                return firstLine;
+            }
+        }
+
+        // If the file is empty or doesn't contain text
+        return 'The file is empty.';
+    } catch (error: any) {
+        // Handle errors, e.g., file not found, invalid JSON format
+        return `Error reading file: ${error.message}`;
+    }
+}
+
+// async function readFirstLine(pathToFile: string) {
+//     const inputStream = createReadStream(pathToFile);
+//     try {
+//         for await (const line of createInterface(inputStream)){
+//             return line;
+//         }
+//         return 'Nothing in here.'; // If the file is empty.
+//     }
+//     finally {
+//         inputStream.destroy(); // Destroy file stream.
+//     }
+// }
+
 export async function getNotes(folderName: string) {
     let folderContents: any = [];
 
@@ -38,18 +80,18 @@ export async function getNotes(folderName: string) {
         const stats = await fsp.stat(filePath);
         const mtime = stats.mtimeMs;
         const lastModified = timeAgo(mtime);
-
+        const firstLine = await readFirstLine(filePath);
 
         if (folderItem.isDirectory()) {
             folderContents = folderContents.concat(
                 await getNotes(filePath)
             );
         } else if (folderItem.isFile() && path.extname(folderItem.name) === '.json' && !folderItem.name.startsWith('.')) {
-            folderContents.push({ folderItem, nameWithoutExtension, mtime, lastModified });
+            folderContents.push({ folderItem, nameWithoutExtension, mtime, firstLine, lastModified });
         }
     }
 
-    console.log('All JSON Files:', folderContents);
+    // console.log('All JSON Files:', folderContents);
     return folderContents.sort((b: Record<string, number>, a: Record<string, number>) => a.mtime - b.mtime).slice(0, 5);
 
 }

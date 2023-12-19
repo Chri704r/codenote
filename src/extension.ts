@@ -10,7 +10,7 @@ import { getNotes } from "./utils/getLastEditedNotes";
 
 export async function activate(context: vscode.ExtensionContext) {
 	const folders = await getFolderContents(context);
-	const files = await getNotes(context.globalStorageUri.fsPath);
+	const lastEditedNotes = await getNotes(context.globalStorageUri.fsPath);
 
 	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {
@@ -18,13 +18,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		});
 
 
-		panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
+		panel.webview.html = await getWebviewOverview(panel.webview, context, folders, lastEditedNotes);
 
 		panel.webview.onDidReceiveMessage(
 			async (message) => {
 				switch (message.page) {
 					case "overview":
-						panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
+						panel.webview.html = await getWebviewOverview(panel.webview, context, folders, lastEditedNotes);
 						return;
 					case "subfolder":
 						const folderName = message.folderName;
