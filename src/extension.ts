@@ -6,8 +6,7 @@ import { displayDecorators } from "./utils/displayDecorators";
 import { addDecoratorToLine } from "./utils/addDecoratorToLine";
 import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
-import { getFiles, getNotes } from "./utils/getLastEditedNotes";
-
+import { getNotes } from "./utils/getLastEditedNotes";
 
 export async function activate(context: vscode.ExtensionContext) {
 	const folders = await getFolderContents(context);
