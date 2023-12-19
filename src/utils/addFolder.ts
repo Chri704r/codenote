@@ -2,18 +2,11 @@ import * as vscode from "vscode";
 const fs = require('fs').promises;
 const path = require('path');
 import { getWebviewOverview } from '../components/overview/overview';
-import { getFolderContents } from './initialize';
+import { getWebviewSubfolder } from '../components/subfolder/subfolder';
+import { getFolderContents, getContentInFolder } from './initialize';
 import { getFiles } from './getLastEditedNotes';
 
-async function updateWebviewContent(panel: vscode.Webview, context: vscode.ExtensionContext) {
-	const folders = await getFolderContents(context);
-	const files = await getFiles(context);
-	return getWebviewOverview(panel, context, folders, files);
-}
-
-export async function addFolder(destinationFolder: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel): Promise<void> {
-	const globalStorageUri = context.globalStorageUri;
-	// const currentFolder = path.join(globalStorageUri.fsPath, folderName);
+export async function addFolder(destinationFolderName: string, destinationFolderUri: string, webviewToRender: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel): Promise<void> {
 
 	const newFolderName = await vscode.window.showInputBox({
 		placeHolder: 'Enter folder name',
@@ -21,21 +14,16 @@ export async function addFolder(destinationFolder: string, context: vscode.Exten
 	});
 
 	if (!newFolderName) {
-		// User canceled or entered an empty name
 		return;
 	}
 
-	// const currentFolderPath = path.join(globalStorageUri.fsPath, currentFolder);
-	const newFolderPath = path.join(destinationFolder, newFolderName);
+	const newFolderPath = path.join(destinationFolderUri, newFolderName);
 
 	try {
 		await fs.mkdir(newFolderPath, Error);
 		vscode.window.showInformationMessage(`Folder "${newFolderName}" created successfully.`);
 		console.log(`Folder '${newFolderName}' created successfully.`);
 
-		const updateOverview = await updateWebviewContent(panel.webview, context);
-		panel.webview.html = updateOverview;
-		
 	} catch (error: any) {
 		if (error.code === 'EEXIST') {
 			vscode.window.showWarningMessage(`Folder "${newFolderName}" already exists.`);

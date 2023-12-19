@@ -43,11 +43,18 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await search(message.searchTerm, panel.webview, context);
 						return;
 					case 'addFolder':
-						// const currentFolder = message.folderName;
-						// const folderToAdd = message.newFolderName;
-						await addFolder(message.destinationFolder, context, panel);
+						await addFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
 						const updatedFolders = await getFolderContents(context);
-						panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders, files);
+						// const updatedFolder = await getContentInFolder(message.destinationFolder);
+						const updatedFolder = { folderName: message.destinationFolderName, uriPath: message.destinationFolderUri };
+
+						if (message.webviewToRender === 'subfolder') {
+							panel.webview.html = await getWebviewSubfolder(updatedFolder, panel.webview, context);
+						} else if (message.webviewToRender === 'overview') {
+							panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders, files);
+						} else {
+							console.error('Error rendering webview.');
+						}
 						return;
 				}
 			},

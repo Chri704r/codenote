@@ -17,7 +17,6 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 
 
     const notesHTML = await renderFiles(files);
-    console.log(files);
 
     async function renderFiles(files: any) {
         return files
@@ -156,10 +155,11 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 
             document.querySelector("#add-folder-button").addEventListener("click", () => {
                 const globalStoragePath = ${JSON.stringify(globalStorageFolder)};
+                const overview = 'overview';
                 vscode.postMessage({
-                    page: 'overview',
                     command: 'addFolder',
-                    destinationFolder: 'globalStoragePath',
+                    destinationFolderUri: globalStoragePath,
+                    webviewToRender: overview,
                 });
             });
             

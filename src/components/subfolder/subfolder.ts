@@ -14,7 +14,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
     const allFolders = await getAllFolderContents(context);
     const folderContent = await getContentInFolder(folderData);
     const folderContentsHTML = await displayFolders(folderContent.folders);
-    console.log(folderContent.files);
 
     const notesHTML = await renderFiles(folderContent.files);
 
@@ -100,22 +99,14 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
 
 
             document.querySelector("#add-folder-button").addEventListener("click", () => {
-                    const uri = ${JSON.stringify(folderData.uriPath)}
-                    const parentUri = uri.substr(0, uri.lastIndexOf("/"));
-                    const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
-                    if(parentFolder == "undefined_publisher.codenote"){
-                        vscode.postMessage({
-                            page: "overview",
-                            command: "addFolder",
-                            destinationFolder: parentFolder,
-                        });
-                    } else {
-                        vscode.postMessage({
-                            page: 'subfolder',
-                            command: "addFolder",
-                            destinationFolder: uri,
-                        });
-                    }
+                    const currentFolder = ${JSON.stringify(folderData.folderName)};
+                    const currentUri = ${JSON.stringify(folderData.uriPath)};
+                    vscode.postMessage({
+                        command: "addFolder",
+                        destinationFolderName: currentFolder,
+                        destinationFolderUri: currentUri,
+                        webviewToRender: 'subfolder',
+                    });
             });
 
                 document.querySelector(".back-button").addEventListener("click", ()=>{
