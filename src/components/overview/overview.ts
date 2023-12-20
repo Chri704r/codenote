@@ -13,7 +13,8 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 
     const folderContentsHTML = await displayFolders(folders);
     const allFolders = await getAllFolderContents(context);
-    const globalStorageFolder = context.globalStorageUri.fsPath;
+    const globalStorageFolder = context.globalStorageUri;
+    const globalStoragePath = context.globalStorageUri.fsPath;
 
 
     const notesHTML = await renderFiles(files);
@@ -154,10 +155,12 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                 });
 
             document.querySelector("#add-folder-button").addEventListener("click", () => {
-                const globalStoragePath = ${JSON.stringify(globalStorageFolder)};
+                const globalStorageName = 'undefined_publisher.codenote';
+                const globalStoragePath = ${JSON.stringify(globalStoragePath)};
                 const overview = 'overview';
                 vscode.postMessage({
                     command: 'addFolder',
+                    destinationFolderName: globalStorageName,
                     destinationFolderUri: globalStoragePath,
                     webviewToRender: overview,
                 });
