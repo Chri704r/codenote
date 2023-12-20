@@ -4,12 +4,12 @@ const path = require('path');
 import { getFolderContents } from "./initialize";
 import { getWebviewOverview } from "../components/overview/overview";
 import { getWebviewSubfolder } from "../components/subfolder/subfolder";
-import { getFiles } from './getLastEditedNotes';
+import { getNotes } from './getLastEditedNotes';
 
 export async function renderAddedFolder(destinationFolderName: string, destinationFolderUri: string, webviewToRender: string, panel: vscode.Webview, context: vscode.ExtensionContext): Promise<string> {
 	const updatedFolder = { folderName: destinationFolderName, uriPath: destinationFolderUri };
 	const updatedFolders = await getFolderContents(context);
-	const lastEditedNotes = await getFiles(context);
+	const lastEditedNotes = await getNotes(context.globalStorageUri.fsPath);
 
 	if (webviewToRender === 'subfolder') {
 		return await getWebviewSubfolder(updatedFolder, panel, context); 

@@ -4,7 +4,7 @@ import { searchInput } from "../search/searchInput";
 import { getAllFolderContents } from "../../utils/getAllFolders";
 import { renderSettingsDropdown } from "../dropdown/dropdown";
 
-export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, files: any) {
+export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, lastEditedNotes: any) {
     const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
     const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
     const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
@@ -13,20 +13,18 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 
     const folderContentsHTML = await displayFolders(folders);
     const allFolders = await getAllFolderContents(context);
-    const globalStorageFolder = context.globalStorageUri;
     const globalStoragePath = context.globalStorageUri.fsPath;
 
+    const notesHTML = await renderFiles(lastEditedNotes);
 
-    const notesHTML = await renderFiles(files);
-
-    async function renderFiles(files: any) {
-        return files
+    async function renderFiles(lastEditedNotes: any) {
+        return lastEditedNotes
             .map((file: any) => {
                 const dropdownHtml = renderSettingsDropdown(file);
                 return `
                     <div class="item">
                         <div class="left file-item" data-folder-name="${file.fileName}" folder-path="${file.uriPath}">
-                            <p class="folder-name">${file.nameWithoutExtension}</p>
+                            <p class="folder-name">${file.firstLine}</p>
                             <p class="mtime">${file.lastModified}</p>
                         </div>
     
@@ -142,6 +140,17 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                             page: 'subfolder',
                             folderName: folderName,
                             folderPath: path
+                        });
+                    });
+
+                    const fileItems = document.querySelectorAll('.file-item');
+                    fileItems.forEach(item => {
+                        item.addEventListener("click", function () {
+                            const fileName = item.getAttribute("data-file-name");
+                            vscode.postMessage({
+                                page: 'note',
+                                fileName: fileName
+                            });
                         });
                     });
                 });
