@@ -16,11 +16,6 @@ h1 {
 h2 {
 	font-size: 16px;
 }
-
-.breadcrumb {
-	font-size: 12px;
-	color: #b0b0b0;
-}
 /* -----search bar------- */
 
 .search-container {
@@ -233,4 +228,19 @@ button {
 .foldername-container {
 	display: flex;
 	align-items: center;
+}
+
+/* --------- BREADCRUMB ----------- */
+.breadcrumb-container {
+	display: flex;
+}
+
+.breadcrumb {
+	font-size: 12px;
+	color: #b0b0b0;
+}
+
+.breadcrumb:hover {
+	text-decoration: underline;
+	cursor: pointer;
 }
