@@ -1,13 +1,11 @@
 // ------ delete modal ------
-/* document.querySelectorAll(".delete-button").forEach((deleteButton) => {
-	deleteButton.addEventListener("click", () => {
-		document.querySelector("#delete-container").classList.remove("hidden");
-	});
-}); */
+document.querySelectorAll(".secondary-button").forEach((cancelButton) => {
+	cancelButton.addEventListener("click", () => {
+		const deleteContainer = cancelButton.closest(".item").querySelector("#delete-container");
 
-/* document.querySelector(".secondary-button").addEventListener("click", () => {
-	document.querySelector("#delete-container").classList.add("hidden");
-}); */
+		deleteContainer.classList.add("hidden");
+	});
+});
 
 // ------ dropdown ------
 function list(data = [], sourcePath, sourceFoldername) {

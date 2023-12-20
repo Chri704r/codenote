@@ -51,17 +51,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						await saveFile(fileName, fileContent, context);
 						return;
 					case "deleteFolder":
-						await deleteFolder(message.folderName, message.folderPath, context, panel);
-						const updatedFolders = await getFolderContents(context);
-						const updatedFolder = { folderName: message.currentFolderName, uriPath: message.currentFolderPath };
-						
-						if (message.setPage === 'overview') {
-							panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders, files);
-						} else if (message.setPage === 'subfolder') {
-							panel.webview.html = await getWebviewSubfolder(updatedFolder, panel.webview, context);
-						} else {
-							vscode.window.showErrorMessage("Error rendering page");
-						}
+						await deleteFolder(message.folderName, message.folderPath, context, panel, message.setPage, message.currentFolderName, message.currentFolderPath, files);
 						return;
 					case "deleteFile":
 						await deleteFile(message.fileName, message.filePath, context, panel);
