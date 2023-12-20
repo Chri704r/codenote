@@ -10,6 +10,7 @@ import { search } from "./components/search/search";
 import { getFiles } from "./utils/getLastEditedNotes";
 import { saveFile } from "./utils/saveFile";
 import { deleteFolder } from "./utils/deleteFolder";
+import { deleteFile } from "./utils/deleteNote";
 
 export async function activate(context: vscode.ExtensionContext) {
 	const files = await getFiles(context);
@@ -53,6 +54,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						await deleteFolder(message.folderName, message.folderPath, context, panel);
 						const updatedFolders = await getFolderContents(context);
 						const updatedFolder = { folderName: message.currentFolderName, uriPath: message.currentFolderPath };
+						
 						if (message.setPage === 'overview') {
 							panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders, files);
 						} else if (message.setPage === 'subfolder') {
@@ -61,6 +63,18 @@ export async function activate(context: vscode.ExtensionContext) {
 							vscode.window.showErrorMessage("Error rendering page");
 						}
 						return;
+					case "deleteFile":
+						await deleteFile(message.fileName, message.filePath, context, panel);
+						const updatedFiles = await getFiles(context);
+						const updatedFolderDeleteFiles = { folderName: message.currentFolderName, uriPath: message.currentFolderPath };
+						
+						if (message.setPage === 'overview') {
+							panel.webview.html = await getWebviewOverview(panel.webview, context, folders, updatedFiles);
+						} else if (message.setPage === 'subfolder') {
+							panel.webview.html = await getWebviewSubfolder(updatedFolderDeleteFiles, panel.webview, context);
+						} else {
+							vscode.window.showErrorMessage("Error rendering page");
+						}
 				}
 			},
 			undefined,

@@ -1,13 +1,13 @@
 // ------ delete modal ------
-document.querySelectorAll(".delete-button").forEach((deleteButton) => {
+/* document.querySelectorAll(".delete-button").forEach((deleteButton) => {
 	deleteButton.addEventListener("click", () => {
 		document.querySelector("#delete-container").classList.remove("hidden");
 	});
-});
+}); */
 
-document.querySelector(".secondary-button").addEventListener("click", () => {
+/* document.querySelector(".secondary-button").addEventListener("click", () => {
 	document.querySelector("#delete-container").classList.add("hidden");
-});
+}); */
 
 // ------ dropdown ------
 function list(data = [], sourcePath, sourceFoldername) {

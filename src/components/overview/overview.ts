@@ -118,13 +118,6 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                     }, { once: true })
                 });
 
-/*                 document.querySelectorAll(".settings-container").forEach((button) => {
-                    button.addEventListener("click", () => {
-                        event.stopPropagation();
-                        button.querySelector(".dropdown").classList.toggle("hidden");
-                    });
-                }); */
-
                 document.querySelectorAll(".delete-button").forEach((deleteButton) => {
                     deleteButton.addEventListener("click", () => {
                         const folderName = deleteButton.getAttribute("data-folder-name");
