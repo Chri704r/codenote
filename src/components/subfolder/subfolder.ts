@@ -15,6 +15,9 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
 	const folderContent = await getContentInFolder(folderData);
 	const folderContentsHTML = await displayFolders(folderContent.folders);
 
+	const globalStorageMainUri = context.globalStorageUri.fsPath;
+	const breadcrumb = folderData.uriPath.replace(globalStorageMainUri, "Overview");
+
 	const notesHTML = await renderFiles(folderContent.files);
 
 	return `<!DOCTYPE html>
@@ -32,7 +35,8 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                     <span class="codicon codicon-chevron-left"></span>
                 </div>
                 <h1 class="subfolder-header">${folderData.folderName}</h1> 
-            </div>       
+            </div>
+            <p class="breadcrumb">${breadcrumb}</p>    
             ${searchInput()}
             <h2>Folders</h2>
             <div id="folders-container" class="container">

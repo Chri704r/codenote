@@ -10,6 +10,8 @@ import { getNotes } from "./utils/getLastEditedNotes";
 import { search } from "./components/search/search";
 import { saveFile } from "./utils/saveFile";
 
+let currentOpenFile: string;
+
 export async function activate(context: vscode.ExtensionContext) {
 	const folders = await getFolderContents(context);
 	const files = await getNotes(context.globalStorageUri.fsPath);
@@ -33,6 +35,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						return;
 					case "note":
 						const fileName = message.fileName;
+						currentOpenFile = fileName;
 						panel.webview.html = await getWebviewNote(panel.webview, context, fileName);
 						return;
 				}
@@ -48,6 +51,8 @@ export async function activate(context: vscode.ExtensionContext) {
 						const fileContent = message.data.fileContent;
 						await saveFile(fileName, fileContent, context);
 						return;
+					case "comment":
+						addDecoratorToLine(panel.webview, context, message.fileName);
 				}
 			},
 			undefined,
@@ -57,20 +62,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		await initializeFileAndFolder(context);
 	});
 
-	let displayDecoratorsInEditor = vscode.commands.registerCommand("extension.onDidChangeActiveTextEditor", () => {
-		displayDecorators(context);
-	});
-
-	let addDecorator = vscode.commands.registerCommand("extension.addDecorator", () => {
-		addDecoratorToLine(context);
-	});
-
 	vscode.window.onDidChangeActiveTextEditor(() => {
 		// Trigger the registered command when the active text editor changes
-		vscode.commands.executeCommand("extension.onDidChangeActiveTextEditor");
+		// vscode.commands.executeCommand("extension.onDidChangeActiveTextEditor");
+		displayDecorators(context, currentOpenFile);
 	});
 
-	context.subscriptions.push(disposable, displayDecoratorsInEditor, addDecorator);
+	context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated
