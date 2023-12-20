@@ -7,12 +7,13 @@ import { addDecoratorToLine } from "./utils/addDecoratorToLine";
 import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
 import { search } from "./components/search/search";
-import { getFiles } from "./utils/getLastEditedNotes";
+import { getNotes } from "./utils/getLastEditedNotes";
 import { addFolder } from "./utils/addFolder";
 import { addNote } from "./utils/addNote";
+import { updateWebview } from "./utils/updateWebview";
 
 export async function activate(context: vscode.ExtensionContext) {
-	const files = await getFiles(context);
+	const files = await getNotes(context.globalStorageUri.fsPath);
 	const folders = await getFolderContents(context);
 
 	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
@@ -59,17 +60,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						return;
 					case 'addNote':
 						await addNote(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
-						const updatedFilesN = await getFiles(context);
-						// const updatedFolder = await getContentInFolder(message.destinationFolder);
-						const updatedFolderN = { folderName: message.destinationFolderName, uriPath: message.destinationFolderUri };
-
-						if (message.webviewToRender === 'subfolder') {
-							panel.webview.html = await getWebviewSubfolder(updatedFolderN, panel.webview, context);
-						} else if (message.webviewToRender === 'overview') {
-							panel.webview.html = await getWebviewOverview(panel.webview, context, folders, updatedFilesN);
-						} else {
-							console.error('Error rendering webview.');
-						}
+						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
 						return;
 				}
 			},

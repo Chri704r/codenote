@@ -5,11 +5,6 @@ const {v4 : uuidv4} = require('uuid');
 
 export async function addNote(destinationFolderName: string, destinationFolderUri: string, webviewToRender: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel): Promise<void> {
 
-    // const newNoteName = await vscode.window.showInputBox({
-    //     placeHolder: 'Enter note name',
-    //     prompt: 'Provide a name for the new note'
-    // });
-
     const newNoteName = uuidv4();
 
     if (!newNoteName) {
