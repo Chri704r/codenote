@@ -8,6 +8,7 @@ import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
 import { getNotes } from "./utils/getLastEditedNotes";
 import { search } from "./components/search/search";
+import { addFolder, renderAddedFolder } from "./utils/addFolder";
 import { saveFile } from "./utils/saveFile";
 
 let currentOpenFile: string;
@@ -46,6 +47,10 @@ export async function activate(context: vscode.ExtensionContext) {
 					case "search":
 						panel.webview.html = await search(message.searchTerm, panel.webview, context);
 						return;
+					case 'addFolder':
+						await addFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
+						panel.webview.html = await renderAddedFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
+						return;
 					case "save":
 						const fileName = message.data.fileName;
 						const fileContent = message.data.fileContent;
@@ -72,4 +77,4 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
