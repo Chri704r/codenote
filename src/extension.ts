@@ -15,20 +15,20 @@ let currentOpenFile: string;
 
 export async function activate(context: vscode.ExtensionContext) {
 	const folders = await getFolderContents(context);
-	const lastEditedNotes = await getNotes(context.globalStorageUri.fsPath);
+	const files = await getNotes(context.globalStorageUri.fsPath);
 
 	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {
 			enableScripts: true,
 		});
 
-		panel.webview.html = await getWebviewOverview(panel.webview, context, folders, lastEditedNotes);
+		panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 
 		panel.webview.onDidReceiveMessage(
 			async (message) => {
 				switch (message.page) {
 					case "overview":
-						panel.webview.html = await getWebviewOverview(panel.webview, context, folders, lastEditedNotes);
+						panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 						return;
 					case "subfolder":
 						const folder = { folderName: message.folderName, uriPath: message.folderPath };

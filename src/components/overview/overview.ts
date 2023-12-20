@@ -4,21 +4,22 @@ import { searchInput } from "../search/searchInput";
 import { getAllFolderContents } from "../../utils/getAllFolders";
 import { renderSettingsDropdown } from "../dropdown/dropdown";
 
-export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, lastEditedNotes: any) {
+export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, files: any) {
     const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
     const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
     const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
     const styles = webview.asWebviewUri(onDiskPathStyles);
     const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
 
-    const folderContentsHTML = await displayFolders(folders);
-    const allFolders = await getAllFolderContents(context);
+
+	const folderContentsHTML = await displayFolders(folders);
+	const allFolders = await getAllFolderContents(context);
     const globalStoragePath = context.globalStorageUri.fsPath;
 
-    const notesHTML = await renderFiles(lastEditedNotes);
+    const notesHTML = await renderFiles(files);
 
-    async function renderFiles(lastEditedNotes: any) {
-        return lastEditedNotes
+    async function renderFiles(files: any) {
+        return files
             .map((file: any) => {
                 const dropdownHtml = renderSettingsDropdown(file);
                 return `
