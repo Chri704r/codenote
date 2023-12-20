@@ -6,13 +6,13 @@ import { displayDecorators } from "./utils/displayDecorators";
 import { addDecoratorToLine } from "./utils/addDecoratorToLine";
 import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
+import { getNotes } from "./utils/getLastEditedNotes";
 import { search } from "./components/search/search";
-import { getFiles } from "./utils/getLastEditedNotes";
 import { saveFile } from "./utils/saveFile";
 
 export async function activate(context: vscode.ExtensionContext) {
-	const files = await getFiles(context);
 	const folders = await getFolderContents(context);
+	const files = await getNotes(context.globalStorageUri.fsPath);
 
 	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {

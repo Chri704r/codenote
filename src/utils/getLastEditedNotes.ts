@@ -1,7 +1,5 @@
-import * as path from "path";
-import * as vscode from "vscode";
 const fsp = require("fs").promises;
-
+const path = require('path');
 
 function timeAgo(mtime: EpochTimeStamp) {
     const currentDate = new Date();
@@ -26,25 +24,53 @@ function timeAgo(mtime: EpochTimeStamp) {
     }
 }
 
-export async function getFiles(context: vscode.ExtensionContext) {
+async function readFirstLine(filePath: string): Promise<string> {
     try {
-        const globalStorageUri = context.globalStorageUri;
-        const files = await fsp.readdir(globalStorageUri.fsPath, { withFileTypes: true });
-        const allFiles = [];
+        const fileContent = await fsp.readFile(filePath, 'utf-8');
+        const deltaContent = JSON.parse(fileContent);
 
-        for (const file of files) {
-            if (file.isFile() && path.extname(file.name) === '.json') {
-                const nameWithoutExtension = path.basename(file.name, path.extname(file.name));
-                const filePath = path.join(globalStorageUri.fsPath, file.name);
-                const stats = await fsp.stat(filePath);
-                const mtime = stats.mtimeMs;
-                const lastModified = timeAgo(mtime);
-                allFiles.push({ file, nameWithoutExtension, mtime, lastModified });
+        // Check if the Delta contains any operations
+        if (Array.isArray(deltaContent.ops) && deltaContent.ops.length > 0) {
+            // Extract the first operation (assuming it's a text operation)
+            const firstOperation = deltaContent.ops[0];
+
+            if (typeof firstOperation.insert === 'string' && firstOperation.insert.match(/^[0-9A-z!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
+                // Extract the first line of text
+                const firstLine = firstOperation.insert.split('\n')[0];
+                return firstLine;
             }
         }
-        return allFiles;
+
+        return 'This note is empty.';
     } catch (error: any) {
-        console.error(`Error reading global storage directory ${error.message}`);
-        return [];
+        return `Error reading file: ${error.message}`;
     }
+}
+
+export async function getNotes(folderName: string) {
+    let folderContents: any = [];
+
+    const folderItems = await fsp.readdir(folderName, { withFileTypes: true });
+
+    for (const folderItem of folderItems) {
+
+        const nameWithoutExtension = path.basename(folderItem.name, path.extname(folderItem.name));
+        const filePath = path.join(folderName, folderItem.name);
+        const stats = await fsp.stat(filePath);
+        const mtime = stats.mtimeMs;
+        const lastModified = timeAgo(mtime);
+        const firstLine = await readFirstLine(filePath);
+
+        if (folderItem.isDirectory()) {
+            folderContents = folderContents.concat(
+                await getNotes(filePath)
+            );
+        } else if (folderItem.isFile() && path.extname(folderItem.name) === '.json' && !folderItem.name.startsWith('.')) {
+            folderContents.push({ folderItem, nameWithoutExtension, mtime, firstLine, lastModified });
+        }
+    }
+
+    // console.log('All JSON Files:', folderContents);
+    return folderContents.sort((b: Record<string, number>, a: Record<string, number>) => a.mtime - b.mtime).slice(0, 5);
+
 }
