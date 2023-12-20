@@ -17,7 +17,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
 
 	const notesHTML = await renderFiles(folderContent.files);
 
-	return `<!DOCTYPE html>
+    return `<!DOCTYPE html>
     <html lang="en">
         <head>
             <meta charset="UTF-8" />
@@ -42,24 +42,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
             <div id="folders-container" class="container">
                 ${notesHTML}
             </div> 
-
-            <div id="delete-container" class="hidden">
-                <div id="delete-wrapper">
-                    <div id="delete-modal">
-                        <p>Are you sure you want to delete?</p>
-                        <p>Once you click delete you will not be able to get it back.</p>
-                        <div id="button-container">
-                            <button class="secondary-button">Cancel</button>
-                            <button id="delete-button-perm">
-                                <p>Delete</p>
-                                <span class="codicon codicon-trash"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <script>
-
                 document.querySelectorAll(".folder-item").forEach((folder) => {
                     folder.addEventListener("click", () => {
                         const folderName = folder.getAttribute('data-folder-name');
@@ -104,7 +87,33 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         const sourceFoldername = moveButton.getAttribute("name")
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
-                })
+                });
+
+                document.querySelectorAll(".delete-button").forEach((deleteButton) => {
+                    deleteButton.addEventListener("click", () => {
+                        const folderName = deleteButton.getAttribute("data-folder-name");
+                        const folderPath = deleteButton.getAttribute("data-folder-path");
+                
+                        const deleteContainer = deleteButton.closest(".item").querySelector("#delete-container");
+                
+                        deleteContainer.classList.remove("hidden");
+                
+                        const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
+                
+                        deleteButtonPerm.addEventListener("click", () => {
+                            deleteContainer.classList.add("hidden");
+                
+                            vscode.postMessage({
+                                command: 'deleteFolder',
+                                folderName: folderName,
+                                folderPath: folderPath,
+                                setPage: 'subfolder',
+                                currentFolderName: ${JSON.stringify(folderData.folderName)},
+                                currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                            });
+                        });
+                    });
+                });
             </script>
             <script src="${script}"></script>
         </body>

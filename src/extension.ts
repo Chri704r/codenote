@@ -9,6 +9,7 @@ import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
 import { search } from "./components/search/search";
 import { getFiles } from "./utils/getLastEditedNotes";
 import { saveFile } from "./utils/saveFile";
+import { deleteFolder } from "./utils/deleteFolder";
 
 export async function activate(context: vscode.ExtensionContext) {
 	const files = await getFiles(context);
@@ -47,6 +48,18 @@ export async function activate(context: vscode.ExtensionContext) {
 						const fileName = message.data.fileName;
 						const fileContent = message.data.fileContent;
 						await saveFile(fileName, fileContent, context);
+						return;
+					case "deleteFolder":
+						await deleteFolder(message.folderName, message.folderPath, context, panel);
+						const updatedFolders = await getFolderContents(context);
+						const updatedFolder = { folderName: message.currentFolderName, uriPath: message.currentFolderPath };
+						if (message.setPage === 'overview') {
+							panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders, files);
+						} else if (message.setPage === 'subfolder') {
+							panel.webview.html = await getWebviewSubfolder(updatedFolder, panel.webview, context);
+						} else {
+							vscode.window.showErrorMessage("Error rendering page");
+						}
 						return;
 				}
 			},

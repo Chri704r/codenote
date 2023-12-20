@@ -9,6 +9,16 @@ document.querySelector(".secondary-button").addEventListener("click", () => {
 	document.querySelector("#delete-container").classList.add("hidden");
 });
 
+// ------ extension - redirect view ------
+
+document.querySelectorAll(".left").forEach((folder) => {
+	folder.addEventListener("click", (e) => {
+		vscode.postMessage({
+			page: "note",
+		});
+	});
+});
+
 // ------ dropdown ------
 function list(data = [], sourcePath, sourceFoldername) {
 	if (data.length > 0) {
@@ -43,7 +53,7 @@ function list(data = [], sourcePath, sourceFoldername) {
 
 function clickOnFolder(option, folder, sourcePath, sourceFoldername) {
 	option.addEventListener("click", () => {
-		document.querySelector(`[data-folder-name="${sourceFoldername}"]`).parentElement.classList.add("hidden");
+		document.querySelector(`[data-folder-name="${sourceFoldername}"]`).classList.add("hidden");
 		vscode.postMessage({
 			command: "move",
 			pathTo: folder.uriPath,
