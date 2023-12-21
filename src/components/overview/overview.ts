@@ -11,10 +11,10 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
     const styles = webview.asWebviewUri(onDiskPathStyles);
     const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
 
-    const folderContentsHTML = await displayFolders(folders);
-    const allFolders = await getAllFolderContents(context);
-    const globalStorageFolder = context.globalStorageUri.fsPath;
 
+	const folderContentsHTML = await displayFolders(folders);
+	const allFolders = await getAllFolderContents(context);
+    const globalStoragePath = context.globalStorageUri.fsPath;
 
     const notesHTML = await renderFiles(files);
 
@@ -25,7 +25,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                 return `
                     <div class="item">
                         <div class="left file-item" data-folder-name="${file.fileName}" folder-path="${file.uriPath}">
-                            <p class="folder-name">${file.nameWithoutExtension}</p>
+                            <p class="folder-name">${file.firstLine}</p>
                             <p class="mtime">${file.lastModified}</p>
                         </div>
     
@@ -143,6 +143,17 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                             folderPath: path
                         });
                     });
+
+                    const fileItems = document.querySelectorAll('.file-item');
+                    fileItems.forEach(item => {
+                        item.addEventListener("click", function () {
+                            const fileName = item.getAttribute("data-file-name");
+                            vscode.postMessage({
+                                page: 'note',
+                                fileName: fileName
+                            });
+                        });
+                    });
                 });
 
                 document.querySelectorAll(".file-item").forEach((folder) => {
@@ -154,17 +165,19 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                 });
 
             document.querySelector("#add-folder-button").addEventListener("click", () => {
-                const globalStoragePath = ${JSON.stringify(globalStorageFolder)};
+                const globalStorageName = 'undefined_publisher.codenote';
+                const globalStoragePath = ${JSON.stringify(globalStoragePath)};
                 const overview = 'overview';
                 vscode.postMessage({
                     command: 'addFolder',
+                    destinationFolderName: globalStorageName,
                     destinationFolderUri: globalStoragePath,
                     webviewToRender: overview,
                 });
             });
 
             document.querySelector("#add-note-button").addEventListener("click", () => {
-                const notesFolderPath = ${JSON.stringify(globalStorageFolder)} + '/Notes';
+                const notesFolderPath = ${JSON.stringify(globalStoragePath)} + '/Notes';
                 const overview = 'overview';
                 vscode.postMessage({
                     command: 'addNote',
