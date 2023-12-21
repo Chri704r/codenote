@@ -92,10 +92,21 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
                 const parentUri = replaceBackslash.substr(0, lastSlashIndex);
                 const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
 				const currentPage = ${JSON.stringify(currentPage)};
-                if (parentFolder == "undefined_publisher.codenote" || currentPage == "overview"){
-                    vscode.postMessage({
-                        page: "overview",
-                    });
+				const fileContent = quill.getContents();
+				const fileName = ${JSON.stringify(fileName)};
+				const filePath = ${JSON.stringify(filePath)};
+
+				vscode.postMessage({
+					command: 'save',
+					data: { fileName, fileContent },
+					fileName: fileName,
+					filePath: filePath,
+				});
+
+                if (parentFolder == "undefined_publisher.codenote" || currentPage == "overview"){			
+					vscode.postMessage({
+						page: 'overview'
+					});
                 } else {
                     vscode.postMessage({
                         page: 'subfolder',

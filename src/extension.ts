@@ -58,6 +58,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
 						return;
 					case "save":
+						console.log("save");
 						await saveFile(message.fileName, message.filePath, message.data.fileContent, context);
 						return;
 					case "deleteFile":
