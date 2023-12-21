@@ -81,11 +81,12 @@
 		"eslint": "^8.52.0",
 		"glob": "^10.3.10",
 		"mocha": "^10.2.0",
-		"typescript": "^5.2.2",
-		"uuid": "^9.0.1"
+		"typescript": "^5.2.2"
 	},
 	"dependencies": {
 		"@vscode/codicons": "^0.0.35",
-		"highlight.js": "^11.9.0"
+		"fs-extra": "^11.2.0",
+		"highlight.js": "^11.9.0",
+		"uuid": "^9.0.1"
 	}
 }
