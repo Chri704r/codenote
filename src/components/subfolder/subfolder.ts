@@ -172,23 +172,34 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         const folderPath = deleteButton.getAttribute("data-folder-path");
                 
                         const deleteContainer = deleteButton.closest(".item").querySelector("#delete-container");
+                        
+                        if (deleteContainer) {
+                            deleteContainer.classList.remove("hidden");
+                            const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
                 
-                        deleteContainer.classList.remove("hidden");
-                
-                        const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
-                
-                        deleteButtonPerm.addEventListener("click", () => {
-                            deleteContainer.classList.add("hidden");
-                
-                            vscode.postMessage({
-                                command: 'deleteFolder',
-                                folderName: folderName,
-                                folderPath: folderPath,
-                                setPage: 'subfolder',
-                                currentFolderName: ${JSON.stringify(folderData.folderName)},
-                                currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                            deleteButtonPerm.addEventListener("click", () => {
+                                deleteContainer.classList.add("hidden");
+                                if (folderName) {
+                                    vscode.postMessage({
+                                        command: 'deleteFolder',
+                                        folderName: folderName,
+                                        folderPath: folderPath,
+                                        setPage: 'subfolder',
+                                        currentFolderName: ${JSON.stringify(folderData.folderName)},
+                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                                    });                            
+                                } else {
+                                    vscode.postMessage({
+                                        command: 'deleteFile',
+                                        fileName: deleteButton.getAttribute("data-file-name"),
+                                        filePath: deleteButton.getAttribute("data-file-path"),
+                                        setPage: 'subfolder',
+                                        currentFolderName: ${JSON.stringify(folderData.folderName)},
+                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                                    }); 
+                                }
                             });
-                        });
+                        }
                     });
                 });
             </script>
@@ -204,7 +215,7 @@ async function renderFiles(files: any) {
 			const dropdownHtml = renderSettingsDropdown(file);
 			return `
                 <div class="item">
-                    <div class="left file-item" data-folder-name="${file.fileName}" folder-path="${file.uriPath}">
+                    <div class="left file-item" data-file-name="${file.fileName}" data-file-path="${file.uriPath}">
                         <p class="folder-name">${file.fileName}</p>
                         <p class="mtime">${file.date}</p>
                     </div>
@@ -218,7 +229,21 @@ async function renderFiles(files: any) {
                             ${dropdownHtml}
                         </div>
                     </div>
-
+                    <div id="delete-container" class="hidden">
+                        <div id="delete-wrapper">
+                            <div id="delete-modal">
+                                <p>Are you sure you want to delete?</p>
+                                <p>Once you click delete you will not be able to get it back.</p>
+                                <div id="button-container">
+                                    <button class="secondary-button">Cancel</button>
+                                    <button id="delete-button-perm">
+                                        <p>Delete</p>
+                                        <span class="codicon codicon-trash"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 `;
 		})

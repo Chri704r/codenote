@@ -54,19 +54,19 @@ export async function getNotes(folderName: string) {
 
     for (const folderItem of folderItems) {
 
-        const nameWithoutExtension = path.basename(folderItem.name, path.extname(folderItem.name));
-        const filePath = path.join(folderName, folderItem.name);
-        const stats = await fsp.stat(filePath);
+        const fileName = path.basename(folderItem.name, path.extname(folderItem.name));
+        const uriPath = path.join(folderName, folderItem.name);
+        const stats = await fsp.stat(uriPath);
         const mtime = stats.mtimeMs;
         const lastModified = timeAgo(mtime);
-        const firstLine = await readFirstLine(filePath);
+        const firstLine = await readFirstLine(uriPath);
 
         if (folderItem.isDirectory()) {
             folderContents = folderContents.concat(
-                await getNotes(filePath)
+                await getNotes(uriPath)
             );
         } else if (folderItem.isFile() && path.extname(folderItem.name) === '.json' && !folderItem.name.startsWith('.')) {
-            folderContents.push({ folderItem, nameWithoutExtension, mtime, firstLine, lastModified });
+            folderContents.push({ folderItem, fileName, mtime, firstLine, lastModified, uriPath });
         }
     }
 
