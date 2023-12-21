@@ -80,7 +80,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
             </div>
         </div>
             <script>
-
                 document.querySelectorAll(".folder-item").forEach((folder) => {
                     folder.addEventListener("click", () => {
                         const folderName = folder.getAttribute('data-folder-name');
@@ -148,7 +147,33 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         const sourceFoldername = moveButton.getAttribute("name")
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
-                })
+                });
+
+                document.querySelectorAll(".delete-button").forEach((deleteButton) => {
+                    deleteButton.addEventListener("click", () => {
+                        const folderName = deleteButton.getAttribute("data-folder-name");
+                        const folderPath = deleteButton.getAttribute("data-folder-path");
+                
+                        const deleteContainer = deleteButton.closest(".item").querySelector("#delete-container");
+                
+                        deleteContainer.classList.remove("hidden");
+                
+                        const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
+                
+                        deleteButtonPerm.addEventListener("click", () => {
+                            deleteContainer.classList.add("hidden");
+                
+                            vscode.postMessage({
+                                command: 'deleteFolder',
+                                folderName: folderName,
+                                folderPath: folderPath,
+                                setPage: 'subfolder',
+                                currentFolderName: ${JSON.stringify(folderData.folderName)},
+                                currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                            });
+                        });
+                    });
+                });
             </script>
             <script src="${script}"></script>
         </body>
