@@ -3,6 +3,7 @@ import * as fs from 'fs';
 
 export async function saveFile(fileName: string, filePath: string, quillContentDelta: any, context: vscode.ExtensionContext): Promise<void> {
     try {
+
         const quillContentString = JSON.stringify(quillContentDelta, null, 2);
 
         await fs.promises.writeFile(filePath, quillContentString, 'utf8');
@@ -15,8 +16,7 @@ export async function saveFile(fileName: string, filePath: string, quillContentD
 
 export async function loadFile(fileName: string, filePath: string, context: vscode.ExtensionContext) {
     try {
-        const globalStorageUri = context.globalStorageUri.fsPath;
-
+        
         const fileStats = await fs.promises.stat(filePath);
 
         if (fileStats.size > 0) {

@@ -13,6 +13,7 @@ import { addNote } from "./utils/addNote";
 import { updateWebview } from "./utils/updateWebview";
 import { saveFile } from "./utils/saveFile";
 import { deleteFolder } from "./utils/deleteFolder";
+import { deleteFile } from "./utils/deleteNote";
 
 let currentOpenFile: string;
 
@@ -59,6 +60,8 @@ export async function activate(context: vscode.ExtensionContext) {
 					case "save":
 						await saveFile(message.fileName, message.filePath, message.data.fileContent, context);
 						return;
+					case "deleteFile":
+						await deleteFile(message.fileName, message.filePath, context, panel, folders, message.setPage, message.currentFolderName, message.currentFolderPath);
 					case "comment":
 						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath);
 				}
