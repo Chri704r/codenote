@@ -8,7 +8,9 @@ import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
 import { getNotes } from "./utils/getLastEditedNotes";
 import { search } from "./components/search/search";
-import { addFolder, renderAddedFolder } from "./utils/addFolder";
+import { addFolder } from "./utils/addFolder";
+import { addNote } from "./utils/addNote";
+import { updateWebview } from "./utils/updateWebview";
 import { saveFile } from "./utils/saveFile";
 
 let currentOpenFile: string;
@@ -49,7 +51,11 @@ export async function activate(context: vscode.ExtensionContext) {
 						return;
 					case 'addFolder':
 						await addFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
-						panel.webview.html = await renderAddedFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
+						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
+						return;
+					case 'addNote':
+						await addNote(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
+						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
 						return;
 					case "save":
 						const fileName = message.data.fileName;
