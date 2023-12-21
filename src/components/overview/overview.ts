@@ -65,7 +65,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 			</div>
             
             <script>
-                document.querySelectorAll(".left").forEach((folder) => {
+                document.querySelectorAll(".folder-item").forEach((folder) => {
                     folder.addEventListener("click", () => {
                         const folderName = folder.getAttribute('data-folder-name');
                         const path = folder.getAttribute('folder-path');
@@ -75,23 +75,16 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                             folderPath: path
                         });
                     });
-
-                    const fileItems = document.querySelectorAll('.file-item');
-                    fileItems.forEach(item => {
-                        item.addEventListener("click", function () {
-                            const fileName = item.getAttribute("data-file-name");
-                            vscode.postMessage({
-                                page: 'note',
-                                fileName: fileName
-                            });
-                        });
-                    });
                 });
 
-                document.querySelectorAll(".file-item").forEach((folder) => {
-                    folder.addEventListener("click", () => {
+                document.querySelectorAll(".file-item").forEach((file) => {
+                    file.addEventListener("click", () => {
+                        const noteName = file.getAttribute('data-file-name');
+                        const notePath = file.getAttribute('data-file-path');
                         vscode.postMessage({
                             page: 'note',
+                            fileName: noteName,
+                            filePath: notePath
                         });
                     });
                 });
@@ -133,21 +126,31 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                         const folderPath = deleteButton.getAttribute("data-folder-path");
                 
                         const deleteContainer = deleteButton.closest(".item").querySelector("#delete-container");
+
+                        if (deleteContainer) {
+                            deleteContainer.classList.remove("hidden");
+                            const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
                 
-                        deleteContainer.classList.remove("hidden");
-                
-                        const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
-                
-                        deleteButtonPerm.addEventListener("click", () => {
-                            deleteContainer.classList.add("hidden");
-                
-                            vscode.postMessage({
-                                command: 'deleteFolder',
-                                folderName: folderName,
-                                folderPath: folderPath,
-                                setPage: 'overview'
+                            deleteButtonPerm.addEventListener("click", () => {
+                                deleteContainer.classList.add("hidden");
+                                if (folderName) {
+                                    vscode.postMessage({
+                                        command: 'deleteFolder',
+                                        folderName: folderName,
+                                        folderPath: folderPath,
+                                        setPage: 'overview'
+                                    });                            
+                                } else {
+                                    vscode.postMessage({
+                                        command: 'deleteFile',
+                                        fileName: deleteButton.getAttribute("data-file-name"),
+                                        filePath: deleteButton.getAttribute("data-file-path"),
+                                        setPage: 'overview',
+                                        currentFolderName: ${JSON.stringify(globalStoragePath)}
+                                    }); 
+                                }
                             });
-                        });
+                        }
                     });
                 });
             </script>

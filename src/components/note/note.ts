@@ -1,14 +1,12 @@
 import * as vscode from "vscode";
 import { loadFile } from "../../utils/saveFile";
 
-export async function getWebviewNote(webview: vscode.Webview, context: any, fileName: string) {
+export async function getWebviewNote(webview: vscode.Webview, context: any, fileName: string, filePath: string) {
 	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/note", "note.css");
 	const styles = webview.asWebviewUri(onDiskPathStyles);
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-	const onDiskPathTailwind = vscode.Uri.joinPath(context.extensionUri, "dist", "output.css");
-	const tailwindStyles = webview.asWebviewUri(onDiskPathTailwind);
 
-	const loadedContent = await loadFile(fileName, context);
+	const loadedContent = await loadFile(fileName, filePath, context);
 
 	return `<!DOCTYPE html>
 	<html lang="en">
@@ -23,12 +21,11 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 			<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 			<link rel="stylesheet" href="${styles}">
 			<link rel="stylesheet" href="${codiconsUri}">
-			<link href="${tailwindStyles}" rel="stylesheet">
 		</head>
 		<body>
-			<div class="flex items-center">
+			<div class="toolbar-wrapper">
 				<div class="codicon codicon-chevron-left cursor-pointer"></div>
-				<div class="mx-auto">
+				<div class="toolbar-container">
 					<div id="toolbar">
 						<select class="ql-size">
 							<option value="small"></option>
@@ -51,7 +48,7 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 						<button id="custom-button" class="codicon codicon-comment ql-snow"></button>
 					</div>
 				</div>
-				<button class="save-file">Save</button>
+				<button class="save-file ">Save</button>
 			</div>
 			<div id="editor"></div>
             <script>
@@ -73,11 +70,15 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 
 			document.querySelector(".save-file").addEventListener("click", function () {
 				const fileContent = quill.getContents();
-				const fileName = "${fileName}";
-
+				const fileName = ${JSON.stringify(fileName)};
+				const filePath = ${JSON.stringify(filePath)};
+				console.log(fileContent);
+				
 				vscode.postMessage({
 					command: 'save',
-					data: { fileName, fileContent }
+					data: { fileName, fileContent },
+					fileName: fileName,
+					filePath: filePath,
 				})
 			});	
 
