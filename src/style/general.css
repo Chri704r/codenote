@@ -250,3 +250,14 @@ button {
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+/* --------- TOOLBAR ----------- */
+.toolbar {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.toolbar-container {
+	display: flex;
+	align-items: center;
+}

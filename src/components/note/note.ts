@@ -5,8 +5,7 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/note", "note.css");
 	const styles = webview.asWebviewUri(onDiskPathStyles);
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-	const onDiskPathTailwind = vscode.Uri.joinPath(context.extensionUri, "dist", "output.css");
-	const tailwindStyles = webview.asWebviewUri(onDiskPathTailwind);
+    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 
 	const loadedContent = await loadFile(fileName, context);
 
@@ -23,12 +22,14 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 			<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 			<link rel="stylesheet" href="${styles}">
 			<link rel="stylesheet" href="${codiconsUri}">
-			<link href="${tailwindStyles}" rel="stylesheet">
+			<link rel="stylesheet" href="${generalStyles}">
 		</head>
 		<body>
-			<div class="flex items-center">
-				<div class="codicon codicon-chevron-left cursor-pointer"></div>
-				<div class="mx-auto">
+			<div class="toolbar-container">
+			<div class="back-button">
+				<span class="codicon codicon-chevron-left"></span>
+			</div>				
+				<div class="toolbar">
 					<div id="toolbar">
 						<select class="ql-size">
 							<option value="small"></option>
@@ -81,6 +82,22 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 				})
 			});	
 
+			document.querySelector(".back-button").addEventListener("click", () => {
+				//const parentUri = uri.substr(0, uri.lastIndexOf("/"));
+				//const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
+				/* if(parentFolder == "undefined_publisher.codenote"){
+					vscode.postMessage({
+						page: "overview",
+					});
+				} else{
+					vscode.postMessage({
+						page: 'subfolder',
+						folderName: parentFolder,
+						folderPath: parentUri
+					});
+				} */
+			})
+
 			const loadedContent = ${JSON.stringify(loadedContent)};
 			if (loadedContent !== null) {
 				quill.setContents(loadedContent);
@@ -92,12 +109,7 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
                     command: "comment",
                     fileName: fileName,
                 });
-            })
-
-/* 			function detectLanguage(code) {
-				let result = hljs.highlightAuto(code);
-				return result.language || 'plaintext';
-			}; */
+            });
             </script>
 		</body>
 	</html>`;
