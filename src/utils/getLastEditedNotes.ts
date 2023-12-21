@@ -34,12 +34,12 @@ export async function getFiles(context: vscode.ExtensionContext) {
 
         for (const file of files) {
             if (file.isFile() && path.extname(file.name) === '.json') {
-                const nameWithoutExtension = path.basename(file.name, path.extname(file.name));
-                const filePath = path.join(globalStorageUri.fsPath, file.name);
-                const stats = await fsp.stat(filePath);
+                const fileName = path.basename(file.name, path.extname(file.name));
+                const uriPath = path.join(globalStorageUri.fsPath, file.name);
+                const stats = await fsp.stat(uriPath);
                 const mtime = stats.mtimeMs;
                 const lastModified = timeAgo(mtime);
-                allFiles.push({ file, nameWithoutExtension, mtime, lastModified });
+                allFiles.push({ file, fileName, mtime, lastModified, uriPath  });
             }
         }
         return allFiles;

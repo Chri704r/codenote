@@ -10,32 +10,8 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
 	const styles = webview.asWebviewUri(onDiskPathStyles);
 	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
-
 	const folderContentsHTML = await displayFolders(folders);
 	const allFolders = await getAllFolderContents(context);
-
-	async function renderFiles(files: any) {
-		return Object.keys(files)
-			.map((key) => {
-				return `<div class="item">
-                    <div class="left file-item" data-folder-name="${files[key].nameWithoutExtension}">
-                        <p class="folder-name">${files[key].nameWithoutExtension}</p>
-                        <p class="mtime">${files[key].lastModified}</p>
-                    </div>
-                    <div class="right">
-                        <div class="settings-container">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                                <path
-                                d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
-                            </svg>
-                        </div>
-                    </div>
-
-                </div>
-                `;
-			})
-			.join("");
-	}
 
 	const notesHTML = await renderFiles(files);
 
@@ -124,25 +100,73 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                         const folderPath = deleteButton.getAttribute("data-folder-path");
                 
                         const deleteContainer = deleteButton.closest(".item").querySelector("#delete-container");
+
+                        if (deleteContainer) {
+                            deleteContainer.classList.remove("hidden");
+                            const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
                 
-                        deleteContainer.classList.remove("hidden");
-                
-                        const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
-                
-                        deleteButtonPerm.addEventListener("click", () => {
-                            deleteContainer.classList.add("hidden");
-                
-                            vscode.postMessage({
-                                command: 'deleteFolder',
-                                folderName: folderName,
-                                folderPath: folderPath,
-                                setPage: 'overview'
+                            deleteButtonPerm.addEventListener("click", () => {
+                                deleteContainer.classList.add("hidden");
+                                if (folderName) {
+                                    vscode.postMessage({
+                                        command: 'deleteFolder',
+                                        folderName: folderName,
+                                        folderPath: folderPath,
+                                        setPage: 'overview'
+                                    });                            
+                                } else {
+                                    vscode.postMessage({
+                                        command: 'deleteFile',
+                                        fileName: deleteButton.getAttribute("data-file-name"),
+                                        filePath: deleteButton.getAttribute("data-file-path"),
+                                        setPage: 'overview'
+                                    }); 
+                                }
                             });
-                        });
+                        }
                     });
                 });
             </script>
             <script src="${script}"></script>
 		</body>
 	</html>`;
+}
+
+async function renderFiles(files: any) {
+    return Object.keys(files)
+        .map((key) => {
+            const dropdownHtml = renderSettingsDropdown(files[key]);
+            return `<div class="item">
+                <div class="left file-item" data-file-name="${files[key].fileName}">
+                    <p class="folder-name">${files[key].fileName}</p>
+                    <p class="mtime">${files[key].lastModified}</p>
+                </div>
+                <div class="right">
+                    <div class="settings-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
+                            <path
+                            d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
+                        </svg>
+                        ${dropdownHtml}
+                    </div>
+                </div>
+                <div id="delete-container" class="hidden">
+                    <div id="delete-wrapper">
+                        <div id="delete-modal">
+                            <p>Are you sure you want to delete?</p>
+                            <p>Once you click delete you will not be able to get it back.</p>
+                            <div id="button-container">
+                                <button class="secondary-button">Cancel</button>
+                                <button id="delete-button-perm">
+                                    <p>Delete</p>
+                                    <span class="codicon codicon-trash"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        })
+        .join("");
 }

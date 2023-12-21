@@ -133,7 +133,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
 }
 
 async function renderFiles(files: any) {
-    console.log(files);
 	return files
 		.map((file: any) => {
 			const dropdownHtml = renderSettingsDropdown(file);
