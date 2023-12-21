@@ -3,7 +3,6 @@ import * as fse from "fs-extra";
 import { getWebviewOverview } from "../components/overview/overview";
 import { getWebviewSubfolder } from "../components/subfolder/subfolder";
 import { getFolderContents } from "./initialize";
-import { getNotes } from "./getLastEditedNotes";
 
 async function updateWebview(
 	setPage: string,
