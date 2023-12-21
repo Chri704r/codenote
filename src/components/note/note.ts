@@ -4,7 +4,7 @@ import { loadFile } from "../../utils/saveFile";
 export async function getWebviewNote(webview: vscode.Webview, context: any, fileName: string) {
 	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/note", "note.css");
 	const styles = webview.asWebviewUri(onDiskPathStyles);
-	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
 	const onDiskPathTailwind = vscode.Uri.joinPath(context.extensionUri, "dist", "output.css");
 	const tailwindStyles = webview.asWebviewUri(onDiskPathTailwind);
 
@@ -48,6 +48,7 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 						<button class="ql-indent" value="+1"></button>
 						<button class="ql-link"></button>
 						<button class="ql-image"></button>
+						<button id="custom-button" class="codicon codicon-comment ql-snow"></button>
 					</div>
 				</div>
 				<button class="save-file">Save</button>
@@ -85,7 +86,13 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 				quill.setContents(loadedContent);
 			}
 
-			
+			document.querySelector("#custom-button").addEventListener("click", ()=>{
+                const fileName = "${fileName}";
+                vscode.postMessage({
+                    command: "comment",
+                    fileName: fileName,
+                });
+            })
 
 /* 			function detectLanguage(code) {
 				let result = hljs.highlightAuto(code);

@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
-export function addDecoratorToLine(context: vscode.ExtensionContext) {
+import { getWebviewNote } from "../components/note/note";
+
+export function addDecoratorToLine(webview: vscode.Webview, context: vscode.ExtensionContext, currentFileName: string) {
 	let activeEditor = vscode.window.activeTextEditor;
 
 	if (activeEditor) {
@@ -23,41 +25,58 @@ export function addDecoratorToLine(context: vscode.ExtensionContext) {
 		}
 
 		//Retrieve the existing array or initialize a new one
-		let allDecorators = globalState.get<any[]>("decorators") || [];
+		let allDecoratorsInNote = globalState.get<any[]>(`decorators-${currentFileName}`) || [];
 
 		//check if there is already a decorator on same line in active file
-		const hasDecorator = allDecorators?.some((decorator) => line == decorator.line && file == decorator.file);
+		const hasDecorator = allDecoratorsInNote?.some((decorator) => line == decorator.line && file == decorator.file);
 
-		if (hasDecorator) {
-			const indexToRemove = allDecorators.findIndex((obj) => line === obj.line);
-
-			// Check if the object was found
-			if (indexToRemove !== -1) {
-				// Remove the object from global state
-				allDecorators.splice(indexToRemove, 1);
-
-				// Update global state with the modified array
-				globalState.update("decorators", allDecorators);
-
-				// remove decorator from editor
-				activeEditor?.setDecorations(decorationType, []);
-			}
-		} else {
+		if (!hasDecorator) {
+			console.log("push decorator");
 			pushDecorator();
+		} else {
+			vscode.window.showErrorMessage("Error! Already declared in note");
 		}
 
-		function pushDecorator() {
+		async function pushDecorator() {
 			// Add object to array
-			allDecorators.push({ file: file, line: line, text: text });
+			allDecoratorsInNote.push({ file, line, text });
 
 			// Store the updated array in global state
-			globalState.update("decorators", allDecorators);
+			globalState.update(`decorators-${currentFileName}`, allDecoratorsInNote);
 
 			// Specify the line the decorator should be placed on
 			const decorationRange = new vscode.Range(line, 0, line, 0);
 
 			// Add decorator to editor
 			activeEditor?.setDecorations(decorationType, [decorationRange]);
+
+			// Add code to file
+			const fs = require("fs");
+			const globalStorageUri = context.globalStorageUri;
+			const data = fs.readFileSync(`${globalStorageUri.path}/${currentFileName}.json`);
+			const jsonData = JSON.parse(data);
+
+			// split selected text after each line
+			const lines = text.split(/\r?\n/);
+
+			jsonData.ops.push({ insert: "\n" });
+			jsonData.ops.push({ insert: `</> (${file.substr(file.lastIndexOf("/") + 1)}, Ln ${line + 1})\n`, attributes: { color: "#575757" } });
+
+			lines.map((line) => {
+				jsonData.ops.push(
+					{ insert: `${line}` },
+					{
+						attributes: {
+							"code-block": true,
+						},
+						insert: "\n",
+					}
+				);
+			});
+
+			fs.writeFileSync(`${globalStorageUri.path}/${currentFileName}.json`, JSON.stringify(jsonData));
+
+			webview.html = await getWebviewNote(webview, context, currentFileName);
 		}
 	}
 }
