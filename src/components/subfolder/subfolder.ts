@@ -119,7 +119,8 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         vscode.postMessage({
                             page: 'note',
                             fileName: noteName,
-                            filePath: notePath
+                            filePath: notePath,
+                            currentPage: 'subfolder'
                         });
                     });
                 });

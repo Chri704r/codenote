@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { loadFile } from "../../utils/saveFile";
 
-export async function getWebviewNote(webview: vscode.Webview, context: any, fileName: string, filePath: string) {
+export async function getWebviewNote(webview: vscode.Webview, context: any, fileName: string, filePath: string, currentPage?: string) {
 	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/note", "note.css");
 	const styles = webview.asWebviewUri(onDiskPathStyles);
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
@@ -76,7 +76,6 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 				const fileContent = quill.getContents();
 				const fileName = ${JSON.stringify(fileName)};
 				const filePath = ${JSON.stringify(filePath)};
-				console.log(fileContent);
 				
 				vscode.postMessage({
 					command: 'save',
@@ -87,20 +86,24 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 			});	
 
 			document.querySelector(".back-button").addEventListener("click", () => {
-				//const parentUri = uri.substr(0, uri.lastIndexOf("/"));
-				//const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
-				/* if(parentFolder == "undefined_publisher.codenote"){
-					vscode.postMessage({
-						page: "overview",
-					});
-				} else{
-					vscode.postMessage({
-						page: 'subfolder',
-						folderName: parentFolder,
-						folderPath: parentUri
-					});
-				} */
-			})
+				const uri = ${JSON.stringify(filePath)};
+                const replaceBackslash = uri.replace(/[\/\\\\]/g, "/");
+                const lastSlashIndex = Math.max(replaceBackslash.lastIndexOf("/"));
+                const parentUri = replaceBackslash.substr(0, lastSlashIndex);
+                const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
+				const currentPage = ${JSON.stringify(currentPage)};
+                if (parentFolder == "undefined_publisher.codenote" || currentPage == "overview"){
+                    vscode.postMessage({
+                        page: "overview",
+                    });
+                } else {
+                    vscode.postMessage({
+                        page: 'subfolder',
+                        folderName: parentFolder,
+                        folderPath: parentUri
+                    });
+                }
+            });
 
 			const loadedContent = ${JSON.stringify(loadedContent)};
 			if (loadedContent !== null) {
