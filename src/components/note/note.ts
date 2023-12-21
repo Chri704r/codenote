@@ -23,9 +23,9 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 			<link rel="stylesheet" href="${codiconsUri}">
 		</head>
 		<body>
-			<div class="flex items-center"> <!-- Er de her classes fra Tailwind elller Quill? -->
+			<div class="toolbar-wrapper">
 				<div class="codicon codicon-chevron-left cursor-pointer"></div>
-				<div class="mx-auto"> <!-- Er de her classes fra Tailwind elller Quill? -->
+				<div class="toolbar-container">
 					<div id="toolbar">
 						<select class="ql-size">
 							<option value="small"></option>
