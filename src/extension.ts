@@ -95,6 +95,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			context.subscriptions
 		);
 
+		vscode.window.onDidChangeActiveColorTheme(async () => {
+			panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
+		});
+
 		await initializeFileAndFolder(context);
 	});
 
