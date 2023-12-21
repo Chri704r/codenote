@@ -6,15 +6,19 @@ import { displayDecorators } from "./utils/displayDecorators";
 import { addDecoratorToLine } from "./utils/addDecoratorToLine";
 import { moveToFolder } from "./utils/moveToFolder";
 import { getFolderContents, initializeFileAndFolder } from "./utils/initialize";
-import { search } from "./components/search/search";
 import { getNotes } from "./utils/getLastEditedNotes";
+import { search } from "./components/search/search";
 import { addFolder } from "./utils/addFolder";
 import { addNote } from "./utils/addNote";
 import { updateWebview } from "./utils/updateWebview";
+import { saveFile } from "./utils/saveFile";
+import { deleteFolder } from "./utils/deleteFolder";
+
+let currentOpenFile: string;
 
 export async function activate(context: vscode.ExtensionContext) {
-	const files = await getNotes(context.globalStorageUri.fsPath);
 	const folders = await getFolderContents(context);
+	const files = await getNotes(context.globalStorageUri.fsPath);
 
 	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
 		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {
@@ -34,7 +38,9 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await getWebviewSubfolder(folder, panel.webview, context);
 						return;
 					case "note":
-						panel.webview.html = getWebviewNote(panel.webview, context);
+						const fileName = message.fileName;
+						currentOpenFile = fileName;
+						panel.webview.html = await getWebviewNote(panel.webview, context, fileName);
 						return;
 				}
 				switch (message.command) {
@@ -46,22 +52,22 @@ export async function activate(context: vscode.ExtensionContext) {
 						return;
 					case 'addFolder':
 						await addFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
-						const updatedFolders = await getFolderContents(context);
-						// const updatedFolder = await getContentInFolder(message.destinationFolder);
-						const updatedFolderF = { folderName: message.destinationFolderName, uriPath: message.destinationFolderUri };
-
-						if (message.webviewToRender === 'subfolder') {
-							panel.webview.html = await getWebviewSubfolder(updatedFolderF, panel.webview, context);
-						} else if (message.webviewToRender === 'overview') {
-							panel.webview.html = await getWebviewOverview(panel.webview, context, updatedFolders, files);
-						} else {
-							console.error('Error rendering webview.');
-						}
+						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
 						return;
 					case 'addNote':
 						await addNote(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
 						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
 						return;
+					case "save":
+						const fileName = message.data.fileName;
+						const fileContent = message.data.fileContent;
+						await saveFile(fileName, fileContent, context);
+						return;
+					case "deleteFolder":
+						await deleteFolder(message.folderName, message.folderPath, context, panel, message.setPage, message.currentFolderName, message.currentFolderPath, files);
+						return;
+					case "comment":
+						addDecoratorToLine(panel.webview, context, message.fileName);
 				}
 			},
 			undefined,
@@ -71,20 +77,13 @@ export async function activate(context: vscode.ExtensionContext) {
 		await initializeFileAndFolder(context);
 	});
 
-	let displayDecoratorsInEditor = vscode.commands.registerCommand("extension.onDidChangeActiveTextEditor", () => {
-		displayDecorators(context);
-	});
-
-	let addDecorator = vscode.commands.registerCommand("extension.addDecorator", () => {
-		addDecoratorToLine(context);
-	});
-
 	vscode.window.onDidChangeActiveTextEditor(() => {
 		// Trigger the registered command when the active text editor changes
-		vscode.commands.executeCommand("extension.onDidChangeActiveTextEditor");
+		// vscode.commands.executeCommand("extension.onDidChangeActiveTextEditor");
+		displayDecorators(context, currentOpenFile);
 	});
 
-	context.subscriptions.push(disposable, displayDecoratorsInEditor, addDecorator);
+	context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated

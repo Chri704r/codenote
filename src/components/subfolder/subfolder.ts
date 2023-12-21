@@ -6,18 +6,20 @@ import { searchInput } from "../search/searchInput";
 import { renderSettingsDropdown } from "../dropdown/dropdown";
 
 export async function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
-    const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
-    const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-    const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
-    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
+	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
+	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 
-    const allFolders = await getAllFolderContents(context);
-    const folderContent = await getContentInFolder(folderData);
-    const folderContentsHTML = await displayFolders(folderContent.folders);
+	const allFolders = await getAllFolderContents(context);
+	const folderContent = await getContentInFolder(folderData);
+	const folderContentsHTML = await displayFolders(folderContent.folders);
 
-    const notesHTML = await renderFiles(folderContent.files);
+	const htmlBreadcrumb = await clickBreadcrumb(folderData, context);
 
-    return `<!DOCTYPE html>
+	const notesHTML = await renderFiles(folderContent.files);
+
+	return `<!DOCTYPE html>
     <html lang="en">
         <head>
             <meta charset="UTF-8" />
@@ -32,7 +34,8 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                     <span class="codicon codicon-chevron-left"></span>
                 </div>
                 <h1 class="subfolder-header">${folderData.folderName}</h1> 
-            </div>       
+            </div>
+            <div class="breadcrumb-container">${htmlBreadcrumb}</div>    
             ${searchInput()}
             <h2>Folders</h2>
             <div id="folders-container" class="container">
@@ -76,7 +79,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
             </div>
         </div>
             <script>
-
                 document.querySelectorAll(".folder-item").forEach((folder) => {
                     folder.addEventListener("click", () => {
                         const folderName = folder.getAttribute('data-folder-name');
@@ -86,6 +88,24 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                             folderName: folderName,
                             folderPath: path
                         });
+                    });
+                });
+
+                document.querySelectorAll(".breadcrumb").forEach((crumb) => {
+                    crumb.addEventListener("click", () => {
+                        const folderName = crumb.getAttribute('data-folder-name');
+                        const path = crumb.getAttribute('folder-path');
+                        if(folderName == "Overview"){
+                            vscode.postMessage({
+                                page: "overview",
+                            });
+                        } else{
+                            vscode.postMessage({
+                                page: 'subfolder',
+                                folderName: folderName,
+                                folderPath: path
+                            });
+                        }
                     });
                 });
 
@@ -144,7 +164,33 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         const sourceFoldername = moveButton.getAttribute("name")
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
-                })
+                });
+
+                document.querySelectorAll(".delete-button").forEach((deleteButton) => {
+                    deleteButton.addEventListener("click", () => {
+                        const folderName = deleteButton.getAttribute("data-folder-name");
+                        const folderPath = deleteButton.getAttribute("data-folder-path");
+                
+                        const deleteContainer = deleteButton.closest(".item").querySelector("#delete-container");
+                
+                        deleteContainer.classList.remove("hidden");
+                
+                        const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
+                
+                        deleteButtonPerm.addEventListener("click", () => {
+                            deleteContainer.classList.add("hidden");
+                
+                            vscode.postMessage({
+                                command: 'deleteFolder',
+                                folderName: folderName,
+                                folderPath: folderPath,
+                                setPage: 'subfolder',
+                                currentFolderName: ${JSON.stringify(folderData.folderName)},
+                                currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                            });
+                        });
+                    });
+                });
             </script>
             <script src="${script}"></script>
         </body>
@@ -153,10 +199,10 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
 }
 
 async function renderFiles(files: any) {
-    return files
-        .map((file: any) => {
-            const dropdownHtml = renderSettingsDropdown(file);
-            return `
+	return files
+		.map((file: any) => {
+			const dropdownHtml = renderSettingsDropdown(file);
+			return `
                 <div class="item">
                     <div class="left file-item" data-folder-name="${file.fileName}" folder-path="${file.uriPath}">
                         <p class="folder-name">${file.fileName}</p>
@@ -175,6 +221,20 @@ async function renderFiles(files: any) {
 
                 </div>
                 `;
-        })
-        .join("");
+		})
+		.join("");
+}
+
+async function clickBreadcrumb(folderData: any, context: any) {
+	const globalStorageMainUri = context.globalStorageUri.fsPath;
+	const breadcrumb = folderData.uriPath.replace(globalStorageMainUri, "Overview");
+	const breadcrumbFolders = breadcrumb.split("/");
+	let pathmaker = globalStorageMainUri;
+
+	return breadcrumbFolders
+		.map((folder: any) => {
+			pathmaker = pathmaker + "/" + folder;
+			return `<p class="breadcrumb" data-folder-name="${folder}" folder-path="${pathmaker.replace("Overview/", "")}">${folder}/</p>`;
+		})
+		.join("");
 }

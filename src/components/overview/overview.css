@@ -32,7 +32,8 @@ svg {
 	align-items: center;
 }
 
-.item {
+.item,
+.item-file {
 	width: 100%;
 	padding: 5px;
 	display: grid;
@@ -67,7 +68,8 @@ svg {
 	cursor: pointer;
 }
 
-.folder-name {
+.folder-name,
+.file-name {
 	padding-left: 10px;
 }
 
