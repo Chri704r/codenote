@@ -85,10 +85,15 @@ svg {
 	color: #b0b0b0;
 }
 
-#add-container {
-	width: 100%;
-	position: sticky;
-	bottom: 0px;
-	background-color: #1e1e1e;
-	padding-top: 20px;
+#buttons-container {
+    width: 100%;
+    position: sticky;
+    bottom: 0px;
+    background-color: #1e1e1e;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#buttons-container svg {
+    cursor: pointer;
 }

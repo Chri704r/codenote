@@ -2,10 +2,10 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { getWebviewOverview } from '../components/overview/overview';
 import { getWebviewSubfolder } from '../components/subfolder/subfolder';
-import { getFiles } from './getLastEditedNotes';
+import { getNotes } from './getLastEditedNotes';
 
-async function updateWebview(setPage: string, panel: vscode.WebviewPanel, context: vscode.ExtensionContext, folders: any, currentFolderName?: string, currentFolderPath?: string) {
-    const updatedFiles = await getFiles(context);
+async function updateWebview(setPage: string, panel: vscode.WebviewPanel, context: vscode.ExtensionContext, folders: any, currentFolderName: string, currentFolderPath?: string) {
+    const updatedFiles = await getNotes(currentFolderName);
 	const updatedFolderDeleteFiles = { folderName: currentFolderName, uriPath: currentFolderPath };
 
     if (setPage === 'overview') {
@@ -17,10 +17,10 @@ async function updateWebview(setPage: string, panel: vscode.WebviewPanel, contex
     }
 }
 
-export async function deleteFile(fileName: string, filePath: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel, folders: any, setPage: string, currentFolderName?: string, currentFolderPath?: string): Promise<void> {
+export async function deleteFile(fileName: string, filePath: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel, folders: any, setPage: string, currentFolderName: string, currentFolderPath?: string): Promise<void> {
     try {
             if (await fse.pathExists(filePath)) {
-                await fse.unlink(filePath);
+                fse.unlink(filePath);
                 vscode.window.showInformationMessage(`File ${fileName} deleted successfully.`);
             } else {
                 vscode.window.showErrorMessage(`File ${fileName} not found.`);
