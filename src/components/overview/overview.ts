@@ -92,7 +92,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 			</div>
             
             <script>
-                document.querySelectorAll(".left").forEach((folder) => {
+                document.querySelectorAll(".folder-item").forEach((folder) => {
                     folder.addEventListener("click", () => {
                         const folderName = folder.getAttribute('data-folder-name');
                         const path = folder.getAttribute('folder-path');
@@ -102,23 +102,17 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                             folderPath: path
                         });
                     });
-
-                    const fileItems = document.querySelectorAll('.file-item');
-                    fileItems.forEach(item => {
-                        item.addEventListener("click", function () {
-                            const fileName = item.getAttribute("data-file-name");
-                            vscode.postMessage({
-                                page: 'note',
-                                fileName: fileName
-                            });
-                        });
-                    });
                 });
 
                 document.querySelectorAll(".file-item").forEach((folder) => {
                     folder.addEventListener("click", () => {
+                        const noteName = folder.getAttribute('data-folder-name');
+                        const notePath = folder.getAttribute('folder-path');
+                        console.log('File-item clicked', noteName, notePath);
                         vscode.postMessage({
                             page: 'note',
+                            fileName: noteName,
+                            filePath: notePath
                         });
                     });
                 });

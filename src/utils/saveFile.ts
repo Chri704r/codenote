@@ -1,12 +1,8 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as path from 'path';
 
-export async function saveFile(fileName: string, quillContentDelta: any, context: vscode.ExtensionContext): Promise<void> {
+export async function saveFile(fileName: string, filePath: string, quillContentDelta: any, context: vscode.ExtensionContext): Promise<void> {
     try {
-        const globalStorageUri = context.globalStorageUri.fsPath;
-        const filePath = path.join(globalStorageUri, `${fileName}.json`);
-
         const quillContentString = JSON.stringify(quillContentDelta, null, 2);
 
         await fs.promises.writeFile(filePath, quillContentString, 'utf8');
@@ -17,10 +13,9 @@ export async function saveFile(fileName: string, quillContentDelta: any, context
     }
 }
 
-export async function loadFile(fileName: string, context: vscode.ExtensionContext) {
+export async function loadFile(fileName: string, filePath: string, context: vscode.ExtensionContext) {
     try {
         const globalStorageUri = context.globalStorageUri.fsPath;
-        const filePath = path.join(globalStorageUri, `${fileName}.json`);
 
         const fileStats = await fs.promises.stat(filePath);
 

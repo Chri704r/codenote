@@ -38,9 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await getWebviewSubfolder(folder, panel.webview, context);
 						return;
 					case "note":
-						const fileName = message.fileName;
-						currentOpenFile = fileName;
-						panel.webview.html = await getWebviewNote(panel.webview, context, fileName);
+						panel.webview.html = await getWebviewNote(panel.webview, context, message.fileName, message.filePath);
 						return;
 				}
 				switch (message.command) {
@@ -59,15 +57,10 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
 						return;
 					case "save":
-						const fileName = message.data.fileName;
-						const fileContent = message.data.fileContent;
-						await saveFile(fileName, fileContent, context);
-						return;
-					case "deleteFolder":
-						await deleteFolder(message.folderName, message.folderPath, context, panel, message.setPage, message.currentFolderName, message.currentFolderPath, files);
+						await saveFile(message.fileName, message.filePath, message.data.fileContent, context);
 						return;
 					case "comment":
-						addDecoratorToLine(panel.webview, context, message.fileName);
+						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath);
 				}
 			},
 			undefined,
