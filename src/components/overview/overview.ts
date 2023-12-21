@@ -24,9 +24,9 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                 const dropdownHtml = renderSettingsDropdown(file);
                 return `
                     <div class="item">
-                        <div class="left file-item" data-folder-name="${file.fileName}" folder-path="${file.uriPath}">
-                            <p class="folder-name">${file.firstLine}</p>
-                            <p class="mtime">${file.lastModified}</p>
+                        <div class="left file-item" data-file-name="${file.fileName}" data-file-path="${file.uriPath}">
+                            <p class="folder-name">${file.fileName}</p>
+                            <p class="mtime">${file.date}</p>
                         </div>
     
                         <div class="right">
@@ -38,7 +38,21 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                                 ${dropdownHtml}
                             </div>
                         </div>
-    
+                        <div id="delete-container" class="hidden">
+                            <div id="delete-wrapper">
+                                <div id="delete-modal">
+                                    <p>Are you sure you want to delete?</p>
+                                    <p>Once you click delete you will not be able to get it back.</p>
+                                    <div id="button-container">
+                                        <button class="secondary-button">Cancel</button>
+                                        <button id="delete-button-perm">
+                                            <p>Delete</p>
+                                            <span class="codicon codicon-trash"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     `;
             })
@@ -92,7 +106,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 			</div>
             
             <script>
-                document.querySelectorAll(".left").forEach((folder) => {
+                document.querySelectorAll(".folder-item").forEach((folder) => {
                     folder.addEventListener("click", () => {
                         const folderName = folder.getAttribute('data-folder-name');
                         const path = folder.getAttribute('folder-path');
@@ -102,23 +116,16 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                             folderPath: path
                         });
                     });
-
-                    const fileItems = document.querySelectorAll('.file-item');
-                    fileItems.forEach(item => {
-                        item.addEventListener("click", function () {
-                            const fileName = item.getAttribute("data-file-name");
-                            vscode.postMessage({
-                                page: 'note',
-                                fileName: fileName
-                            });
-                        });
-                    });
                 });
 
-                document.querySelectorAll(".file-item").forEach((folder) => {
-                    folder.addEventListener("click", () => {
+                document.querySelectorAll(".file-item").forEach((file) => {
+                    file.addEventListener("click", () => {
+                        const noteName = file.getAttribute('data-file-name');
+                        const notePath = file.getAttribute('data-file-path');
                         vscode.postMessage({
                             page: 'note',
+                            fileName: noteName,
+                            filePath: notePath
                         });
                     });
                 });
@@ -160,21 +167,31 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                         const folderPath = deleteButton.getAttribute("data-folder-path");
                 
                         const deleteContainer = deleteButton.closest(".item").querySelector("#delete-container");
+
+                        if (deleteContainer) {
+                            deleteContainer.classList.remove("hidden");
+                            const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
                 
-                        deleteContainer.classList.remove("hidden");
-                
-                        const deleteButtonPerm = deleteContainer.querySelector("#delete-button-perm");
-                
-                        deleteButtonPerm.addEventListener("click", () => {
-                            deleteContainer.classList.add("hidden");
-                
-                            vscode.postMessage({
-                                command: 'deleteFolder',
-                                folderName: folderName,
-                                folderPath: folderPath,
-                                setPage: 'overview'
+                            deleteButtonPerm.addEventListener("click", () => {
+                                deleteContainer.classList.add("hidden");
+                                if (folderName) {
+                                    vscode.postMessage({
+                                        command: 'deleteFolder',
+                                        folderName: folderName,
+                                        folderPath: folderPath,
+                                        setPage: 'overview'
+                                    });                            
+                                } else {
+                                    vscode.postMessage({
+                                        command: 'deleteFile',
+                                        fileName: deleteButton.getAttribute("data-file-name"),
+                                        filePath: deleteButton.getAttribute("data-file-path"),
+                                        setPage: 'overview',
+                                        currentFolderName: ${JSON.stringify(globalStoragePath)}
+                                    }); 
+                                }
                             });
-                        });
+                        }
                     });
                 });
             </script>
