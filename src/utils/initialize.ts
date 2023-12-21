@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
+import { timeAgo, readFirstLine } from "./getLastEditedNotes";
 const fs = require("fs");
 const fsp = require("fs").promises;
 
@@ -82,10 +83,22 @@ export async function getContentInFolder(folder: any): Promise<any> {
 					if (stats.isDirectory()) {
 						folders.push({ folderName: file, uriPath: folderPath });
 					} else {
-						let date = new Date(stats.mtimeMs);
-						let dateStr = date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
 						if (!file.startsWith(".")) {
-							files.push({ fileName: file, uriPath: folderPath, date: dateStr });
+							const nameWithoutExtension = path.basename(file, path.extname(file));
+							const mtime = stats.mtimeMs;
+							const date = new Date(mtime);
+							const dateCreated = date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
+							const lastModified = timeAgo(mtime);
+							const firstLine = await readFirstLine(folderPath);
+							files.push({
+								fileName: file,
+								uriPath: folderPath,
+								nameWithoutExtension: nameWithoutExtension,
+								mtime: mtime,
+								firstLine: firstLine,
+								lastModified: lastModified,
+								date: dateCreated
+							});
 						}
 					}
 				})

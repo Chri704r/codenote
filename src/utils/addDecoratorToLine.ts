@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { getWebviewNote } from "../components/note/note";
 
-export function addDecoratorToLine(webview: vscode.Webview, context: vscode.ExtensionContext, currentFileName: string) {
+export function addDecoratorToLine(webview: vscode.Webview, context: vscode.ExtensionContext, currentFileName: string, currentFilePath: string) {
 	let activeEditor = vscode.window.activeTextEditor;
 
 	if (activeEditor) {
@@ -16,7 +16,7 @@ export function addDecoratorToLine(webview: vscode.Webview, context: vscode.Exte
 		const selection = activeEditor.document.getText(activeEditor.selection);
 		let text = "";
 
-		if (selection == "") {
+		if (selection === "") {
 			// if there is no selection of text, get text from current line
 			text = activeEditor.document.lineAt(line).text;
 		} else {
@@ -28,7 +28,7 @@ export function addDecoratorToLine(webview: vscode.Webview, context: vscode.Exte
 		let allDecoratorsInNote = globalState.get<any[]>(`decorators-${currentFileName}`) || [];
 
 		//check if there is already a decorator on same line in active file
-		const hasDecorator = allDecoratorsInNote?.some((decorator) => line == decorator.line && file == decorator.file);
+		const hasDecorator = allDecoratorsInNote?.some((decorator) => line === decorator.line && file === decorator.file);
 
 		if (!hasDecorator) {
 			console.log("push decorator");
@@ -76,7 +76,7 @@ export function addDecoratorToLine(webview: vscode.Webview, context: vscode.Exte
 
 			fs.writeFileSync(`${globalStorageUri.path}/${currentFileName}.json`, JSON.stringify(jsonData));
 
-			webview.html = await getWebviewNote(webview, context, currentFileName);
+			webview.html = await getWebviewNote(webview, context, currentFileName, currentFilePath);
 		}
 	}
 }
