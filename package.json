@@ -53,6 +53,12 @@
 				"command": "codenote.addDecorator",
 				"title": "addDecorator"
 			}
+		],
+		"search": [
+			{
+				"scheme": "vscode-userdata",
+				"pattern": "**/*"
+			}
 		]
 	},
 	"scripts": {
@@ -64,6 +70,7 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
+		"@types/fs-extra": "^11.0.4",
 		"@types/mocha": "^10.0.3",
 		"@types/node": "18.x",
 		"@types/quill": "^2.0.14",
@@ -79,6 +86,8 @@
 	},
 	"dependencies": {
 		"@vscode/codicons": "^0.0.35",
-		"highlight.js": "^11.9.0"
+		"fs-extra": "^11.2.0",
+		"highlight.js": "^11.9.0",
+		"uuid": "^9.0.1"
 	}
 }
