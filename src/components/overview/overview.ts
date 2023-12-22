@@ -7,10 +7,8 @@ import { renderSettingsDropdown } from "../dropdown/dropdown";
 import { renderAddButtons } from "../../utils/renderAddButtons";
 
 export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, files: any) {
-	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
 	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-	const styles = webview.asWebviewUri(onDiskPathStyles);
 	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
 
 	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
@@ -27,7 +25,6 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 		<head>
 			<meta charset="UTF-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <link rel="stylesheet" href="${styles}">
             <link rel="stylesheet" href="${generalStyles}">
             <link rel="stylesheet" href="${codiconsUri}">
 		</head>

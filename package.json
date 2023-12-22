@@ -60,7 +60,18 @@
 				"scheme": "vscode-userdata",
 				"pattern": "**/*"
 			}
-		]
+		],
+		"webview": {
+			"views": {
+				"entry-get-started": {
+					"title": "Getting Started",
+					"resources": {
+						"style": "src/style/general.css",
+						"script": "src/utils/script.js"
+					}
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -75,7 +86,7 @@
 		"@types/mocha": "^10.0.3",
 		"@types/node": "18.x",
 		"@types/quill": "^2.0.14",
-		"@types/vscode": "^1.84.0",
+		"@types/vscode": "^1.83.0",
 		"@typescript-eslint/eslint-plugin": "^6.9.0",
 		"@typescript-eslint/parser": "^6.9.0",
 		"@vscode/test-electron": "^2.3.6",

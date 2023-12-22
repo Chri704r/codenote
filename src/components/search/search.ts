@@ -4,7 +4,6 @@ import { searchInput } from "./searchInput";
 import { getAllFolderContents } from "../../utils/getAllFolders";
 
 export async function search(searchTerm: string, webview: vscode.Webview, context: any) {
-	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
 	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
@@ -30,7 +29,6 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="${styles}" />
         <link rel="stylesheet" href="${codiconsUri}">
         <link rel="stylesheet" href="${generalStyles}">
 	</head>
