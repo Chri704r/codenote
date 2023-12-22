@@ -79,7 +79,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                 });
 
             document.querySelector("#add-folder-button").addEventListener("click", () => {
-                const globalStorageName = 'undefined_publisher.codenote';
+                const globalStorageName = 'entry.entry';
                 const globalStoragePath = ${JSON.stringify(globalStoragePath)};
                 const overview = 'overview';
                 vscode.postMessage({

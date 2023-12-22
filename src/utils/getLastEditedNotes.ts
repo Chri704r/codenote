@@ -72,7 +72,6 @@ export async function getNotes(folderName: string) {
         }
     }
 
-    // console.log('All JSON Files:', folderContents);
     return folderContents.sort((b: Record<string, number>, a: Record<string, number>) => a.mtime - b.mtime).slice(0, 5);
 
 }

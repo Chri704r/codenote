@@ -1,6 +1,7 @@
 {
-	"name": "codenote",
-	"displayName": "codenote",
+	"name": "entry",
+	"displayName": "entry",
+	"publisher": "Entry",
 	"description": "Write notes for your code",
 	"version": "0.0.1",
 	"engines": {
@@ -21,36 +22,23 @@
 				}
 			]
 		},
-		"views": {
-			"entry-explorer": [
-				{
-					"id": "entry-get-started",
-					"name": "Getting Started",
-					"type": "tree"
-				},
-				{
-					"id": "entry-documentation",
-					"name": "Documentation"
-				}
-			]
-		},
 		"viewsWelcome": [
 			{
 				"view": "entry-get-started",
-				"contents": "Take notes the easy and intuitive way. \n[View Entries](command:codenote.codenote)"
+				"contents": "Take notes the easy and intuitive way. \n[View Entries](command:entry.entry)"
 			},
 			{
 				"view": "entry-documentation",
-				"contents": "Entry was built to supercharge the notetaking experience in VSCode. \nLearn more about the project on [GitHub](https://github.com/Chri704r/codenote)."
+				"contents": "Entry was built to supercharge the notetaking experience in VSCode. \nLearn more about the project on [GitHub](https://github.com/Chri704r/entry)."
 			}
 		],
 		"commands": [
 			{
-				"command": "codenote.codenote",
-				"title": "Code Note"
+				"command": "entry.entry",
+				"title": "Entry"
 			},
 			{
-				"command": "codenote.addDecorator",
+				"command": "entry.addDecorator",
 				"title": "addDecorator"
 			}
 		],

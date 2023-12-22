@@ -52,7 +52,6 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 						<button id="custom-button" class="codicon codicon-comment ql-snow"></button>
 					</div>
 				</div>
-				<button class="save-file ">Save</button>
 			</div>
 			<div id="editor"></div>
             <script>
@@ -72,20 +71,6 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
                 });
             });
 
-			document.querySelector(".save-file").addEventListener("click", function () {
-				const fileContent = quill.getContents();
-				const fileName = ${JSON.stringify(fileName)};
-				const filePath = ${JSON.stringify(filePath)};
-				console.log('save on click', fileName, filePath);
-				
-				vscode.postMessage({
-					command: 'save',
-					data: { fileName, fileContent },
-					fileName: fileName,
-					filePath: filePath
-				})
-			});	
-
 			document.querySelector(".back-button").addEventListener("click", () => {
 				const uri = ${JSON.stringify(filePath)};
                 const replaceBackslash = uri.replace(/[\/\\\\]/g, "/");
@@ -98,7 +83,7 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 				const filePath = ${JSON.stringify(filePath)};
 
 
-                if (parentFolder == 'undefined_publisher.codenote' || currentPage == 'overview'){			
+                if (parentFolder == 'entry.entry' || currentPage == 'overview'){			
 					vscode.postMessage({
 						command: 'save',
 						data: { fileName, fileContent },

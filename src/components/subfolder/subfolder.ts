@@ -97,9 +97,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                     });
                 });
 
-
-                // TODO: Notes
-
                 document.querySelectorAll(".file-item").forEach((file) => {
                     file.addEventListener("click", () => {
                         const noteName = file.getAttribute('data-file-name');
@@ -141,7 +138,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                 const lastSlashIndex = Math.max(replaceBackslash.lastIndexOf("/"));
                 const parentUri = replaceBackslash.substr(0, lastSlashIndex);
                 const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
-                if(parentFolder == "undefined_publisher.codenote"){
+                if(parentFolder == "entry.entry"){
                     vscode.postMessage({
                         page: "overview",
                     });

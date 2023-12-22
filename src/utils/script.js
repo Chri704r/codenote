@@ -1,7 +1,6 @@
 const updateTheme = (isDark) => {
-	console.log(isDark);
 	document.documentElement.style.setProperty("--body-background-color", isDark ? "#1e1e1e" : "#fff");
-	document.documentElement.style.setProperty("--text-color", isDark ? "#fff" : "#000");
+	document.documentElement.style.setProperty("--text-color", isDark ? "#fff" : "#3f3f3f");
 	document.documentElement.style.setProperty("--secondary-text-color", isDark ? "#b0b0b0" : "#909090");
 	document.documentElement.style.setProperty("--border-color", isDark ? "#2f2f2f" : "#F5F5F5");
 	document.documentElement.style.setProperty("--split-border-color", isDark ? "#3f3f3f" : "#3f3f3f");

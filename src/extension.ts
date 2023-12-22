@@ -12,7 +12,6 @@ import { addFolder } from "./utils/addFolder";
 import { addNote } from "./utils/addNote";
 import { updateWebview } from "./utils/updateWebview";
 import { saveFile } from "./utils/saveFile";
-import { deleteFolder } from "./utils/deleteFolder";
 import { deleteFile } from "./utils/deleteNote";
 import { renameFolder } from "./utils/renameFolder";
 
@@ -21,9 +20,10 @@ let currentOpenFile: string;
 export async function activate(context: vscode.ExtensionContext) {
 	const folders = await getFolderContents(context);
 	const files = await getNotes(context.globalStorageUri.fsPath);
+	console.log(context.globalStorageUri.fsPath);
 
-	let disposable = vscode.commands.registerCommand("codenote.codenote", async () => {
-		const panel = vscode.window.createWebviewPanel("codenote", "codenote", vscode.ViewColumn.One, {
+	let disposable = vscode.commands.registerCommand("entry.entry", async () => {
+		const panel = vscode.window.createWebviewPanel("entry", "entry", vscode.ViewColumn.One, {
 			enableScripts: true,
 		});
 

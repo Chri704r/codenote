@@ -31,7 +31,6 @@ export function addDecoratorToLine(webview: vscode.Webview, context: vscode.Exte
 		const hasDecorator = allDecoratorsInNote?.some((decorator) => line === decorator.line && file === decorator.file);
 
 		if (!hasDecorator) {
-			console.log("push decorator");
 			pushDecorator();
 		} else {
 			vscode.window.showErrorMessage("Error! Already declared in note");

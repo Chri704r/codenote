@@ -8,9 +8,9 @@ export async function saveFile(fileName: string, filePath: string, quillContentD
 
         await fs.promises.writeFile(filePath, quillContentString, 'utf8');
 
-        vscode.window.showInformationMessage(`File ${fileName} saved`);
+        vscode.window.showInformationMessage(`File saved`);
     } catch (error: any) {
-        vscode.window.showErrorMessage(`Error saving file ${fileName}: ${error.message}`);
+        vscode.window.showErrorMessage(`Error saving file: ${error.message}`);
     }
 }
 
@@ -29,7 +29,7 @@ export async function loadFile(fileName: string, filePath: string, context: vsco
             return null;
         }
     } catch (error: any) {
-        vscode.window.showErrorMessage(`Error loading file ${fileName}: ${error.message}`);
+        vscode.window.showErrorMessage(`Error loading file: ${error.message}`);
         return null;
     }
 }

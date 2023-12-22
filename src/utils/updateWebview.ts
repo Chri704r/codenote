@@ -14,7 +14,6 @@ export async function updateWebview(destinationFolderName: string, destinationFo
 	} else if (webviewToRender === 'overview') {
 		return await getWebviewOverview(panel, context, updatedFolders, lastEditedNotes);
 	} else {
-		console.error('Error rendering webview.');
 		return 'There was an error rendering the webview.';
 	}
 }

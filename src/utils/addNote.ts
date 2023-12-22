@@ -12,19 +12,16 @@ export async function addNote(destinationFolderName: string, destinationFolderUr
     }
 
     const newNotePath = path.join(destinationFolderUri, `${newNoteName}.json`);
-    console.log(newNotePath);
 
     try {
         await fs.access(newNotePath);
 
         vscode.window.showWarningMessage(`A note of that name already exists. Please try again.`);
-        // vscode.window.showWarningMessage(`Note "${newNoteName}.json" already exists.`);
         console.error(`Note already exists`);
     } catch {
         try {
             await fs.writeFile(newNotePath, '{}');
             vscode.window.showInformationMessage(`New note created successfully.`);
-            // vscode.window.showInformationMessage(`Note "${newNoteName}.json" created successfully.`);
         } catch (error: any) {
             vscode.window.showErrorMessage(`Error creating note: ${error.message}`);
         }

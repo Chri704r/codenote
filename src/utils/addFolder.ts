@@ -18,16 +18,12 @@ export async function addFolder(destinationFolderName: string, destinationFolder
 	try {
 		await fs.mkdir(newFolderPath, Error);
 		vscode.window.showInformationMessage(`Folder "${newFolderName}" created successfully.`);
-		console.log(`Folder '${newFolderName}' created successfully.`);
 
 	} catch (error: any) {
 		if (error.code === 'EEXIST') {
 			vscode.window.showWarningMessage(`Folder "${newFolderName}" already exists.`);
-			console.error(`Folder already exists: ${error.message}`);
 		} else {
 			vscode.window.showErrorMessage(`Error creating folder: ${error.message}`);
-			console.error(`Error creating folder: ${error.message}`);
-
 		}
 	}
 }
