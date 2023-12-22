@@ -225,7 +225,7 @@ async function renderFiles(files: any) {
 			return `
                 <div class="item">
                     <div class="left file-item" data-file-name="${file.fileName}" data-file-path="${file.uriPath}">
-                        <p class="folder-name">${file.fileName}</p>
+                        <p class="folder-name">${file.firstLine}</p>
                         <p class="mtime">${file.date}</p>
                     </div>
 

@@ -76,12 +76,13 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 				const fileContent = quill.getContents();
 				const fileName = ${JSON.stringify(fileName)};
 				const filePath = ${JSON.stringify(filePath)};
+				console.log('save on click', fileName, filePath);
 				
 				vscode.postMessage({
 					command: 'save',
 					data: { fileName, fileContent },
 					fileName: fileName,
-					filePath: filePath,
+					filePath: filePath
 				})
 			});	
 
@@ -96,22 +97,26 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 				const fileName = ${JSON.stringify(fileName)};
 				const filePath = ${JSON.stringify(filePath)};
 
-				vscode.postMessage({
-					command: 'save',
-					data: { fileName, fileContent },
-					fileName: fileName,
-					filePath: filePath,
-				});
 
-                if (parentFolder == "undefined_publisher.codenote" || currentPage == "overview"){			
+                if (parentFolder == 'undefined_publisher.codenote' || currentPage == 'overview'){			
 					vscode.postMessage({
-						page: 'overview'
+						command: 'save',
+						data: { fileName, fileContent },
+						fileName: fileName,
+						filePath: filePath,
+						destinationFolderName: parentFolder,
+						destinationFolderUri: parentUri,
+						webviewToRender: 'overview'
 					});
                 } else {
                     vscode.postMessage({
-                        page: 'subfolder',
-                        folderName: parentFolder,
-                        folderPath: parentUri
+						command: 'save',
+						data: { fileName, fileContent },
+						fileName: fileName,
+						filePath: filePath,
+						destinationFolderName: parentFolder,
+						destinationFolderUri: parentUri,
+						webviewToRender: 'subfolder'
                     });
                 }
             });
