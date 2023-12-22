@@ -112,13 +112,28 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
             });
             
                 document.querySelectorAll(".move").forEach((moveButton)=>{
-                    moveButton.addEventListener("mouseover", (button)=>{
+                    moveButton.addEventListener("mouseover", (button) => {
                         const data = ${JSON.stringify(allFolders)}
                         const sourcePath = moveButton.getAttribute("value")
                         const sourceFoldername = moveButton.getAttribute("name")
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
                 });
+
+                document.querySelectorAll(".rename").forEach((renameButton) => {
+                    renameButton.addEventListener("click", () => {
+                        const oldFolderPath = renameButton.getAttribute("value");
+                        const parentPath = oldFolderPath.substr(0, oldFolderPath.lastIndexOf("/"));
+                        const parentFolder = parentPath.substr(parentPath.lastIndexOf("/") + 1);
+                            vscode.postMessage({
+                                command: 'renameFolder',
+                                oldFolderPath: oldFolderPath,
+                                parentPath: parentPath,
+                                parentFolder: parentFolder,
+                                webviewToRender: 'overview'
+                            });
+                        });
+                    });
 
                 document.querySelectorAll(".delete-button").forEach((deleteButton) => {
                     deleteButton.addEventListener("click", () => {
