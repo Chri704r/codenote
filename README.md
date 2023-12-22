@@ -1,71 +1,38 @@
-# codenote README
+<font color="#8D95E6">
 
-This is the README for your extension "codenote". After writing up a brief description, we recommend including the following sections.
+# Entry
+</font>
+
+Entry was built to supercharge the notetaking experience in Visual Studio Code.
+
+<font color="#8D95E6">
 
 ## Features
+</font>
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Makes taking notes for your code simple and easy with the following features:
 
-For example if there is an image subfolder under your extension project workspace:
+* Embed code snippets into your notes and watch them get highlighted (Syntax Highlighting Support: TBD)
+* Mark code blocks from your files and embed them in your notes with just a click
+* Browse and organize your notes easily directly in your IDE
+* Search notes and folders directly in your IDE
+* Provides a classic WYSIWG-editor experience inside your IDE
 
-\!\[feature X\]\(images/feature\-x\.png\)
+<font color="#8D95E6">
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Installation
+</font>
 
-## Requirements
+Simply search for 'Entry' under the extensions tab in Visual Studio Code, and click the 'Install' button:
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+*[Image Coming Soon]*
 
-## Extension Settings
+Otherwise, you can easily download Entry from the Visual Studio Code Marketplace. Click [here](https://marketplace.visualstudio.com/items?itemName=Entry.entry) to be brought to the extension page.<br>
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+<font color="#8D95E6">
 
-For example:
+## Behind Entry
+</font>
 
-This extension contributes the following settings:
+Entry was built by three students who couldn't find any solutions that would allow us take notes directly in our Visual Studio code, in an easy and intuitive manner, with all the features expected from a modern notetaking app. As a result, we decided to develop Entry for our bachelor project.
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
-***
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

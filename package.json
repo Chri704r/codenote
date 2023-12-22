@@ -1,8 +1,8 @@
 {
-	"name": "entry",
-	"displayName": "entry",
+	"name": "ntry",
+	"displayName": "Entry",
 	"publisher": "Entry",
-	"icon": "$(pencil)",
+	"icon": "./src/assets/icons/extension-icon-light.png", 
 	"description": "Write notes for your code",
 	"version": "0.0.1",
 	"engines": {
@@ -92,7 +92,7 @@
 		"@types/mocha": "^10.0.3",
 		"@types/node": "18.x",
 		"@types/quill": "^2.0.14",
-		"@types/vscode": "^1.84.0",
+		"@types/vscode": "^1.83.0",
 		"@typescript-eslint/eslint-plugin": "^6.9.0",
 		"@typescript-eslint/parser": "^6.9.0",
 		"@vscode/test-electron": "^2.3.6",
