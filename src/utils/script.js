@@ -1,4 +1,5 @@
 const updateTheme = (isDark) => {
+	console.log(isDark);
 	document.documentElement.style.setProperty("--body-background-color", isDark ? "#1e1e1e" : "#fff");
 	document.documentElement.style.setProperty("--text-color", isDark ? "#fff" : "#000");
 	document.documentElement.style.setProperty("--secondary-text-color", isDark ? "#b0b0b0" : "#909090");
