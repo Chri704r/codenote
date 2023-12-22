@@ -14,6 +14,7 @@ import { updateWebview } from "./utils/updateWebview";
 import { saveFile } from "./utils/saveFile";
 import { deleteFolder } from "./utils/deleteFolder";
 import { deleteFile } from "./utils/deleteNote";
+import { renameFolder } from "./utils/renameFolder";
 
 let currentOpenFile: string;
 
@@ -52,6 +53,10 @@ export async function activate(context: vscode.ExtensionContext) {
 					case 'addFolder':
 						await addFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
 						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
+						return;
+					case 'renameFolder':
+						await renameFolder(message.oldFolderPath);
+						panel.webview.html = await updateWebview(message.parentFolder, message.parentPath, message.webviewToRender, panel.webview, context);						
 						return;
 					case 'addNote':
 						await addNote(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);

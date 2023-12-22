@@ -9,7 +9,6 @@ export async function displayNotes(files: any) {
                             <p class="folder-name">${file.firstLine}</p>
                             <p class="mtime">${file.lastModified}</p>
                         </div>
-
                         <div class="right">
                             <div class="settings-container">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">

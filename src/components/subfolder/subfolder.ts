@@ -11,6 +11,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
     const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
     const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 
+    const globalStoragePath = context.globalStorageUri.fsPath;
     const allFolders = await getAllFolderContents(context);
     const folderContent = await getContentInFolder(folderData);
     const folderContentsHTML = await displayFolders(folderContent.folders);
@@ -173,6 +174,21 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
                 });
+
+                document.querySelectorAll(".rename").forEach((renameButton) => {
+                    renameButton.addEventListener("click", () => {
+                        const oldFolderPath = renameButton.getAttribute("value");
+                        const parentPath = oldFolderPath.substr(0, oldFolderPath.lastIndexOf("/"));
+                        const parentFolder = parentPath.substr(parentPath.lastIndexOf("/") + 1);
+                            vscode.postMessage({
+                                command: 'renameFolder',
+                                oldFolderPath: oldFolderPath,
+                                parentPath: parentPath,
+                                parentFolder: parentFolder,
+                                webviewToRender: 'subfolder'
+                            });
+                        });
+                    });
                 
                 document.querySelectorAll(".delete-button").forEach((deleteButton) => {
                     deleteButton.addEventListener("click", () => {
