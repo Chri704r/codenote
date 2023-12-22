@@ -9,6 +9,8 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
 	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
 
+	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
+
 	const allFolders = await getAllFolderContents(context);
 	const results = await searchFiles(searchTerm, context);
 
@@ -106,6 +108,9 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
                 })
 		</script>
 		<script src="${script}"></script>
+		<script>
+			updateTheme(${isDark});
+		</script>
 	</body>
 </html>`;
 }
@@ -201,7 +206,6 @@ async function renderFiles(files: any) {
                         <p class="folder-name">${file.name}</p>
                         <p class="mtime">${file.date}</p>
                     </div>
-
                     <div class="right">
                         <div class="settings-container">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
@@ -211,7 +215,6 @@ async function renderFiles(files: any) {
                             ${dropdownHtml}
                         </div>
                     </div>
-
                 </div>
                 `;
 		})

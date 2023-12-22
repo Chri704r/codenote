@@ -14,6 +14,7 @@ import { updateWebview } from "./utils/updateWebview";
 import { saveFile } from "./utils/saveFile";
 import { deleteFolder } from "./utils/deleteFolder";
 import { deleteFile } from "./utils/deleteNote";
+import { renameFolder } from "./utils/renameFolder";
 
 let currentOpenFile: string;
 
@@ -39,7 +40,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await getWebviewSubfolder(folder, panel.webview, context);
 						return;
 					case "note":
-						panel.webview.html = await getWebviewNote(panel.webview, context, message.fileName, message.filePath);
+						panel.webview.html = await getWebviewNote(panel.webview, context, message.fileName, message.filePath, message.currentPage);
 						return;
 				}
 				switch (message.command) {
@@ -59,6 +60,10 @@ export async function activate(context: vscode.ExtensionContext) {
 							context
 						);
 						return;
+					case "renameFolder":
+						await renameFolder(message.oldFolderPath);
+						panel.webview.html = await updateWebview(message.parentFolder, message.parentPath, message.webviewToRender, panel.webview, context);
+						return;
 					case "addNote":
 						await addNote(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
 						panel.webview.html = await updateWebview(
@@ -71,6 +76,13 @@ export async function activate(context: vscode.ExtensionContext) {
 						return;
 					case "save":
 						await saveFile(message.fileName, message.filePath, message.data.fileContent, context);
+						panel.webview.html = await updateWebview(
+							message.destinationFolderName,
+							message.destinationFolderUri,
+							message.webviewToRender,
+							panel.webview,
+							context
+						);
 						return;
 					case "deleteFile":
 						await deleteFile(

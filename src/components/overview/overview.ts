@@ -1,65 +1,26 @@
 import * as vscode from "vscode";
 import { displayFolders } from "../../utils/displayFolders";
+import { displayNotes } from "../../utils/displayNotes";
 import { searchInput } from "../search/searchInput";
 import { getAllFolderContents } from "../../utils/getAllFolders";
 import { renderSettingsDropdown } from "../dropdown/dropdown";
 
 export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, files: any) {
-    const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
-    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
-    const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-    const styles = webview.asWebviewUri(onDiskPathStyles);
-    const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
+	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
+	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
+	const styles = webview.asWebviewUri(onDiskPathStyles);
+	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
 
+	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
 
-	const folderContentsHTML = await displayFolders(folders);
+	const globalStoragePath = context.globalStorageUri.fsPath;
 	const allFolders = await getAllFolderContents(context);
-    const globalStoragePath = context.globalStorageUri.fsPath;
 
-    const notesHTML = await renderFiles(files);
+	const notesHTML = await displayNotes(files);
+	const folderContentsHTML = await displayFolders(folders);
 
-    async function renderFiles(files: any) {
-        return files
-            .map((file: any) => {
-                const dropdownHtml = renderSettingsDropdown(file);
-                return `
-                    <div class="item">
-                        <div class="left file-item" data-file-name="${file.fileName}" data-file-path="${file.uriPath}">
-                            <p class="folder-name">${file.fileName}</p>
-                            <p class="mtime">${file.date}</p>
-                        </div>
-    
-                        <div class="right">
-                            <div class="settings-container">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
-                                    <path
-                                    d="M480.12-139q-34.055 0-57.881-23.803-23.826-23.804-23.826-57.784 0-34.078 23.804-57.952Q446.02-302.413 480-302.413q34.174 0 57.88 23.844 23.707 23.844 23.707 57.881 0 34.036-23.707 57.862Q514.174-139 480.12-139Zm0-259.413q-34.055 0-57.881-23.804Q398.413-446.02 398.413-480q0-34.174 23.804-57.88Q446.02-561.587 480-561.587q34.174 0 57.88 23.707 23.707 23.706 23.707 57.76 0 34.055-23.707 57.881-23.706 23.826-57.76 23.826Zm0-259.174q-34.055 0-57.881-23.894t-23.826-58q0-34.106 23.804-57.813Q446.02-821 480-821q34.174 0 57.88 23.706 23.707 23.707 23.707 57.813t-23.707 58q-23.706 23.894-57.76 23.894Z" />
-                                </svg>
-                                ${dropdownHtml}
-                            </div>
-                        </div>
-                        <div id="delete-container" class="hidden">
-                            <div id="delete-wrapper">
-                                <div id="delete-modal">
-                                    <p>Are you sure you want to delete?</p>
-                                    <p>Once you click delete you will not be able to get it back.</p>
-                                    <div id="button-container">
-                                        <button class="secondary-button">Cancel</button>
-                                        <button id="delete-button-perm">
-                                            <p>Delete</p>
-                                            <span class="codicon codicon-trash"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    `;
-            })
-            .join("");
-    }
-
-    return `<!DOCTYPE html>
+	return `<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8" />
@@ -125,7 +86,8 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                         vscode.postMessage({
                             page: 'note',
                             fileName: noteName,
-                            filePath: notePath
+                            filePath: notePath,
+                            currentPage: 'overview'
                         });
                     });
                 });
@@ -153,13 +115,28 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
             });
             
                 document.querySelectorAll(".move").forEach((moveButton)=>{
-                    moveButton.addEventListener("mouseover", (button)=>{
+                    moveButton.addEventListener("mouseover", (button) => {
                         const data = ${JSON.stringify(allFolders)}
                         const sourcePath = moveButton.getAttribute("value")
                         const sourceFoldername = moveButton.getAttribute("name")
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
                 });
+
+                document.querySelectorAll(".rename").forEach((renameButton) => {
+                    renameButton.addEventListener("click", () => {
+                        const oldFolderPath = renameButton.getAttribute("value");
+                        const parentPath = oldFolderPath.substr(0, oldFolderPath.lastIndexOf("/"));
+                        const parentFolder = parentPath.substr(parentPath.lastIndexOf("/") + 1);
+                            vscode.postMessage({
+                                command: 'renameFolder',
+                                oldFolderPath: oldFolderPath,
+                                parentPath: parentPath,
+                                parentFolder: parentFolder,
+                                webviewToRender: 'overview'
+                            });
+                        });
+                    });
 
                 document.querySelectorAll(".delete-button").forEach((deleteButton) => {
                     deleteButton.addEventListener("click", () => {
@@ -196,6 +173,9 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                 });
             </script>
             <script src="${script}"></script>
+            <script>
+	            updateTheme(${isDark});
+            </script>
 		</body>
 	</html>`;
 }
