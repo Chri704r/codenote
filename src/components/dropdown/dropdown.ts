@@ -12,6 +12,14 @@ type FolderOrFile = Folder | File;
 
 export function renderSettingsDropdown(folderOrFile: FolderOrFile) {
     const isFolder = 'folderName' in folderOrFile;
+
+    const renderRenameButton =  `
+            <li class="rename" value="${folderOrFile.uriPath}" name="${isFolder ? (folderOrFile as Folder).folderName : (folderOrFile as File).fileName}"><a>
+            <p>Rename</p>
+            <span class="codicon codicon-case-sensitive"></span>
+            </a></li>
+            `;
+            
     return `
             <div class="dropdown hidden">
                 <ul>
@@ -19,14 +27,11 @@ export function renderSettingsDropdown(folderOrFile: FolderOrFile) {
                         <p>Move</p>
                         <span class="codicon codicon-chevron-right"></span>
                     </a></li>
-                    <li class="rename" value="${folderOrFile.uriPath}" name="${isFolder ? (folderOrFile as Folder).folderName : (folderOrFile as File).fileName}"><a>
-                        <p>Rename</p>
-                        <span class="codicon codicon-case-sensitive"></span>
-                    </a></li>
+                    ${isFolder ? renderRenameButton : ''}
                     <li><a class="delete-button" data-${isFolder ? 'folder' : 'file'}-name="${isFolder ? (folderOrFile as Folder).folderName : (folderOrFile as File).fileName}" data-${isFolder ? 'folder' : 'file'}-path="${folderOrFile.uriPath}">
                         <p>Delete</p>
                         <span class="codicon codicon-trash"></span>
                     </a></li>
                 </ul>
             </div>`;
-}
+    }
