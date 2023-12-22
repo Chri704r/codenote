@@ -119,7 +119,8 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         vscode.postMessage({
                             page: 'note',
                             fileName: noteName,
-                            filePath: notePath
+                            filePath: notePath,
+                            currentPage: 'subfolder'
                         });
                     });
                 });
@@ -146,22 +147,24 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                     });
             });
 
-                document.querySelector(".back-button").addEventListener("click", ()=>{
-                    const uri = ${JSON.stringify(folderData.uriPath)}
-                    const parentUri = uri.substr(0, uri.lastIndexOf("/"));
-                    const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
-                    if(parentFolder == "undefined_publisher.codenote"){
-                        vscode.postMessage({
-                            page: "overview",
-                        });
-                    } else{
-                        vscode.postMessage({
-                            page: 'subfolder',
-                            folderName: parentFolder,
-                            folderPath: parentUri
-                        });
-                    }
-                })
+            document.querySelector(".back-button").addEventListener("click", ()=>{
+                const uri = ${JSON.stringify(folderData.uriPath)};
+                const replaceBackslash = uri.replace(/[\/\\\\]/g, "/");
+                const lastSlashIndex = Math.max(replaceBackslash.lastIndexOf("/"));
+                const parentUri = replaceBackslash.substr(0, lastSlashIndex);
+                const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
+                if(parentFolder == "undefined_publisher.codenote"){
+                    vscode.postMessage({
+                        page: "overview",
+                    });
+                } else{
+                    vscode.postMessage({
+                        page: 'subfolder',
+                        folderName: parentFolder,
+                        folderPath: parentUri
+                    });
+                }
+            });
 
                 document.querySelectorAll(".move").forEach((moveButton)=>{
                     moveButton.addEventListener("mouseover", (button)=>{

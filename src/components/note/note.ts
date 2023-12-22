@@ -1,10 +1,11 @@
 import * as vscode from "vscode";
 import { loadFile } from "../../utils/saveFile";
 
-export async function getWebviewNote(webview: vscode.Webview, context: any, fileName: string, filePath: string) {
+export async function getWebviewNote(webview: vscode.Webview, context: any, fileName: string, filePath: string, currentPage?: string) {
 	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/note", "note.css");
 	const styles = webview.asWebviewUri(onDiskPathStyles);
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
+    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 
 	const loadedContent = await loadFile(fileName, filePath, context);
 
@@ -21,11 +22,14 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 			<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 			<link rel="stylesheet" href="${styles}">
 			<link rel="stylesheet" href="${codiconsUri}">
+			<link rel="stylesheet" href="${generalStyles}">
 		</head>
 		<body>
-			<div class="toolbar-wrapper">
-				<div class="codicon codicon-chevron-left cursor-pointer"></div>
-				<div class="toolbar-container">
+			<div class="toolbar-container">
+			<div class="back-button">
+				<span class="codicon codicon-chevron-left"></span>
+			</div>				
+				<div class="toolbar">
 					<div id="toolbar">
 						<select class="ql-size">
 							<option value="small"></option>
@@ -72,7 +76,6 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 				const fileContent = quill.getContents();
 				const fileName = ${JSON.stringify(fileName)};
 				const filePath = ${JSON.stringify(filePath)};
-				console.log(fileContent);
 				
 				vscode.postMessage({
 					command: 'save',
@@ -81,6 +84,37 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 					filePath: filePath,
 				})
 			});	
+
+			document.querySelector(".back-button").addEventListener("click", () => {
+				const uri = ${JSON.stringify(filePath)};
+                const replaceBackslash = uri.replace(/[\/\\\\]/g, "/");
+                const lastSlashIndex = Math.max(replaceBackslash.lastIndexOf("/"));
+                const parentUri = replaceBackslash.substr(0, lastSlashIndex);
+                const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
+				const currentPage = ${JSON.stringify(currentPage)};
+				const fileContent = quill.getContents();
+				const fileName = ${JSON.stringify(fileName)};
+				const filePath = ${JSON.stringify(filePath)};
+
+				vscode.postMessage({
+					command: 'save',
+					data: { fileName, fileContent },
+					fileName: fileName,
+					filePath: filePath,
+				});
+
+                if (parentFolder == "undefined_publisher.codenote" || currentPage == "overview"){			
+					vscode.postMessage({
+						page: 'overview'
+					});
+                } else {
+                    vscode.postMessage({
+                        page: 'subfolder',
+                        folderName: parentFolder,
+                        folderPath: parentUri
+                    });
+                }
+            });
 
 			const loadedContent = ${JSON.stringify(loadedContent)};
 			if (loadedContent !== null) {
@@ -93,12 +127,7 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
                     command: "comment",
                     fileName: fileName,
                 });
-            })
-
-/* 			function detectLanguage(code) {
-				let result = hljs.highlightAuto(code);
-				return result.language || 'plaintext';
-			}; */
+            });
             </script>
 		</body>
 	</html>`;

@@ -39,7 +39,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await getWebviewSubfolder(folder, panel.webview, context);
 						return;
 					case "note":
-						panel.webview.html = await getWebviewNote(panel.webview, context, message.fileName, message.filePath);
+						panel.webview.html = await getWebviewNote(panel.webview, context, message.fileName, message.filePath, message.currentPage);
 						return;
 				}
 				switch (message.command) {

@@ -84,7 +84,8 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                         vscode.postMessage({
                             page: 'note',
                             fileName: noteName,
-                            filePath: notePath
+                            filePath: notePath,
+                            currentPage: 'overview'
                         });
                     });
                 });
