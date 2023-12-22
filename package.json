@@ -2,6 +2,7 @@
 	"name": "entry",
 	"displayName": "entry",
 	"publisher": "Entry",
+	"icon": "$(pencil)",
 	"description": "Write notes for your code",
 	"version": "0.0.1",
 	"engines": {
@@ -13,6 +14,22 @@
 	"activationEvents": [],
 	"main": "./out/extension.js",
 	"contributes": {
+		"contributes": {
+			"stylesheets": [
+			   {
+				  "label": "general.css",
+				  "path": "./src/style/general.css"
+			   },
+			   {
+				  "label": "overview.css",
+				  "path": "./src/components/overview/overview.css"
+			   },
+			   {
+				  "label": "codicon.css",
+				  "path": "./node_modules/@vscode/codicons/dist/codicon.css"
+			   }
+			]
+		 },
 		"viewsContainers": {
 			"activitybar": [
 				{
