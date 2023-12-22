@@ -2,10 +2,9 @@ import * as vscode from "vscode";
 import { loadFile } from "../../utils/saveFile";
 
 export async function getWebviewNote(webview: vscode.Webview, context: any, fileName: string, filePath: string, currentPage?: string) {
-	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/note", "note.css");
-	const styles = webview.asWebviewUri(onDiskPathStyles);
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
 	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
 
 	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
 
@@ -22,7 +21,6 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
 			<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 			<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-			<link rel="stylesheet" href="${styles}">
 			<link rel="stylesheet" href="${codiconsUri}">
 			<link rel="stylesheet" href="${generalStyles}">
 		</head>
@@ -136,6 +134,7 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
                 });
             });
             </script>
+			<script src="${script}"></script>
 			<script>
 				updateTheme(${isDark});
 			</script>
