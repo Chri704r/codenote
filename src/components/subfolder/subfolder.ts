@@ -6,15 +6,17 @@ import { searchInput } from "../search/searchInput";
 import { displayNotes } from "../../utils/displayNotes";
 
 export async function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
-    const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
-    const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-    const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
-    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
+	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
+	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 
-    const globalStoragePath = context.globalStorageUri.fsPath;
-    const allFolders = await getAllFolderContents(context);
-    const folderContent = await getContentInFolder(folderData);
-    const folderContentsHTML = await displayFolders(folderContent.folders);
+	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
+
+	const globalStoragePath = context.globalStorageUri.fsPath;
+	const allFolders = await getAllFolderContents(context);
+	const folderContent = await getContentInFolder(folderData);
+	const folderContentsHTML = await displayFolders(folderContent.folders);
 
 	const notesHTML = await displayNotes(folderContent.files);
 	const htmlBreadcrumb = await clickBreadcrumb(folderData, context);
@@ -228,6 +230,9 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                 });
             </script>
             <script src="${script}"></script>
+            <script>
+	            updateTheme(${isDark});
+            </script>
         </body>
     </html>
     `;

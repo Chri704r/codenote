@@ -5,7 +5,9 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/note", "note.css");
 	const styles = webview.asWebviewUri(onDiskPathStyles);
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+
+	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
 
 	const loadedContent = await loadFile(fileName, filePath, context);
 
@@ -134,6 +136,9 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
                 });
             });
             </script>
+			<script>
+				updateTheme(${isDark});
+			</script>
 		</body>
 	</html>`;
 }

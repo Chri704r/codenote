@@ -50,24 +50,51 @@ export async function activate(context: vscode.ExtensionContext) {
 					case "search":
 						panel.webview.html = await search(message.searchTerm, panel.webview, context);
 						return;
-					case 'addFolder':
+					case "addFolder":
 						await addFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
-						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
+						panel.webview.html = await updateWebview(
+							message.destinationFolderName,
+							message.destinationFolderUri,
+							message.webviewToRender,
+							panel.webview,
+							context
+						);
 						return;
-					case 'renameFolder':
+					case "renameFolder":
 						await renameFolder(message.oldFolderPath);
-						panel.webview.html = await updateWebview(message.parentFolder, message.parentPath, message.webviewToRender, panel.webview, context);						
+						panel.webview.html = await updateWebview(message.parentFolder, message.parentPath, message.webviewToRender, panel.webview, context);
 						return;
-					case 'addNote':
+					case "addNote":
 						await addNote(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
-						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
+						panel.webview.html = await updateWebview(
+							message.destinationFolderName,
+							message.destinationFolderUri,
+							message.webviewToRender,
+							panel.webview,
+							context
+						);
 						return;
 					case "save":
 						await saveFile(message.fileName, message.filePath, message.data.fileContent, context);
-						panel.webview.html = await updateWebview(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, panel.webview, context);						
+						panel.webview.html = await updateWebview(
+							message.destinationFolderName,
+							message.destinationFolderUri,
+							message.webviewToRender,
+							panel.webview,
+							context
+						);
 						return;
 					case "deleteFile":
-						await deleteFile(message.fileName, message.filePath, context, panel, folders, message.setPage, message.currentFolderName, message.currentFolderPath);
+						await deleteFile(
+							message.fileName,
+							message.filePath,
+							context,
+							panel,
+							folders,
+							message.setPage,
+							message.currentFolderName,
+							message.currentFolderPath
+						);
 					case "comment":
 						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath);
 				}
@@ -75,6 +102,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			undefined,
 			context.subscriptions
 		);
+
+		vscode.window.onDidChangeActiveColorTheme(async () => {
+			panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
+		});
 
 		await initializeFileAndFolder(context);
 	});
@@ -89,4 +120,4 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {}
