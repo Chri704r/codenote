@@ -3,19 +3,20 @@ import { getAllFolderContents } from "../../utils/getAllFolders";
 import { getContentInFolder } from "../../utils/initialize";
 import { displayFolders } from "../../utils/displayFolders";
 import { searchInput } from "../search/searchInput";
-import { renderSettingsDropdown } from "../dropdown/dropdown";
 import { displayNotes } from "../../utils/displayNotes";
 
 export async function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
-    const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
-    const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-    const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
-    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
+	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
+	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
 
-    const globalStoragePath = context.globalStorageUri.fsPath;
-    const allFolders = await getAllFolderContents(context);
-    const folderContent = await getContentInFolder(folderData);
-    const folderContentsHTML = await displayFolders(folderContent.folders);
+	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
+
+	const globalStoragePath = context.globalStorageUri.fsPath;
+	const allFolders = await getAllFolderContents(context);
+	const folderContent = await getContentInFolder(folderData);
+	const folderContentsHTML = await displayFolders(folderContent.folders);
 
 	const notesHTML = await displayNotes(folderContent.files);
 	const htmlBreadcrumb = await clickBreadcrumb(folderData, context);
@@ -120,7 +121,8 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         vscode.postMessage({
                             page: 'note',
                             fileName: noteName,
-                            filePath: notePath
+                            filePath: notePath,
+                            currentPage: 'subfolder'
                         });
                     });
                 });
@@ -147,22 +149,24 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                     });
             });
 
-                document.querySelector(".back-button").addEventListener("click", ()=>{
-                    const uri = ${JSON.stringify(folderData.uriPath)}
-                    const parentUri = uri.substr(0, uri.lastIndexOf("/"));
-                    const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
-                    if(parentFolder == "undefined_publisher.codenote"){
-                        vscode.postMessage({
-                            page: "overview",
-                        });
-                    } else{
-                        vscode.postMessage({
-                            page: 'subfolder',
-                            folderName: parentFolder,
-                            folderPath: parentUri
-                        });
-                    }
-                })
+            document.querySelector(".back-button").addEventListener("click", ()=>{
+                const uri = ${JSON.stringify(folderData.uriPath)};
+                const replaceBackslash = uri.replace(/[\/\\\\]/g, "/");
+                const lastSlashIndex = Math.max(replaceBackslash.lastIndexOf("/"));
+                const parentUri = replaceBackslash.substr(0, lastSlashIndex);
+                const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
+                if(parentFolder == "undefined_publisher.codenote"){
+                    vscode.postMessage({
+                        page: "overview",
+                    });
+                } else{
+                    vscode.postMessage({
+                        page: 'subfolder',
+                        folderName: parentFolder,
+                        folderPath: parentUri
+                    });
+                }
+            });
 
                 document.querySelectorAll(".move").forEach((moveButton)=>{
                     moveButton.addEventListener("mouseover", (button)=>{
@@ -226,6 +230,9 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                 });
             </script>
             <script src="${script}"></script>
+            <script>
+	            updateTheme(${isDark});
+            </script>
         </body>
     </html>
     `;

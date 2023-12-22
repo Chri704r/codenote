@@ -1,3 +1,13 @@
+const updateTheme = (isDark) => {
+	document.documentElement.style.setProperty("--body-background-color", isDark ? "#1e1e1e" : "#fff");
+	document.documentElement.style.setProperty("--text-color", isDark ? "#fff" : "#000");
+	document.documentElement.style.setProperty("--secondary-text-color", isDark ? "#b0b0b0" : "#909090");
+	document.documentElement.style.setProperty("--border-color", isDark ? "#2f2f2f" : "#F5F5F5");
+	document.documentElement.style.setProperty("--split-border-color", isDark ? "#3f3f3f" : "#3f3f3f");
+	document.documentElement.style.setProperty("--modal-background-color", isDark ? "#373737" : "#fff");
+	document.documentElement.style.setProperty("--item-background-color", isDark ? "#262626" : "#F8F8F8");
+	document.documentElement.style.setProperty("--hover-background-color", isDark ? "#444444" : "#F8F8F8");
+};
 // ------ delete modal ------
 document.querySelectorAll(".secondary-button").forEach((cancelButton) => {
 	cancelButton.addEventListener("click", () => {

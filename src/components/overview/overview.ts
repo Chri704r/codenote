@@ -6,19 +6,21 @@ import { getAllFolderContents } from "../../utils/getAllFolders";
 import { renderSettingsDropdown } from "../dropdown/dropdown";
 
 export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, files: any) {
-    const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
-    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
-    const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-    const styles = webview.asWebviewUri(onDiskPathStyles);
-    const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
+	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
+	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
+	const styles = webview.asWebviewUri(onDiskPathStyles);
+	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
 
-    const globalStoragePath = context.globalStorageUri.fsPath;
+	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
+
+	const globalStoragePath = context.globalStorageUri.fsPath;
 	const allFolders = await getAllFolderContents(context);
-    
-    const notesHTML = await displayNotes(files);
+
+	const notesHTML = await displayNotes(files);
 	const folderContentsHTML = await displayFolders(folders);
 
-    return `<!DOCTYPE html>
+	return `<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8" />
@@ -84,7 +86,8 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                         vscode.postMessage({
                             page: 'note',
                             fileName: noteName,
-                            filePath: notePath
+                            filePath: notePath,
+                            currentPage: 'overview'
                         });
                     });
                 });
@@ -170,6 +173,9 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                 });
             </script>
             <script src="${script}"></script>
+            <script>
+	            updateTheme(${isDark});
+            </script>
 		</body>
 	</html>`;
 }
