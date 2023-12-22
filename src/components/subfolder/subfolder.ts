@@ -3,7 +3,6 @@ import { getAllFolderContents } from "../../utils/getAllFolders";
 import { getContentInFolder } from "../../utils/initialize";
 import { displayFolders } from "../../utils/displayFolders";
 import { searchInput } from "../search/searchInput";
-import { renderSettingsDropdown } from "../dropdown/dropdown";
 import { displayNotes } from "../../utils/displayNotes";
 
 export async function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
