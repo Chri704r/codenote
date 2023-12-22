@@ -22,6 +22,19 @@
 				}
 			]
 		},
+		"views": {
+			"entry-explorer": [
+				{
+					"id": "entry-get-started",
+					"name": "Getting Started",
+					"type": "tree"
+				},
+				{
+					"id": "entry-documentation",
+					"name": "Documentation"
+				}
+			]
+		},
 		"viewsWelcome": [
 			{
 				"view": "entry-get-started",
