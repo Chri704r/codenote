@@ -54,3 +54,12 @@
     font-size: 12px;
     color: #333;
 }
+
+#toolbar-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+#toolbar-container {
+    margin: 0 auto;
+}

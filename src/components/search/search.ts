@@ -191,7 +191,8 @@ async function renderFolderContent(folders: any) {
 		.join("");
 }
 
-async function renderFiles(files: any) {
+async function renderFiles
+(files: any) {
 	return files
 		.map((file: any) => {
 			const dropdownHtml = renderSettingsDropdown(file);
@@ -201,7 +202,6 @@ async function renderFiles(files: any) {
                         <p class="folder-name">${file.name}</p>
                         <p class="mtime">${file.date}</p>
                     </div>
-
                     <div class="right">
                         <div class="settings-container">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" height="24" viewBox="0 -960 960 960" width="24">
@@ -211,7 +211,6 @@ async function renderFiles(files: any) {
                             ${dropdownHtml}
                         </div>
                     </div>
-
                 </div>
                 `;
 		})

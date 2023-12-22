@@ -52,7 +52,7 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 						<button id="custom-button" class="codicon codicon-comment ql-snow"></button>
 					</div>
 				</div>
-				<button class="save-file">Save</button>
+				<button class="save-file ">Save</button>
 			</div>
 			<div id="editor"></div>
             <script>
