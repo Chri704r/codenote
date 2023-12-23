@@ -5,16 +5,10 @@ import { displayFolders } from "../../utils/displayFolders";
 import { searchInput } from "../search/searchInput";
 import { displayNotes } from "../../utils/displayNotes";
 import { renderAddButtons } from "../../utils/renderAddButtons";
+import { header } from "../../utils/header";
+import { scriptImport } from "../../utils/scriptImport";
 
 export async function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
-	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
-	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
-	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
-
-	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
-
-	const globalStoragePath = context.globalStorageUri.fsPath;
 	const allFolders = await getAllFolderContents(context);
 	const folderContent = await getContentInFolder(folderData);
 
@@ -23,15 +17,13 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
 	const htmlBreadcrumb = await clickBreadcrumb(folderData, context);
 	const addButtonsHtml = await renderAddButtons();
 
+    const htmlHeader = await header(webview, context);
+    const scriptHtml = await scriptImport(webview, context);
+
 	return `<!DOCTYPE html>
     <html lang="en">
-        <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <link rel="stylesheet" href="${styles}" />
-            <link rel="stylesheet" href="${codiconsUri}">
-            <link rel="stylesheet" href="${generalStyles}">
-        </head>
+        ${htmlHeader}
+
         <body>
             <div class="folder-title-container">
                 <div class="back-button">
@@ -212,10 +204,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                     });
                 });
             </script>
-            <script src="${script}"></script>
-            <script>
-	            updateTheme(${isDark});
-            </script>
+            ${scriptHtml}
         </body>
     </html>
     `;
