@@ -24,7 +24,7 @@ jobs:
         run: npm install
       
       - name: Install Yarn
-        run: npm install -g yarn
+        run: yarn install
       
       - name: Publish Extension
         run: npm run deploy --verbose
