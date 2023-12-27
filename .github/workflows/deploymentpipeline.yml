@@ -23,6 +23,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
       
+      - name: Install Yarn
+        run: npm install -g yarn
+      
       - name: Publish Extension
         run: npm run deploy --verbose
         env:
