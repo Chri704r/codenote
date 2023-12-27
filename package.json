@@ -69,7 +69,7 @@
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js",
-		"copy-assets": "xcopy /E /I src\\style\\* out\\style && xcopy /E /I src\\utils\\* out\\utils",
+		"copy-assets": "cp -R src/style/* out/style && cp -R src/utils/* out/utils",
 		"deploy": "vsce publish --yarn"
 	},
 	"devDependencies": {
