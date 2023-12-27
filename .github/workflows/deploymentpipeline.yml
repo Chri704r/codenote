@@ -20,10 +20,16 @@ jobs:
         with:
           node-version: '18'
       
-      - name: Install Yarn
-        run: yarn install
+      - name: Install Dependencies
+        run: npm install
+      
+      - name: Install vsce
+        run: npm install -g vsce
+      
+      - name: Login to Azure Devops
+        run: vsce login Entry
+        env:
+          VSCODE_PAT: gyen7madyrhlqvhxocywjlcjyrbtlnsbcad7kaa2ofmd2rlzy6lq
       
       - name: Publish Extension
-        run: npm run deploy --verbose
-        env:
-          VSCE_PAT: pxmf53l45w6yw45456e3wga2lzh7eqzhnmvjoxwgrbqttby7vvhq
+        run: vsce publish
