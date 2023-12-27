@@ -18,14 +18,15 @@ import { renameFolder } from "./utils/renameFolder";
 let currentOpenFile: string;
 
 export async function activate(context: vscode.ExtensionContext) {
-	const folders = await getFolderContents(context);
-	const files = await getNotes(context.globalStorageUri.fsPath);
-	console.log(context.globalStorageUri.fsPath);
+	await initializeFileAndFolder(context);
 
 	let disposable = vscode.commands.registerCommand("entry.entry", async () => {
 		const panel = vscode.window.createWebviewPanel("entry", "entry", vscode.ViewColumn.One, {
 			enableScripts: true,
 		});
+
+		const folders = await getFolderContents(context);
+		const files = await getNotes(context.globalStorageUri.fsPath);
 
 		panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 
@@ -106,8 +107,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.window.onDidChangeActiveColorTheme(async () => {
 			panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 		});
-
-		await initializeFileAndFolder(context);
 	});
 
 	vscode.window.onDidChangeActiveTextEditor(() => {

@@ -1,9 +1,9 @@
 {
 	"name": "entry",
 	"displayName": "entry",
-	"publisher": "Entry",
+	"publisher": "entry",
 	"description": "Write notes for your code",
-	"version": "0.0.1",
+	"version": "0.0.93",
 	"engines": {
 		"vscode": "^1.83.0"
 	},
@@ -63,22 +63,25 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
+		"vscode:prepublish": "npm run compile && npm run copy-assets",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
+		"test": "node ./out/test/runTest.js",
+		"copy-assets": "cp -R src/style/* out/style && cp -R src/utils/* out/utils",
+		"deploy": "vsce publish --yarn"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^11.0.4",
 		"@types/mocha": "^10.0.3",
 		"@types/node": "18.x",
 		"@types/quill": "^2.0.14",
-		"@types/vscode": "^1.84.0",
+		"@types/vscode": "^1.83.0",
 		"@typescript-eslint/eslint-plugin": "^6.9.0",
 		"@typescript-eslint/parser": "^6.9.0",
 		"@vscode/test-electron": "^2.3.6",
+		"@vscode/vsce": "^2.22.0",
 		"eslint": "^8.52.0",
 		"glob": "^10.3.10",
 		"mocha": "^10.2.0",

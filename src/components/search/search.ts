@@ -2,15 +2,10 @@ import { renderSettingsDropdown } from "../dropdown/dropdown";
 import * as vscode from "vscode";
 import { searchInput } from "./searchInput";
 import { getAllFolderContents } from "../../utils/getAllFolders";
+import { header } from "../../utils/header";
+import { scriptImport } from "../../utils/scriptImport";
 
 export async function search(searchTerm: string, webview: vscode.Webview, context: any) {
-	const styles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css"));
-	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
-	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
-
-	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
-
 	const allFolders = await getAllFolderContents(context);
 	const results = await searchFiles(searchTerm, context);
 
@@ -25,15 +20,13 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
 		fileContentsHTML = "";
 	}
 
+	const htmlHeader = await header(webview, context);
+	const scriptHtml = await scriptImport(webview, context);
+
 	return `<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="${styles}" />
-        <link rel="stylesheet" href="${codiconsUri}">
-        <link rel="stylesheet" href="${generalStyles}">
-	</head>
+	<html lang="en">
+	${htmlHeader}
+
 	<style>
 		#search-backbutton-container{
 			display: grid;
@@ -107,10 +100,7 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
                     }, { once: true })
                 })
 		</script>
-		<script src="${script}"></script>
-		<script>
-			updateTheme(${isDark});
-		</script>
+		${scriptHtml}
 	</body>
 </html>`;
 }
