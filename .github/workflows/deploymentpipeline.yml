@@ -24,6 +24,6 @@ jobs:
         run: npm install
       
       - name: Publish Extension
-        run: npm run deploy
+        run: npm run deploy --verbose
         env:
           VSCE_PAT: h53oxpq3k2fmfc2zgv3wocrhoh634w46qtg4vdymikthllkjtola
