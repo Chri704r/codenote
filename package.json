@@ -69,7 +69,8 @@
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js",
-		"copy-assets": "xcopy /E /I src\\style\\* out\\style && xcopy /E /I src\\utils\\* out\\utils"
+		"copy-assets": "xcopy /E /I src\\style\\* out\\style && xcopy /E /I src\\utils\\* out\\utils",
+		"deploy": "vsce publish --npm"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^11.0.4",
@@ -80,6 +81,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.9.0",
 		"@typescript-eslint/parser": "^6.9.0",
 		"@vscode/test-electron": "^2.3.6",
+		"@vscode/vsce": "^2.22.0",
 		"eslint": "^8.52.0",
 		"glob": "^10.3.10",
 		"mocha": "^10.2.0",

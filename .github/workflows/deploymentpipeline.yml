@@ -2,11 +2,16 @@ name: Entry Deployment Pipeline
 on: 
   push:
     branches:
-      - fixes
+    - fixes
+  release:
+    types:
+    - created
 
 jobs: 
   deploy:
     runs-on: ubuntu-latest
+
+    if: success() && startsWith(github.ref, 'refs/tags/')
 
     steps: 
       - name: Checkout Repository
@@ -20,13 +25,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
       
-      - name: Install vsce
-        run: npm install -g vsce
-      
-      - name: Login to Azure Devops
-        env:
-          VSCODE_TOKEN: 'h53oxpq3k2fmfc2zgv3wocrhoh634w46qtg4vdymikthllkjtola'
-        run: vsce login Entry
-      
       - name: Publish Extension
-        run: vsce publish
+        run: npm run deploy
+        env:
+          VSCE_PAT: h53oxpq3k2fmfc2zgv3wocrhoh634w46qtg4vdymikthllkjtola
