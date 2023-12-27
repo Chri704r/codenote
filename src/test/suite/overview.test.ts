@@ -6,8 +6,8 @@ suite('Extension Test Suite', () => {
     vscode.window.showInformationMessage('Start all tests');
 
     const context = {
-        extensionUri: vscode.Uri.file('/c:/Users/aisas/OneDrive/Skrivebord/bachelor/entry-notes-app/codenote'),
-        globalStorageUri: vscode.Uri.file('/C:/Users/aisas/AppData/Roaming/Code/User/globalStorage/entry.entry')
+        extensionUri: vscode.Uri.file('/bachelor/entry-notes-app/codenote'),
+        globalStorageUri: vscode.Uri.file('/AppData/Roaming/Code/User/globalStorage/entry.entry')
     };
 
     const folders = [

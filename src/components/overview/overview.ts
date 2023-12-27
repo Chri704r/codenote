@@ -17,9 +17,6 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
     const htmlHeader = await header(webview, context);
     const scriptHtml = await scriptImport(webview, context);
 
-    console.log(folders);
-    console.log(files);
-
 	return `<!DOCTYPE html>
 	<html lang="en">
         ${htmlHeader}
