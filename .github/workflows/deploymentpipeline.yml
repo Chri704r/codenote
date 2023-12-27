@@ -25,7 +25,7 @@ jobs:
       
       - name: Login to Azure Devops
         env:
-          VSCODE_TOKEN: h53oxpq3k2fmfc2zgv3wocrhoh634w46qtg4vdymikthllkjtola
+          VSCODE_TOKEN: 'h53oxpq3k2fmfc2zgv3wocrhoh634w46qtg4vdymikthllkjtola'
         run: vsce login Entry
       
       - name: Publish Extension
