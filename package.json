@@ -70,7 +70,7 @@
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js",
 		"copy-assets": "cp -R src/style/* out/style && cp -R src/utils/* out/utils",
-		"deploy": "vsce publish --yarn"
+		"deploy": "vsce publish --npx"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^11.0.4",
