@@ -5,33 +5,34 @@ const fs = require("fs");
 const fsp = require("fs").promises;
 
 export async function initializeFileAndFolder(context: vscode.ExtensionContext) {
+	const folderName = 'Notes';
+	const fileName = 'Getting started with Entry.json';
+	const fileContent = {
+		"ops": [
+		  {
+			"attributes": {
+			  "size": "large",
+			  "bold": true
+			},
+			"insert": "Welcome to Entry!"
+		  },
+		  {
+			"insert": "\n\nYour new favorite notes extension for VSCode. Take your note taking to a new level with our amazing tools, designed to make it easier for you.\n\nTake notes, add bookmarks to your code - and save them directly in your notes!\n\n"
+		  }
+		]
+	};
+
+	const jsonString = JSON.stringify(fileContent, null, 2);
+	
 	const globalStorageUri = context.globalStorageUri;
-
-	const folderName = "Notes";
-	const fileName = "Getting started with Entry.txt";
-
 	const folderPath = path.join(globalStorageUri.fsPath, folderName);
 	const filePath = path.join(folderPath, fileName);
 
-	try {
-		if (!fs.existsSync(folderPath)) {
-			if (isDirectoryEmpty(globalStorageUri.fsPath)) {
-				fs.mkdirSync(folderPath, { recursive: true });
-				fs.writeFileSync(filePath, "Hello, world!");
-			} else {
-				return;
-			}
-		} else {
-			return;
-		}
-	} catch (error: any) {
-		console.error(`Error creating folder and file: ${error.message}`);
+	if (!fs.existsSync(folderPath)) {
+		fs.mkdirSync(folderPath, { recursive: true });
+		fs.writeFileSync(filePath, jsonString);
 	}
-}
 
-function isDirectoryEmpty(directoryPath: string): boolean {
-	const files = fs.readdirSync(directoryPath);
-	return files.length === 0;
 }
 
 export async function getFolderContents(context: vscode.ExtensionContext) {

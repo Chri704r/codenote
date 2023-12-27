@@ -2,7 +2,10 @@ name: Entry Deployment Pipeline
 on: 
   push:
     branches:
-      - fixes
+    - master
+  release:
+    types:
+    - created
 
 jobs: 
   deploy:
@@ -18,14 +21,13 @@ jobs:
           node-version: '18'
       
       - name: Install Dependencies
-        run: npm install
-      
-      - name: Install vsce
-        run: npm install -g vsce
-      
-      - name: Login to Azure Devops
-        run: vsce login Entry -p zyq6epeclsnru437xqoeviopfqhnbjf4wxneqd4fwbnmi5t7vvta
-      
-      - name: Publish Extension
-        run: vsce publish
+        run: yarn install
 
+      - name: Publish Extension
+        run: npm run deploy
+        env:
+          VSCE_PAT: ${{ secrets.ENTRY_PIPELINE }}
+
+
+
+          

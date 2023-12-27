@@ -3,37 +3,27 @@ import { displayFolders } from "../../utils/displayFolders";
 import { displayNotes } from "../../utils/displayNotes";
 import { searchInput } from "../search/searchInput";
 import { getAllFolderContents } from "../../utils/getAllFolders";
-import { renderSettingsDropdown } from "../dropdown/dropdown";
 import { renderAddButtons } from "../../utils/renderAddButtons";
+import { header } from "../../utils/header";
+import { scriptImport } from "../../utils/scriptImport";
 
 export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, files: any) {
-	const onDiskPathStyles = vscode.Uri.joinPath(context.extensionUri, "src/components/overview", "overview.css");
-	const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
-	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
-	const styles = webview.asWebviewUri(onDiskPathStyles);
-	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/utils", "script.js"));
-
-	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
-
 	const globalStoragePath = context.globalStorageUri.fsPath;
 	const allFolders = await getAllFolderContents(context);
 
     const notesHTML = await displayNotes(files);
 	const folderContentsHTML = await displayFolders(folders);
 	const addButtonsHtml = await renderAddButtons();
+    const htmlHeader = await header(webview, context);
+    const scriptHtml = await scriptImport(webview, context);
 
     console.log(folders);
     console.log(files);
 
 	return `<!DOCTYPE html>
 	<html lang="en">
-		<head>
-			<meta charset="UTF-8" />
-			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <link rel="stylesheet" href="${styles}">
-            <link rel="stylesheet" href="${generalStyles}">
-            <link rel="stylesheet" href="${codiconsUri}">
-		</head>
+        ${htmlHeader}
+		
 		<body>
             ${searchInput()}
             <div>
@@ -161,10 +151,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                     });
                 });
             </script>
-            <script src="${script}"></script>
-            <script>
-	            updateTheme(${isDark});
-            </script>
+            ${scriptHtml}
 		</body>
 	</html>`;
 }
