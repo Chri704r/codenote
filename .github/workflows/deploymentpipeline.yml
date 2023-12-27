@@ -2,7 +2,7 @@ name: Entry Deployment Pipeline
 on: 
   push:
     branches:
-    - fixes
+    - master
   release:
     types:
     - created
@@ -24,6 +24,10 @@ jobs:
         run: yarn install
 
       - name: Publish Extension
-        run: npm run deploy --verbose
+        run: npm run deploy
         env:
           VSCE_PAT: ${{ secrets.ENTRY_PIPELINE }}
+
+
+
+          
