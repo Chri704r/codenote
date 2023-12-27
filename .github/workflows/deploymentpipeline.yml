@@ -21,15 +21,9 @@ jobs:
           node-version: '18'
       
       - name: Install Dependencies
-        run: npm install
-      
-      - name: Install vsce
-        run: npm install -g vsce
-      
-      - name: Login to Azure Devops
-        run: vsce login Entry
-        env:
-          VSCODE_PAT: gyen7madyrhlqvhxocywjlcjyrbtlnsbcad7kaa2ofmd2rlzy6lq
-      
+        run: yarn install
+
       - name: Publish Extension
-        run: vsce publish
+        run: npm run deploy --verbose
+        env:
+          VSCE_PAT: ${{ secrets.ENTRY_PIPELINE }}
