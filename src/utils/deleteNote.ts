@@ -6,7 +6,7 @@ import { getNotes } from './getLastEditedNotes';
 
 async function updateWebview(setPage: string, panel: vscode.WebviewPanel, context: vscode.ExtensionContext, folders: any, currentFolderName: string, currentFolderPath?: string) {
     const updatedFiles = await getNotes(currentFolderName);
-	const updatedFolderDeleteFiles = { folderName: currentFolderName, uriPath: currentFolderPath };
+	const updatedFolderDeleteFiles = { folderName: currentFolderName, uriPath: currentFolderPath || ''};
 
     if (setPage === 'overview') {
         panel.webview.html = await getWebviewOverview(panel.webview, context, folders, updatedFiles);

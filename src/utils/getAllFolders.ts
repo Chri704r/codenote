@@ -25,7 +25,7 @@ async function exploreFolder(folderName: string, globalStorageUri: vscode.Uri, f
 	}
 }
 
-export async function getAllFolderContents(context: any) {
+export async function getAllFolderContents(context: vscode.ExtensionContext) {
 	const globalStorageUri = context.globalStorageUri;
 	const fsp = require("fs").promises;
 
