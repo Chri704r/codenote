@@ -14,6 +14,7 @@ import { updateWebview } from "./utils/updateWebview";
 import { saveFile } from "./utils/saveFile";
 import { deleteFile } from "./utils/deleteNote";
 import { renameFolder } from "./utils/renameFolder";
+import { deleteFolder } from "./utils/deleteFolder";
 
 let currentOpenFile: string;
 let currentOpenFilePath: string;
@@ -101,6 +102,19 @@ export async function activate(context: vscode.ExtensionContext) {
 							message.currentFolderName,
 							message.currentFolderPath
 						);
+						return;
+					case "deleteFolder":
+						await deleteFolder(
+							message.folderName,
+							message.folderPath,
+							context,
+							panel,
+							message.setPage,
+							message.currentFolderName,
+							message.currentFolderPath,
+							files
+							);	
+						return;
 					case "comment":
 						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath);
 				}

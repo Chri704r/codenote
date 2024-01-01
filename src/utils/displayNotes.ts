@@ -1,7 +1,18 @@
 import { renderSettingsDropdown } from "../components/dropdown/dropdown";
-export async function displayNotes(files: any) {
+
+interface Files {
+    dateCreated: string,
+    fileName: string,
+    firstLine: string,
+    folderItem: {},
+    lastModified: string,
+    mtime: number,
+    uriPath: string
+}
+
+export async function displayNotes(files: Files[]) {
     return files
-        .map((file: any) => {
+        .map((file) => {
             const dropdownHtml = renderSettingsDropdown(file);
             return `
                         <div class="item">

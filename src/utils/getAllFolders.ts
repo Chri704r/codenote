@@ -1,13 +1,22 @@
 import * as vscode from "vscode";
 import * as path from "path";
-async function exploreFolder(folderName: string, globalStorageUri: vscode.Uri, folderPath: any) {
+
+interface Folders {
+	folderName: string;
+	uriPath: string;
+	subfolders?: Folders[];
+}
+
+type FilesArrayFromFolders = Folders['folderName'][];
+
+async function exploreFolder(folderName: string, globalStorageUri: vscode.Uri, folderPath: string) {
 	const fsp = require("fs").promises;
 
-	const files = await fsp.readdir(folderPath);
-	const subfolders: any = [];
+	const files: FilesArrayFromFolders = await fsp.readdir(folderPath);
+	const subfolders: Folders[] = [];
 
 	await Promise.all(
-		files.map(async (file: any) => {
+		files.map(async (file) => {
 			const uriPath = path.join(folderPath, file);
 			const newStats = await fsp.stat(uriPath);
 
@@ -31,7 +40,7 @@ export async function getAllFolderContents(context: vscode.ExtensionContext) {
 
 	try {
 		const folders = await fsp.readdir(globalStorageUri.fsPath);
-		const folderContents: any = [];
+		const folderContents: Folders[] = [];
 
 		await Promise.all(
 			folders.map(async (folderName: string) => {

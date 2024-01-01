@@ -1,6 +1,18 @@
 const fsp = require("fs").promises;
 const path = require('path');
 
+interface Foldercontent {
+	dateCreated: string;
+    fileName: string;
+    firstLine: string;
+    folderItem: {
+        name: string;
+    }
+    lastModified: string;
+    mtime: number;
+	uriPath: string;
+}
+
 export function timeAgo(mtime: EpochTimeStamp) {
     const currentDate = new Date();
     const pastDate = new Date(mtime);
@@ -48,7 +60,7 @@ export async function readFirstLine(filePath: string): Promise<string> {
 }
 
 export async function getNotes(folderName: string) {
-    let folderContents: any = [];
+    let folderContents: Foldercontent[] = [];
 
     const folderItems = await fsp.readdir(folderName, { withFileTypes: true });
 
@@ -72,6 +84,6 @@ export async function getNotes(folderName: string) {
         }
     }
 
-    return folderContents.sort((b: Record<string, number>, a: Record<string, number>) => a.mtime - b.mtime).slice(0, 5);
+    return folderContents.sort((b: Foldercontent, a: Foldercontent) => a.mtime - b.mtime).slice(0, 5);
 
 }
