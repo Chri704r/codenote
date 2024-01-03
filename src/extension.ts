@@ -16,6 +16,7 @@ import { deleteFile } from "./utils/deleteNote";
 import { renameFolder } from "./utils/renameFolder";
 
 let currentOpenFile: string;
+let currentOpenFilePath: string;
 
 export async function activate(context: vscode.ExtensionContext) {
 	await initializeFileAndFolder(context);
@@ -41,6 +42,8 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await getWebviewSubfolder(folder, panel.webview, context);
 						return;
 					case "note":
+						currentOpenFile = message.fileName;
+						currentOpenFilePath = message.filePath;
 						panel.webview.html = await getWebviewNote(panel.webview, context, message.fileName, message.filePath, message.currentPage);
 						return;
 				}
@@ -84,6 +87,8 @@ export async function activate(context: vscode.ExtensionContext) {
 							panel.webview,
 							context
 						);
+						currentOpenFile = "";
+						currentOpenFilePath = "";
 						return;
 					case "deleteFile":
 						await deleteFile(
@@ -107,12 +112,18 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.window.onDidChangeActiveColorTheme(async () => {
 			panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 		});
+
+		let addDecorator = vscode.commands.registerCommand("entry.addDecorator", () => {
+			addDecoratorToLine(panel.webview, context, currentOpenFile, currentOpenFilePath);
+		});
+
+		context.subscriptions.push(addDecorator);
 	});
 
 	vscode.window.onDidChangeActiveTextEditor(() => {
 		// Trigger the registered command when the active text editor changes
 		// vscode.commands.executeCommand("extension.onDidChangeActiveTextEditor");
-		displayDecorators(context, currentOpenFile);
+		displayDecorators(context, currentOpenFile, currentOpenFilePath);
 	});
 
 	context.subscriptions.push(disposable);

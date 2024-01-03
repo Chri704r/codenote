@@ -1,13 +1,18 @@
 import * as vscode from "vscode";
 import { getWebviewNote } from "../components/note/note";
 
-export function addDecoratorToLine(webview: vscode.Webview, context: vscode.ExtensionContext, currentFileName: string, currentFilePath: string) {
+export function addDecoratorToLine(
+	webview: vscode.Webview,
+	context: vscode.ExtensionContext,
+	currentFileName: string = "",
+	currentFilePath: string = ""
+) {
 	let activeEditor = vscode.window.activeTextEditor;
 
-	if (activeEditor) {
+	if (activeEditor && currentFileName !== "" && currentFilePath !== "") {
 		// Create a decoration type with a gutter icon
 		const decorationType = vscode.window.createTextEditorDecorationType({
-			gutterIconPath: context.asAbsolutePath("src/assets/icons/pencil.png"),
+			gutterIconPath: context.asAbsolutePath("src/assets/pencil.png"),
 			gutterIconSize: "20px",
 		});
 		const globalState = context.globalState;
@@ -51,8 +56,8 @@ export function addDecoratorToLine(webview: vscode.Webview, context: vscode.Exte
 
 			// Add code to file
 			const fs = require("fs");
-			const globalStorageUri = context.globalStorageUri;
-			const data = fs.readFileSync(`${globalStorageUri.path}/${currentFileName}.json`);
+			// const globalStorageUri = context.globalStorageUri;
+			const data = fs.readFileSync(currentFilePath);
 			const jsonData = JSON.parse(data);
 
 			// split selected text after each line
@@ -73,9 +78,11 @@ export function addDecoratorToLine(webview: vscode.Webview, context: vscode.Exte
 				);
 			});
 
-			fs.writeFileSync(`${globalStorageUri.path}/${currentFileName}.json`, JSON.stringify(jsonData));
+			fs.writeFileSync(currentFilePath, JSON.stringify(jsonData));
 
 			webview.html = await getWebviewNote(webview, context, currentFileName, currentFilePath);
 		}
+	} else {
+		vscode.window.showErrorMessage(`You need to have a note open to add a comment`);
 	}
 }

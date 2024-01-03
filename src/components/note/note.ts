@@ -40,7 +40,6 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 						<button class="ql-indent" value="+1"></button>
 						<button class="ql-link"></button>
 						<button class="ql-image"></button>
-						<button id="custom-button" class="codicon codicon-comment ql-snow"></button>
 					</div>
 				</div>
 			</div>
@@ -101,14 +100,6 @@ export async function getWebviewNote(webview: vscode.Webview, context: any, file
 			if (loadedContent !== null) {
 				quill.setContents(loadedContent);
 			}
-
-			document.querySelector("#custom-button").addEventListener("click", ()=>{
-                const fileName = "${fileName}";
-                vscode.postMessage({
-                    command: "comment",
-                    fileName: fileName,
-                });
-            });
             </script>
 			<script src="${script}"></script>
 			<script>
