@@ -73,7 +73,7 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile && npm run copy-assets",
+		"vscode:prepublish": "npm run copy-assets && npm run compile",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
