@@ -2,6 +2,7 @@
 	"name": "entry",
 	"displayName": "entry",
 	"publisher": "entry",
+	"icon": "out/assets/icon.png",
 	"description": "Write notes for your code",
 	"version": "0.0.97",
 	"engines": {
