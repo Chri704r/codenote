@@ -13,7 +13,7 @@ interface Folder {
 	uriPath: string;
 }
 
-export async function getWebviewSubfolder(folderData: Folder, webview: vscode.Webview, context: vscode.ExtensionContext) {
+export async function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: vscode.ExtensionContext) {
 	const allFolders = await getAllFolderContents(context);
 	const folderContent = await getContentInFolder(folderData);
 
