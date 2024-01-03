@@ -3,7 +3,7 @@
 	"displayName": "entry",
 	"publisher": "entry",
 	"description": "Write notes for your code",
-	"version": "0.0.94",
+	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.83.0"
 	},
