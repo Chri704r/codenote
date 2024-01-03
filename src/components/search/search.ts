@@ -4,6 +4,7 @@ import { searchInput } from "./searchInput";
 import { getAllFolderContents } from "../../utils/getAllFolders";
 import { header } from "../../utils/header";
 import { scriptImport } from "../../utils/scriptImport";
+import { readFirstLine } from "../../utils/getLastEditedNotes";
 
 export async function search(searchTerm: string, webview: vscode.Webview, context: vscode.ExtensionContext) {
 	const allFolders = await getAllFolderContents(context);
@@ -120,10 +121,11 @@ async function searchFiles(searchTerm: string, context: vscode.ExtensionContext)
 }
 
 interface SearchResult {
-	uriPath: any;
+	uriPath: string;
 	name: string;
 	type: vscode.FileType;
-	date: any;
+	date?: string;
+	firstLine?: string;
 }
 
 async function searchFilesInStorage(rootUri: vscode.Uri, searchTerm: string) {
@@ -133,20 +135,35 @@ async function searchFilesInStorage(rootUri: vscode.Uri, searchTerm: string) {
 		const entries = await vscode.workspace.fs.readDirectory(dirUri);
 
 		for (const [name, type] of entries) {
-			const fsp = require("fs").promises;
-
 			const uriPath = vscode.Uri.joinPath(dirUri, name);
-			const stats = await fsp.stat(uriPath.path);
-
-			let date = new Date(stats.mtimeMs);
-			let dateStr = date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
 
 			if (type === vscode.FileType.Directory) {
 				await processDirectory(uriPath);
-			}
 
-			if (name.toLowerCase().includes(searchTerm.toLowerCase())) {
-				result.push({ uriPath: uriPath.path, name, type, date: dateStr });
+				if (name.toLowerCase().includes(searchTerm.toLowerCase())) {
+					result.push({ uriPath: uriPath.path, name, type });
+				}
+			} else if (type === vscode.FileType.File) {
+				const content = await vscode.workspace.fs.readFile(uriPath);
+				const contentStr = Buffer.from(content).toString("utf-8");
+
+				let dateStr: string = "";
+				let firstLine: string = "";
+				try {
+					const fsp = require("fs").promises;
+					const uriPath = vscode.Uri.joinPath(dirUri, name);
+					const stats = await fsp.stat(uriPath.path);
+
+					let date = new Date(stats.mtimeMs);
+					dateStr = date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
+					firstLine = await readFirstLine(uriPath.path);
+				} catch (error) {
+					console.error("Error getting file stats:", error);
+				}
+
+				if (name.toLowerCase().includes(searchTerm.toLowerCase()) || contentStr.toLowerCase().includes(searchTerm.toLowerCase())) {
+					result.push({ uriPath: uriPath.path, name, type, date: dateStr, firstLine });
+				}
 			}
 		}
 	};
@@ -187,7 +204,7 @@ async function renderFiles(files: any) {
 			return `
                 <div class="item">
                     <div class="left file-item" data-folder-name="${file.name}" folder-path="${file.uriPath}">
-                        <p class="folder-name">${file.name}</p>
+                        <p class="folder-name">${file.firstLine}</p>
                         <p class="mtime">${file.date}</p>
                     </div>
                     <div class="right">
