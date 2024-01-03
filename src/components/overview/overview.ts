@@ -11,7 +11,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
 	const globalStoragePath = context.globalStorageUri.fsPath;
 	const allFolders = await getAllFolderContents(context);
 
-	const notesHTML = await displayNotes(files);
+    const notesHTML = await displayNotes(files);
 	const folderContentsHTML = await displayFolders(folders);
 	const addButtonsHtml = await renderAddButtons();
     const htmlHeader = await header(webview, context);
