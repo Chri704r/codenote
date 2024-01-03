@@ -428,3 +428,7 @@ span.codicon.codicon-folder {
 #buttons-container svg {
     cursor: pointer;
 }
+
+#add-folder-button, #add-note-button {
+	cursor: pointer;
+}
