@@ -6,7 +6,7 @@ import { header } from "../../utils/header";
 import { scriptImport } from "../../utils/scriptImport";
 import { readFirstLine } from "../../utils/getLastEditedNotes";
 
-export async function search(searchTerm: string, webview: vscode.Webview, context: any) {
+export async function search(searchTerm: string, webview: vscode.Webview, context: vscode.ExtensionContext) {
 	const allFolders = await getAllFolderContents(context);
 	const results = await searchFiles(searchTerm, context);
 

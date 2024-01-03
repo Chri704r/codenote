@@ -7,11 +7,26 @@ import { renderAddButtons } from "../../utils/renderAddButtons";
 import { header } from "../../utils/header";
 import { scriptImport } from "../../utils/scriptImport";
 
-export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: any, files: any) {
+interface Folders {
+	folderName: string;
+	uriPath: string;
+}
+
+interface Files {
+    dateCreated: string,
+    fileName: string,
+    firstLine: string,
+    folderItem: {},
+    lastModified: string,
+    mtime: number,
+    uriPath: string
+}
+
+export async function getWebviewOverview(webview: vscode.Webview, context: vscode.ExtensionContext, folders: Folders[], files: Files[]) {
 	const globalStoragePath = context.globalStorageUri.fsPath;
 	const allFolders = await getAllFolderContents(context);
 
-	const notesHTML = await displayNotes(files);
+    const notesHTML = await displayNotes(files);
 	const folderContentsHTML = await displayFolders(folders);
 	const addButtonsHtml = await renderAddButtons();
     const htmlHeader = await header(webview, context);
@@ -132,7 +147,9 @@ export async function getWebviewOverview(webview: vscode.Webview, context: any, 
                                         command: 'deleteFolder',
                                         folderName: folderName,
                                         folderPath: folderPath,
-                                        setPage: 'overview'
+                                        setPage: 'overview',
+                                        currentFolderName: folderName,
+                                        currentFolderPath: folderPath
                                     });                            
                                 } else {
                                     vscode.postMessage({

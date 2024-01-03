@@ -4,13 +4,23 @@ import { getWebviewOverview } from "../components/overview/overview";
 import { getWebviewSubfolder } from "../components/subfolder/subfolder";
 import { getFolderContents } from "./initialize";
 
+interface Files {
+    dateCreated: string,
+    fileName: string,
+    firstLine: string,
+    folderItem: {},
+    lastModified: string,
+    mtime: number,
+    uriPath: string
+}
+
 async function updateWebview(
 	setPage: string,
 	panel: vscode.WebviewPanel,
 	context: vscode.ExtensionContext,
 	currentFolderName: string,
 	currentFolderPath: string,
-	files: any
+	files: Files[]
 ) {
 	const updatedFolders = await getFolderContents(context);
 	const updatedFolder = { folderName: currentFolderName, uriPath: currentFolderPath };
@@ -32,7 +42,7 @@ export async function deleteFolder(
 	setPage: string,
 	currentFolderName: string,
 	currentFolderPath: string,
-	files: any
+	files: Files[]
 ): Promise<void> {
 	try {
 		if (await fse.pathExists(folderPath)) {

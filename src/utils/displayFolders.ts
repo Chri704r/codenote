@@ -1,7 +1,13 @@
 import { renderSettingsDropdown } from "../components/dropdown/dropdown";
-export async function displayFolders(folders: any) {
+
+interface Folders {
+	folderName: string;
+	uriPath: string;
+}
+
+export async function displayFolders(folders: Folders[]) {
 	return folders
-		.map((folder: any) => {
+		.map((folder) => {
 			const dropdownHtml = renderSettingsDropdown(folder);
 			return `
                 <div class="item">
