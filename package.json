@@ -4,7 +4,7 @@
 	"publisher": "Entry",
 	"icon": "out/assets/icon.png",
 	"description": "Write notes for your code",
-	"version": "0.0.97",
+	"version": "0.0.98",
 	"engines": {
 		"vscode": "^1.83.0"
 	},
