@@ -12,7 +12,7 @@ export function addDecoratorToLine(
 	if (activeEditor && currentFileName !== "" && currentFilePath !== "") {
 		// Create a decoration type with a gutter icon
 		const decorationType = vscode.window.createTextEditorDecorationType({
-			gutterIconPath: context.asAbsolutePath("src/assets/pencil.png"),
+			gutterIconPath: context.asAbsolutePath("out/assets/pencil.png"),
 			gutterIconSize: "20px",
 		});
 		const globalState = context.globalState;

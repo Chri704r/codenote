@@ -1,7 +1,7 @@
 {
 	"name": "entry",
-	"displayName": "entry",
-	"publisher": "entry",
+	"displayName": "Entry",
+	"publisher": "Entry",
 	"icon": "out/assets/icon.png",
 	"description": "Write notes for your code",
 	"version": "0.0.97",
@@ -39,7 +39,7 @@
 		"viewsWelcome": [
 			{
 				"view": "entry-get-started",
-				"contents": "Take notes the easy and intuitive way. \n[View Entries](command:entry.entry)"
+				"contents": "Simple and easy notetaking when you're working with code. \n[View Entries](command:entry.entry)"
 			},
 			{
 				"view": "entry-documentation",

@@ -5,7 +5,7 @@ export async function displayDecorators(context: vscode.ExtensionContext, curren
 	if (activeEditor && currentOpenFile !== "" && currentOpenFilePath !== "") {
 		// Create a decoration type with a gutter icon
 		const decorationType = vscode.window.createTextEditorDecorationType({
-			gutterIconPath: context.asAbsolutePath("src/assets/pencil.png"), // Use the pencil icon
+			gutterIconPath: context.asAbsolutePath("out/assets/pencil.png"), // Use the pencil icon
 			gutterIconSize: "20px", // Adjust size as needed
 		});
 
