@@ -4,9 +4,14 @@ import { getWebviewOverview } from '../components/overview/overview';
 import { getWebviewSubfolder } from '../components/subfolder/subfolder';
 import { getNotes } from './getLastEditedNotes';
 
-async function updateWebview(setPage: string, panel: vscode.WebviewPanel, context: vscode.ExtensionContext, folders: any, currentFolderName: string, currentFolderPath?: string) {
+interface Folders {
+	folderName: string;
+	uriPath: string;
+}
+
+async function updateWebview(setPage: string, panel: vscode.WebviewPanel, context: vscode.ExtensionContext, folders: Folders[], currentFolderName: string, currentFolderPath?: string) {
     const updatedFiles = await getNotes(currentFolderName);
-	const updatedFolderDeleteFiles = { folderName: currentFolderName, uriPath: currentFolderPath };
+	const updatedFolderDeleteFiles = { folderName: currentFolderName, uriPath: currentFolderPath || ''};
 
     if (setPage === 'overview') {
         panel.webview.html = await getWebviewOverview(panel.webview, context, folders, updatedFiles);
@@ -17,7 +22,7 @@ async function updateWebview(setPage: string, panel: vscode.WebviewPanel, contex
     }
 }
 
-export async function deleteFile(fileName: string, filePath: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel, folders: any, setPage: string, currentFolderName: string, currentFolderPath?: string): Promise<void> {
+export async function deleteFile(fileName: string, filePath: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel, folders: Folders[], setPage: string, currentFolderName: string, currentFolderPath?: string): Promise<void> {
     try {
             if (await fse.pathExists(filePath)) {
                 fse.unlink(filePath);

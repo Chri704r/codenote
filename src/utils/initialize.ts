@@ -64,7 +64,22 @@ interface Folder {
 	uriPath: string;
 }
 
-export async function getContentInFolder(folder: any): Promise<any> {
+interface Folders {
+	folderName: string;
+	uriPath: string;
+}
+
+interface Files {
+    fileName: string,
+	uriPath: string,
+	nameWithoutExtension: string,
+	mtime: number,
+	firstLine: string,
+	lastModified: string,
+	date: string
+}
+
+export async function getContentInFolder(folder: Folder): Promise<any> {
 	try {
 		const mainFolderPath = folder.uriPath;
 		const stats = await fsp.stat(mainFolderPath);
@@ -74,8 +89,8 @@ export async function getContentInFolder(folder: any): Promise<any> {
 		if (stats.isDirectory()) {
 			const filesInFolder = await fsp.readdir(mainFolderPath);
 
-			const folders: any = [];
-			const files: any = [];
+			const folders: Folders[] = [];
+			const files: Files[] = [];
 
 			await Promise.all(
 				filesInFolder.map(async (file: string) => {

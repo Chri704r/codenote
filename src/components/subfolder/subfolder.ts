@@ -8,7 +8,12 @@ import { renderAddButtons } from "../../utils/renderAddButtons";
 import { header } from "../../utils/header";
 import { scriptImport } from "../../utils/scriptImport";
 
-export async function getWebviewSubfolder(folderData: any, webview: vscode.Webview, context: any) {
+interface Folder {
+	folderName: string;
+	uriPath: string;
+}
+
+export async function getWebviewSubfolder(folderData: Folder, webview: vscode.Webview, context: vscode.ExtensionContext) {
 	const allFolders = await getAllFolderContents(context);
 	const folderContent = await getContentInFolder(folderData);
 
@@ -210,14 +215,14 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
     `;
 }
 
-async function clickBreadcrumb(folderData: any, context: any) {
+async function clickBreadcrumb(folderData: Folder, context: vscode.ExtensionContext) {
 	const globalStorageMainUri = context.globalStorageUri.fsPath;
 	const breadcrumb = folderData.uriPath.replace(globalStorageMainUri, "Overview");
 	const breadcrumbFolders = breadcrumb.split("/");
 	let pathmaker = globalStorageMainUri;
 
 	return breadcrumbFolders
-		.map((folder: any) => {
+		.map((folder: string) => {
 			pathmaker = pathmaker + "/" + folder;
 			return `<p class="breadcrumb" data-folder-name="${folder}" folder-path="${pathmaker.replace("Overview/", "")}">${folder}/</p>`;
 		})
