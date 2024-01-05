@@ -18,7 +18,7 @@ document.querySelectorAll(".secondary-button").forEach((cancelButton) => {
 });
 
 // ------ dropdown ------
-function list(data = [], sourcePath, sourceFoldername) {
+function list(data = [], sourcePath) {
 	if (data.length > 0) {
 		const ul = document.createElement("ul");
 		data.forEach((folder) => {
@@ -41,7 +41,7 @@ function list(data = [], sourcePath, sourceFoldername) {
 			li.appendChild(a);
 			listenForMouseOver(li, folder.subfolders, sourcePath);
 			if (folder.uriPath !== sourcePath) {
-				clickOnFolder(li, folder, sourcePath, sourceFoldername);
+				clickOnFolder(li, folder, sourcePath);
 			}
 			ul.appendChild(li);
 		});
@@ -49,9 +49,8 @@ function list(data = [], sourcePath, sourceFoldername) {
 	}
 }
 
-function clickOnFolder(option, folder, sourcePath, sourceFoldername) {
+function clickOnFolder(option, folder, sourcePath) {
 	option.addEventListener("click", () => {
-		document.querySelector(`[data-folder-name="${sourceFoldername}"]`).parentElement.classList.add("hidden");
 		vscode.postMessage({
 			command: "move",
 			pathTo: folder.uriPath,
