@@ -31,7 +31,7 @@ export async function deleteFile(fileName: string, filePath: string, context: vs
                 vscode.window.showErrorMessage(`File ${fileName} not found.`);
             }
 
-            await updateWebview(setPage, panel, context, folders, currentFolderName, currentFolderPath)
+            await updateWebview(setPage, panel, context, folders, currentFolderName, currentFolderPath);
     } catch (error: any) {
         vscode.window.showErrorMessage(`Error deleting file: ${error.message}`);
     }
