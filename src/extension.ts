@@ -51,9 +51,11 @@ export async function activate(context: vscode.ExtensionContext) {
 				switch (message.command) {
 					case "move":
 						moveToFolder(message.pathTo, message.pathFrom);
+						console.log('Move!');
 						return;
 					case "search":
 						panel.webview.html = await search(message.searchTerm, panel.webview, context);
+						console.log('Search!');
 						return;
 					case "addFolder":
 						await addFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
@@ -64,10 +66,12 @@ export async function activate(context: vscode.ExtensionContext) {
 							panel.webview,
 							context
 						);
+						console.log('Add Folder!');
 						return;
 					case "renameFolder":
 						await renameFolder(message.oldFolderPath);
 						panel.webview.html = await updateWebview(message.parentFolder, message.parentPath, message.webviewToRender, panel.webview, context);
+						console.log('Rename!');
 						return;
 					case "addNote":
 						await addNote(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
@@ -78,6 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
 							panel.webview,
 							context
 						);
+						console.log('Add note!');
 						return;
 					case "save":
 						await saveFile(message.fileName, message.filePath, message.data.fileContent, context);
@@ -90,33 +95,41 @@ export async function activate(context: vscode.ExtensionContext) {
 						);
 						currentOpenFile = "";
 						currentOpenFilePath = "";
+						console.log('Save!');
 						return;
 					case "deleteFile":
 						await deleteFile(
 							message.fileName,
 							message.filePath,
-							context,
-							panel,
-							folders,
-							message.setPage,
-							message.currentFolderName,
-							message.currentFolderPath
+							context
 						);
+						panel.webview.html = await updateWebview(
+							message.currentFolderName,
+							message.currentFolderPath,
+							message.webviewToRender,
+							panel.webview,
+							context
+						);
+						console.log('Delete file!');
 						return;
 					case "deleteFolder":
 						await deleteFolder(
 							message.folderName,
 							message.folderPath,
-							context,
-							panel,
-							message.setPage,
-							message.currentFolderName,
-							message.currentFolderPath,
-							files
-							);	
+							context
+							);
+							panel.webview.html = await updateWebview(
+								message.currentFolderName,
+								message.currentFolderPath,
+								message.webviewToRender,
+								panel.webview,
+								context
+							);
+						console.log('Delete folder!');
 						return;
 					case "comment":
 						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath);
+						console.log('Link code inside note!');
 				}
 			},
 			undefined,

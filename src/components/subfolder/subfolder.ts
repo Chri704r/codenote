@@ -190,18 +190,19 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                                         command: 'deleteFolder',
                                         folderName: folderName,
                                         folderPath: folderPath,
-                                        setPage: 'subfolder',
                                         currentFolderName: ${JSON.stringify(folderData.folderName)},
-                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)},
+                                        webviewToRender: 'subfolder'
+
                                     });                            
                                 } else {
                                     vscode.postMessage({
                                         command: 'deleteFile',
                                         fileName: deleteButton.getAttribute("data-file-name"),
                                         filePath: deleteButton.getAttribute("data-file-path"),
-                                        setPage: 'subfolder',
                                         currentFolderName: ${JSON.stringify(folderData.folderName)},
-                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)},
+                                        webviewToRender: 'subfolder'
                                     }); 
                                 }
                             });
