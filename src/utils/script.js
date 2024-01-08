@@ -53,15 +53,15 @@ function clickOnFolder(option, folder, sourcePath) {
 	option.addEventListener("click", () => {
 		const entryFolderPath = sourcePath.substr(0, sourcePath.lastIndexOf("entry")) + 'entry';
 		const entryFolderName = 'entry.entry';
-		const parentPath = sourcePath.substr(0, sourcePath.lastIndexOf("/"));
-		const parentFolder = parentPath.substr(parentPath.lastIndexOf("/") + 1);
-		if (parentFolder === entryFolderName ) {
+		const currentPath = sourcePath.substr(0, sourcePath.lastIndexOf("/"));
+		const currentFolder = currentPath.substr(currentPath.lastIndexOf("/") + 1);
+		if (currentPath === entryFolderPath && currentFolder === entryFolderName) {
 			vscode.postMessage({
 				command: "move",
 				pathTo: folder.uriPath,
 				pathFrom: sourcePath,
-				destinationFolderName: entryFolderName,
-				destinationFolderUri: entryFolderPath,
+				destinationFolderName: currentFolder,
+				destinationFolderUri: currentPath,
 				webviewToRender: 'overview'
 			});
 		} else {
@@ -69,8 +69,8 @@ function clickOnFolder(option, folder, sourcePath) {
 				command: "move",
 				pathTo: folder.uriPath,
 				pathFrom: sourcePath,
-				destinationFolderName: parentFolder,
-				destinationFolderUri: parentPath,
+				destinationFolderName: currentFolder,
+				destinationFolderUri: currentPath,
 				webviewToRender: 'subfolder'
 			});
 		}
