@@ -81,14 +81,20 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         const folderName = crumb.getAttribute('data-folder-name');
                         const path = crumb.getAttribute('folder-path');
                         if(folderName == "Overview"){
+                            console.log('navigate to overview');
                             vscode.postMessage({
-                                page: "overview",
+                                command: 'navigate',
+                                destinationFolderName: folderName,
+                                destinationFolderUri: path,
+                                webviewToRender: 'overview'
                             });
-                        } else{
+                        } else {
+                            console.log('navigate to subfolder');
                             vscode.postMessage({
-                                page: 'subfolder',
-                                folderName: folderName,
-                                folderPath: path
+                                command: 'navigate',
+                                destinationFolderName: folderName,
+                                destinationFolderUri: path,
+                                webviewToRender: 'subfolder'
                             });
                         }
                     });
@@ -137,22 +143,26 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                 const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
                 if(parentFolder == "entry.entry"){
                     vscode.postMessage({
-                        page: "overview",
+                        command: 'navigate',
+                        destinationFolderName: parentFolder,
+                        destinationFolderUri: parentUri,
+                        webviewToRender: 'overview'
                     });
                 } else{
                     vscode.postMessage({
-                        page: 'subfolder',
-                        folderName: parentFolder,
-                        folderPath: parentUri
+                        command: 'navigate',
+                        destinationFolderName: parentFolder,
+                        destinationFolderUri: parentUri,
+                        webviewToRender: 'subfolder'
                     });
                 }
             });
 
                 document.querySelectorAll(".move").forEach((moveButton)=>{
                     moveButton.addEventListener("mouseover", (button)=>{
-                        const data = ${JSON.stringify(allFolders)}
-                        const sourcePath = moveButton.getAttribute("value")
-                        const sourceFoldername = moveButton.getAttribute("name")
+                        const data = ${JSON.stringify(allFolders)};
+                        const sourcePath = moveButton.getAttribute("value");
+                        const sourceFoldername = moveButton.getAttribute("name");
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
                 });

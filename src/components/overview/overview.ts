@@ -105,7 +105,9 @@ export async function getWebviewOverview(webview: vscode.Webview, context: vscod
             
                 document.querySelectorAll(".move").forEach((moveButton)=>{
                     moveButton.addEventListener("mouseover", (button) => {
-                        const data = ${JSON.stringify(allFolders)}
+                        const data = ${JSON.stringify(allFolders)};
+                        const sourcePath = moveButton.getAttribute("value");
+                        const sourceFoldername = moveButton.getAttribute("name");
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
                 });
@@ -131,7 +133,7 @@ export async function getWebviewOverview(webview: vscode.Webview, context: vscod
                         const folderPath = deleteButton.getAttribute("data-folder-path");
                         const globalStorageName = 'entry.entry';
                         const globalStoragePath = ${JSON.stringify(globalStoragePath)};
-
+                        
                         const deleteContainer = deleteButton.closest(".item").querySelector("#delete-container");
 
                         if (deleteContainer) {

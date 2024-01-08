@@ -51,11 +51,29 @@ function list(data = [], sourcePath) {
 
 function clickOnFolder(option, folder, sourcePath) {
 	option.addEventListener("click", () => {
-		vscode.postMessage({
-			command: "move",
-			pathTo: folder.uriPath,
-			pathFrom: sourcePath,
-		});
+		const entryFolderPath = sourcePath.substr(0, sourcePath.lastIndexOf("entry")) + 'entry';
+		const entryFolderName = 'entry.entry';
+		const parentPath = sourcePath.substr(0, sourcePath.lastIndexOf("/"));
+		const parentFolder = parentPath.substr(parentPath.lastIndexOf("/") + 1);
+		if (parentFolder === entryFolderName ) {
+			vscode.postMessage({
+				command: "move",
+				pathTo: folder.uriPath,
+				pathFrom: sourcePath,
+				destinationFolderName: entryFolderName,
+				destinationFolderUri: entryFolderPath,
+				webviewToRender: 'overview'
+			});
+		} else {
+			vscode.postMessage({
+				command: "move",
+				pathTo: folder.uriPath,
+				pathFrom: sourcePath,
+				destinationFolderName: parentFolder,
+				destinationFolderUri: parentPath,
+				webviewToRender: 'subfolder'
+			});
+		}
 	});
 }
 
