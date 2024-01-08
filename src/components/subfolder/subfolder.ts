@@ -81,7 +81,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         const folderName = crumb.getAttribute('data-folder-name');
                         const path = crumb.getAttribute('folder-path');
                         if(folderName == "Overview"){
-                            console.log('navigate to overview');
                             vscode.postMessage({
                                 command: 'navigate',
                                 destinationFolderName: folderName,
@@ -89,7 +88,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                                 webviewToRender: 'overview'
                             });
                         } else {
-                            console.log('navigate to subfolder');
                             vscode.postMessage({
                                 command: 'navigate',
                                 destinationFolderName: folderName,
