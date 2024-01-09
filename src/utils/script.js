@@ -27,7 +27,9 @@ function list(data = [], sourcePath) {
 			const a = document.createElement("a");
 			const p = document.createElement("p");
 			p.textContent = folder.folderName;
-			if (folder.uriPath === sourcePath) {
+			const parentPath = sourcePath.substr(0, sourcePath.lastIndexOf("/"));
+			console.log(parentPath);
+			if (folder.uriPath === sourcePath || folder.uriPath === parentPath) {
 				p.style.color = "#747474";
 				li.style.cursor = "not-allowed";
 			}
