@@ -29,13 +29,13 @@ export async function displayDecorators(context: vscode.ExtensionContext, curren
 		getJsondata(currentOpenFilePath)
 			.then((data: any) => {
 				// Log the parsed JSON data to the console outside the readFile callback
-				const decoratorsInFile = data.ops.filter((ops: any) => {
+				const decoratorsInFile = data?.ops.filter((ops: any) => {
 					if (ops.insert.includes(activeEditorFilename)) {
 						return ops;
 					}
 				});
 
-				const decoratorLines = decoratorsInFile.map((decorator: any) => {
+				const decoratorLines = decoratorsInFile?.map((decorator: any) => {
 					const opsLine = decorator.insert.substring(decorator.insert.indexOf("Ln") + 3, decorator.insert.indexOf(")"));
 					return parseInt(opsLine) - 1;
 				});
