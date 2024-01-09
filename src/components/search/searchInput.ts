@@ -1,7 +1,11 @@
-export function searchInput() {
+export function searchInput(searchTerm: string) {
 	return `<div class="search-container">
                 <span class="codicon codicon-search"></span>
-                <input class="search-input" type="text" placeholder="Search...">
+                ${
+									searchTerm !== ""
+										? `<input class="search-input" type="text" value=${searchTerm}>`
+										: '<input class="search-input" type="text" placeholder="Search...">'
+								}
             </div> 
             <script>
             const vscode = acquireVsCodeApi();

@@ -13,31 +13,31 @@ interface Folders {
 }
 
 interface Files {
-    dateCreated: string,
-    fileName: string,
-    firstLine: string,
-    folderItem: {},
-    lastModified: string,
-    mtime: number,
-    uriPath: string
+	dateCreated: string;
+	fileName: string;
+	firstLine: string;
+	folderItem: {};
+	lastModified: string;
+	mtime: number;
+	uriPath: string;
 }
 
 export async function getWebviewOverview(webview: vscode.Webview, context: vscode.ExtensionContext, folders: Folders[], files: Files[]) {
 	const globalStoragePath = context.globalStorageUri.fsPath;
 	const allFolders = await getAllFolderContents(context);
 
-    const notesHTML = await displayNotes(files);
+	const notesHTML = await displayNotes(files);
 	const folderContentsHTML = await displayFolders(folders);
 	const addButtonsHtml = await renderAddButtons();
-    const htmlHeader = await header(webview, context);
-    const scriptHtml = await scriptImport(webview, context);
+	const htmlHeader = await header(webview, context);
+	const scriptHtml = await scriptImport(webview, context);
 
 	return `<!DOCTYPE html>
 	<html lang="en">
         ${htmlHeader}
 		
 		<body>
-            ${searchInput()}
+            ${searchInput("")}
             <div>
                 <div class="plain">
                     <h2>Last edited</h2>

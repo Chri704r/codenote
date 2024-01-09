@@ -22,8 +22,8 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
 	const htmlBreadcrumb = await clickBreadcrumb(folderData, context);
 	const addButtonsHtml = await renderAddButtons();
 
-    const htmlHeader = await header(webview, context);
-    const scriptHtml = await scriptImport(webview, context);
+	const htmlHeader = await header(webview, context);
+	const scriptHtml = await scriptImport(webview, context);
 
 	return `<!DOCTYPE html>
     <html lang="en">
@@ -37,7 +37,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                 <h1 class="subfolder-header">${folderData.folderName}</h1> 
             </div>
             <div class="breadcrumb-container">${htmlBreadcrumb}</div>     
-            ${searchInput()}
+            ${searchInput("")}
             <h2>Folders</h2>
             <div id="folders-container" class="container">
                 ${folderContentsHTML}
