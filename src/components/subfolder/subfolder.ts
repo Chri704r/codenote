@@ -7,6 +7,7 @@ import { displayNotes } from "../../utils/displayNotes";
 import { renderAddButtons } from "../../utils/renderAddButtons";
 import { header } from "../../utils/header";
 import { scriptImport } from "../../utils/scriptImport";
+import * as path from 'path';
 
 interface Folder {
 	folderName: string;
@@ -214,7 +215,6 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
     </html>
     `;
 }
-import * as path from 'path';
 
 async function clickBreadcrumb(folderData: Folder, context: vscode.ExtensionContext) {
 	const globalStorageMainUri = context.globalStorageUri.fsPath;
@@ -222,15 +222,13 @@ async function clickBreadcrumb(folderData: Folder, context: vscode.ExtensionCont
     const relativePath = path.relative(globalStorageMainUri, folderData.uriPath);
     const breadcrumb = relativePath.replace(/\\/g, '/');
 
-	//const breadcrumb = folderData.uriPath.replace(cleanPath, "Overview");
 	const breadcrumbFolders = breadcrumb.split("/");
-    console.log(breadcrumbFolders, "hej");
 	let pathmaker = globalStorageMainUri;
 
 	return ["Overview", ...breadcrumbFolders]
 		.map((folder: string) => {
-            pathmaker = path.join(pathmaker, folder);
-			return `<p class="breadcrumb" data-folder-name="${folder}" folder-path="${pathmaker.replace(globalStorageMainUri, "Overview").replace("Overview/", "")}">${folder}/</p>`;
+            pathmaker = path.join(pathmaker, folder).replace("Overview", "");
+			return `<p class="breadcrumb" data-folder-name="${folder}" folder-path="${pathmaker}">${folder}/</p>`;
 		})
 		.join("");
 }
