@@ -61,6 +61,39 @@ export async function getWebviewNote(webview: vscode.Webview, context: vscode.Ex
                 });
             });
 
+			document.addEventListener('keydown', (e) => {
+				if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+					e.preventDefault();
+
+					const uri = ${JSON.stringify(filePath)};
+					const replaceBackslash = uri.replace(/[\/\\\\]/g, "/");
+					const lastSlashIndex = Math.max(replaceBackslash.lastIndexOf("/"));
+					const parentUri = replaceBackslash.substr(0, lastSlashIndex);
+					const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
+					const currentPage = ${JSON.stringify(currentPage)};
+					const fileContent = quill.getContents();
+					const fileName = ${JSON.stringify(fileName)};
+					const filePath = ${JSON.stringify(filePath)};
+
+
+					if (parentFolder == 'entry.entry' || currentPage == 'overview'){			
+						vscode.postMessage({
+							command: 'saveOnKey',
+							data: { fileName, fileContent },
+							fileName: fileName,
+							filePath: filePath,
+						});
+					} else {
+						vscode.postMessage({
+							command: 'saveOnKey',
+							data: { fileName, fileContent },
+							fileName: fileName,
+							filePath: filePath,
+						});
+					}
+				}
+			})
+
 			document.querySelector(".back-button").addEventListener("click", () => {
 				const uri = ${JSON.stringify(filePath)};
                 const replaceBackslash = uri.replace(/[\/\\\\]/g, "/");
