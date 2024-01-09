@@ -18,6 +18,9 @@ import { deleteFolder } from "./utils/deleteFolder";
 
 let currentOpenFile: string;
 let currentOpenFilePath: string;
+let fileName: string;
+let filePath: string;
+let fileContent: any;
 
 export async function activate(context: vscode.ExtensionContext) {
 	await initializeFileAndFolder(context);
@@ -138,6 +141,15 @@ export async function activate(context: vscode.ExtensionContext) {
 							context
 						);
 						return;
+					case "saveOnKey": 
+						fileName = message.fileName;
+						filePath = message.filePath;
+						fileContent = message.data.fileContent;
+
+						await vscode.commands.executeCommand('entry.saveNotes', fileName, filePath, fileContent);
+
+						currentOpenFile = "";
+						currentOpenFilePath = "";
 				}
 			},
 			undefined,
@@ -153,6 +165,12 @@ export async function activate(context: vscode.ExtensionContext) {
 		});
 
 		context.subscriptions.push(addDecorator);
+
+		let saveNotes = vscode.commands.registerCommand("entry.saveNotes", () => {
+			saveFile(fileName, filePath, fileContent, context);
+		});
+
+		context.subscriptions.push(saveNotes);
 	});
 
 	vscode.window.onDidChangeActiveTextEditor(() => {

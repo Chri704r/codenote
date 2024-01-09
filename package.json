@@ -56,6 +56,14 @@
 				"icon": "$(pencil)"
 			}
 		],
+		"keybindings": [
+			{
+				"command": "entry.saveNotes",
+				"key": "ctrl+s",
+				"mac": "cmd+s",
+				"when": "editorFileName == 'note.ts'"
+			}
+		],
 		"menus": {
 			"editor/title": [
 				{
