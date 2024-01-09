@@ -88,7 +88,7 @@
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js",
-		"copy-assets": "xcopy /E /I /Y \"src\\style\\*\" \"out\\style\\\" && xcopy /E /I /Y \"src\\utils\\*\" \"out\\utils\\\" && xcopy /E /I /Y \"src\\assets\\*\" \"out\\assets\\\"",
+		"copy-assets": "cp -R src/style/* out/style/ && cp -R src/utils/* out/utils/ && cp -R src/assets/* out/assets/",
 		"deploy": "vsce publish --yarn"
 	},
 	"devDependencies": {
