@@ -1,4 +1,4 @@
-/* import * as assert from 'assert';
+import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { getWebviewOverview } from '../../components/overview/overview';
 
@@ -31,7 +31,7 @@ suite('Extension Test Suite', () => {
         }
     ];
 
-    test('getWebviewOverview returns non-empty string', async () => {
+/*     test('getWebviewOverview returns non-empty string', async () => {
         const webview = {
             asWebviewUri: (uri: vscode.Uri) => uri,
         } as vscode.Webview;
@@ -40,9 +40,9 @@ suite('Extension Test Suite', () => {
 
         assert.strictEqual(typeof result, 'string');
         assert.notStrictEqual(result.length, 0);
-    });
+    }); */
 
-    test('Generated HTML contains folders and files', async () => {
+/*     test('Generated HTML contains folders and files', async () => {
         const webview = {
             asWebviewUri: (uri: vscode.Uri) => uri,
         } as vscode.Webview;
@@ -51,7 +51,7 @@ suite('Extension Test Suite', () => {
 
         assert.ok(result.includes('<div class="left folder-item"'), 'Expected folder element');
         assert.ok(result.includes('<div class="left file-item"'), 'Expected file element');
-    });
+    }); */
 
     test('Array has correct length', async () => {
         assert.strictEqual(folders.length, 1, 'Expected one folder');
@@ -65,4 +65,4 @@ suite('Extension Test Suite', () => {
         assert.deepStrictEqual(folderKeys, ['folderName', 'uriPath'], 'Folder keys are as expected');
         assert.deepStrictEqual(fileKeys, ['dateCreated', 'fileName', 'firstLine', 'folderItem', 'lastModified', 'mtime', 'uriPath'], 'File keys are as expected');
     });
-}); */
+});

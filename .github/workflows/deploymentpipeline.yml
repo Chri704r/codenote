@@ -2,7 +2,7 @@ name: Entry Deployment Pipeline
 on: 
   push:
     branches:
-    - dev
+    - master
   release:
     types:
     - created

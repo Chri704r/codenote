@@ -4,7 +4,7 @@
 	"publisher": "Entry",
 	"icon": "out/assets/icon.png",
 	"description": "Write notes for your code",
-	"version": "0.0.98",
+	"version": "0.0.99",
 	"engines": {
 		"vscode": "^1.83.0"
 	},
@@ -55,6 +55,14 @@
 				"command": "entry.addDecorator",
 				"title": "addDecorator",
 				"icon": "$(pencil)"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "entry.saveNotes",
+				"key": "ctrl+s",
+				"mac": "cmd+s",
+				"when": "editorFileName == 'note.ts'"
 			}
 		],
 		"menus": {

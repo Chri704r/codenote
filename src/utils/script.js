@@ -18,7 +18,7 @@ document.querySelectorAll(".secondary-button").forEach((cancelButton) => {
 });
 
 // ------ dropdown ------
-function list(data = [], sourcePath, sourceFoldername) {
+function list(data = [], sourcePath) {
 	if (data.length > 0) {
 		const ul = document.createElement("ul");
 		data.forEach((folder) => {
@@ -27,7 +27,9 @@ function list(data = [], sourcePath, sourceFoldername) {
 			const a = document.createElement("a");
 			const p = document.createElement("p");
 			p.textContent = folder.folderName;
-			if (folder.uriPath === sourcePath) {
+			const parentPath = sourcePath.substr(0, sourcePath.lastIndexOf("/"));
+			console.log(parentPath);
+			if (folder.uriPath === sourcePath || folder.uriPath === parentPath) {
 				p.style.color = "#747474";
 				li.style.cursor = "not-allowed";
 			}
@@ -41,7 +43,7 @@ function list(data = [], sourcePath, sourceFoldername) {
 			li.appendChild(a);
 			listenForMouseOver(li, folder.subfolders, sourcePath);
 			if (folder.uriPath !== sourcePath) {
-				clickOnFolder(li, folder, sourcePath, sourceFoldername);
+				clickOnFolder(li, folder, sourcePath);
 			}
 			ul.appendChild(li);
 		});
@@ -49,14 +51,31 @@ function list(data = [], sourcePath, sourceFoldername) {
 	}
 }
 
-function clickOnFolder(option, folder, sourcePath, sourceFoldername) {
+function clickOnFolder(option, folder, sourcePath) {
 	option.addEventListener("click", () => {
-		document.querySelector(`[data-folder-name="${sourceFoldername}"]`).parentElement.classList.add("hidden");
-		vscode.postMessage({
-			command: "move",
-			pathTo: folder.uriPath,
-			pathFrom: sourcePath,
-		});
+		const entryFolderPath = sourcePath.substr(0, sourcePath.lastIndexOf("entry")) + 'entry';
+		const entryFolderName = 'entry.entry';
+		const currentPath = sourcePath.substr(0, sourcePath.lastIndexOf("/"));
+		const currentFolder = currentPath.substr(currentPath.lastIndexOf("/") + 1);
+		if (currentPath === entryFolderPath && currentFolder === entryFolderName) {
+			vscode.postMessage({
+				command: "move",
+				pathTo: folder.uriPath,
+				pathFrom: sourcePath,
+				destinationFolderName: currentFolder,
+				destinationFolderUri: currentPath,
+				webviewToRender: 'overview'
+			});
+		} else {
+			vscode.postMessage({
+				command: "move",
+				pathTo: folder.uriPath,
+				pathFrom: sourcePath,
+				destinationFolderName: currentFolder,
+				destinationFolderUri: currentPath,
+				webviewToRender: 'subfolder'
+			});
+		}
 	});
 }
 

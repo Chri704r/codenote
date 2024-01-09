@@ -13,31 +13,31 @@ interface Folders {
 }
 
 interface Files {
-    dateCreated: string,
-    fileName: string,
-    firstLine: string,
-    folderItem: {},
-    lastModified: string,
-    mtime: number,
-    uriPath: string
+	dateCreated: string;
+	fileName: string;
+	firstLine: string;
+	folderItem: {};
+	lastModified: string;
+	mtime: number;
+	uriPath: string;
 }
 
 export async function getWebviewOverview(webview: vscode.Webview, context: vscode.ExtensionContext, folders: Folders[], files: Files[]) {
 	const globalStoragePath = context.globalStorageUri.fsPath;
 	const allFolders = await getAllFolderContents(context);
 
-    const notesHTML = await displayNotes(files);
+	const notesHTML = await displayNotes(files);
 	const folderContentsHTML = await displayFolders(folders);
 	const addButtonsHtml = await renderAddButtons();
-    const htmlHeader = await header(webview, context);
-    const scriptHtml = await scriptImport(webview, context);
+	const htmlHeader = await header(webview, context);
+	const scriptHtml = await scriptImport(webview, context);
 
 	return `<!DOCTYPE html>
 	<html lang="en">
         ${htmlHeader}
 		
 		<body>
-            ${searchInput()}
+            ${searchInput("")}
             <div>
                 <div class="plain">
                     <h2>Last edited</h2>
@@ -86,30 +86,28 @@ export async function getWebviewOverview(webview: vscode.Webview, context: vscod
             document.querySelector("#add-folder-button").addEventListener("click", () => {
                 const globalStorageName = 'entry.entry';
                 const globalStoragePath = ${JSON.stringify(globalStoragePath)};
-                const overview = 'overview';
                 vscode.postMessage({
                     command: 'addFolder',
                     destinationFolderName: globalStorageName,
                     destinationFolderUri: globalStoragePath,
-                    webviewToRender: overview,
+                    webviewToRender: 'overview'
                 });
             });
 
             document.querySelector("#add-note-button").addEventListener("click", () => {
                 const notesFolderPath = ${JSON.stringify(globalStoragePath)} + '/Notes';
-                const overview = 'overview';
                 vscode.postMessage({
                     command: 'addNote',
                     destinationFolderUri: notesFolderPath,
-                    webviewToRender: overview,
+                    webviewToRender: 'overview'
                 });
             });
             
                 document.querySelectorAll(".move").forEach((moveButton)=>{
                     moveButton.addEventListener("mouseover", (button) => {
-                        const data = ${JSON.stringify(allFolders)}
-                        const sourcePath = moveButton.getAttribute("value")
-                        const sourceFoldername = moveButton.getAttribute("name")
+                        const data = ${JSON.stringify(allFolders)};
+                        const sourcePath = moveButton.getAttribute("value");
+                        const sourceFoldername = moveButton.getAttribute("name");
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
                 });
@@ -119,21 +117,23 @@ export async function getWebviewOverview(webview: vscode.Webview, context: vscod
                         const oldFolderPath = renameButton.getAttribute("value");
                         const parentPath = oldFolderPath.substr(0, oldFolderPath.lastIndexOf("/"));
                         const parentFolder = parentPath.substr(parentPath.lastIndexOf("/") + 1);
-                            vscode.postMessage({
-                                command: 'renameFolder',
-                                oldFolderPath: oldFolderPath,
-                                parentPath: parentPath,
-                                parentFolder: parentFolder,
-                                webviewToRender: 'overview'
-                            });
+                        vscode.postMessage({
+                            command: 'renameFolder',
+                            oldFolderPath: oldFolderPath,
+                            parentPath: parentPath,
+                            parentFolder: parentFolder,
+                            webviewToRender: 'overview'
                         });
                     });
+                });
 
                 document.querySelectorAll(".delete-button").forEach((deleteButton) => {
                     deleteButton.addEventListener("click", () => {
                         const folderName = deleteButton.getAttribute("data-folder-name");
                         const folderPath = deleteButton.getAttribute("data-folder-path");
-                
+                        const globalStorageName = 'entry.entry';
+                        const globalStoragePath = ${JSON.stringify(globalStoragePath)};
+                        
                         const deleteContainer = deleteButton.closest(".item").querySelector("#delete-container");
 
                         if (deleteContainer) {
@@ -147,17 +147,18 @@ export async function getWebviewOverview(webview: vscode.Webview, context: vscod
                                         command: 'deleteFolder',
                                         folderName: folderName,
                                         folderPath: folderPath,
-                                        setPage: 'overview',
-                                        currentFolderName: folderName,
-                                        currentFolderPath: folderPath
+                                        destinationFolderName: globalStorageName,
+                                        destinationFolderUri: globalStoragePath,
+                                        webviewToRender: 'overview'
                                     });                            
                                 } else {
                                     vscode.postMessage({
                                         command: 'deleteFile',
                                         fileName: deleteButton.getAttribute("data-file-name"),
                                         filePath: deleteButton.getAttribute("data-file-path"),
-                                        setPage: 'overview',
-                                        currentFolderName: ${JSON.stringify(globalStoragePath)}
+                                        destinationFolderName: globalStorageName,
+                                        destinationFolderUri: globalStoragePath,
+                                        webviewToRender: 'overview'
                                     }); 
                                 }
                             });

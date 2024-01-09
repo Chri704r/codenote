@@ -18,6 +18,9 @@ import { deleteFolder } from "./utils/deleteFolder";
 
 let currentOpenFile: string;
 let currentOpenFilePath: string;
+let fileName: string;
+let filePath: string;
+let fileContent: any;
 
 export async function activate(context: vscode.ExtensionContext) {
 	await initializeFileAndFolder(context);
@@ -51,6 +54,13 @@ export async function activate(context: vscode.ExtensionContext) {
 				switch (message.command) {
 					case "move":
 						moveToFolder(message.pathTo, message.pathFrom);
+						panel.webview.html = await updateWebview(
+							message.destinationFolderName,
+							message.destinationFolderUri,
+							message.webviewToRender,
+							panel.webview,
+							context
+						);
 						return;
 					case "search":
 						panel.webview.html = await search(message.searchTerm, panel.webview, context);
@@ -95,28 +105,51 @@ export async function activate(context: vscode.ExtensionContext) {
 						await deleteFile(
 							message.fileName,
 							message.filePath,
-							context,
-							panel,
-							folders,
-							message.setPage,
+							context
+						);
+						panel.webview.html = await updateWebview(
 							message.currentFolderName,
-							message.currentFolderPath
+							message.currentFolderPath,
+							message.webviewToRender,
+							panel.webview,
+							context
 						);
 						return;
 					case "deleteFolder":
 						await deleteFolder(
 							message.folderName,
 							message.folderPath,
-							context,
-							panel,
-							message.setPage,
-							message.currentFolderName,
-							message.currentFolderPath,
-							files
-							);	
+							context
+							);
+							panel.webview.html = await updateWebview(
+								message.currentFolderName,
+								message.currentFolderPath,
+								message.webviewToRender,
+								panel.webview,
+								context
+							);
 						return;
 					case "comment":
 						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath);
+						return;
+					case "navigate":
+						panel.webview.html = await updateWebview(
+							message.destinationFolderName,
+							message.destinationFolderUri,
+							message.webviewToRender,
+							panel.webview,
+							context
+						);
+						return;
+					case "saveOnKey": 
+						fileName = message.fileName;
+						filePath = message.filePath;
+						fileContent = message.data.fileContent;
+
+						await vscode.commands.executeCommand('entry.saveNotes', fileName, filePath, fileContent);
+
+						currentOpenFile = "";
+						currentOpenFilePath = "";
 				}
 			},
 			undefined,
@@ -132,6 +165,12 @@ export async function activate(context: vscode.ExtensionContext) {
 		});
 
 		context.subscriptions.push(addDecorator);
+
+		let saveNotes = vscode.commands.registerCommand("entry.saveNotes", () => {
+			saveFile(fileName, filePath, fileContent, context);
+		});
+
+		context.subscriptions.push(saveNotes);
 	});
 
 	vscode.window.onDidChangeActiveTextEditor(() => {

@@ -40,7 +40,7 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
             <div class="back-button">
                 <span class="codicon codicon-chevron-left"></span>
             </div>
-            ${searchInput()}
+            ${searchInput(searchTerm)}
         </div>
 
 		<h1>Results</h1>
@@ -78,13 +78,18 @@ export async function search(searchTerm: string, webview: vscode.Webview, contex
 					});
 				});
 
-				document.querySelectorAll(".file-item").forEach((folder) => {
-					folder.addEventListener("click", () => {
-						vscode.postMessage({
-							page: 'note',
-						});
-					});
-				});
+				document.querySelectorAll(".file-item").forEach((file) => {
+                    file.addEventListener("click", () => {
+                        const noteName = file.getAttribute('data-file-name');
+                        const notePath = file.getAttribute('data-file-path');
+                        vscode.postMessage({
+                            page: 'note',
+                            fileName: noteName,
+                            filePath: notePath,
+                            currentPage: 'subfolder'
+                        });
+                    });
+                });
 
 				document.querySelector(".back-button").addEventListener("click", ()=>{
 					vscode.postMessage({
@@ -203,7 +208,7 @@ async function renderFiles(files: any) {
 			const dropdownHtml = renderSettingsDropdown(file);
 			return `
                 <div class="item">
-                    <div class="left file-item" data-folder-name="${file.name}" folder-path="${file.uriPath}">
+                    <div class="left file-item" data-folder-name="${file.name}" data-file-path="${file.uriPath}">
                         <p class="folder-name">${file.firstLine}</p>
                         <p class="mtime">${file.date}</p>
                     </div>
