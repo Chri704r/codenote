@@ -57,6 +57,13 @@ h2 {
 	color: var(--primary-accent-color);
 }
 
+span.codicon.codicon-new-folder {
+	font-size: 22px;
+}
+span.codicon.codicon-new-file {
+	font-size: 22px;
+}
+
 /* ------multi dropdown--------- */
 
 .settings-container {
@@ -66,6 +73,8 @@ h2 {
 
 span.codicon.codicon-kebab-vertical {
 	font-size: 2rem;
+	display: flex;
+	align-items: center;
 }
 
 .dropdown {
@@ -286,62 +295,77 @@ span.codicon.codicon-folder {
 	align-items: center;
 }
 
-.ql-toolbar.ql-snow, .ql-container.ql-snow {
-    border: none;
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+	border: none;
 }
 
 .ql-editor.ql-blank::before {
-    color: white;
+	color: white;
 }
 
 .ql-snow .ql-picker {
-    color: white;
+	color: white;
 }
 
-.ql-snow .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) svg, .ql-snow.ql-toolbar button svg, .ql-snow .ql-toolbar button svg {
-    filter: invert(100%) sepia(1%) saturate(2230%) hue-rotate(216deg) brightness(119%) contrast(98%);
+.ql-snow .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) svg,
+.ql-snow.ql-toolbar button svg,
+.ql-snow .ql-toolbar button svg {
+	filter: invert(100%) sepia(1%) saturate(2230%) hue-rotate(216deg) brightness(119%) contrast(98%);
 }
 
 .ql-toolbar.ql-snow {
-    background-color: var(--item-background-color);
-    border-radius: 0 0 8px 8px;
+	background-color: var(--item-background-color);
+	border-radius: 0 0 8px 8px;
 }
 
 .ql-editor.ql-blank::before {
-    left: 0px;
-    right: 0px;
+	left: 0px;
+	right: 0px;
 }
 
 .ql-editor {
-    padding: 0;
-    padding-top: 1rem;
+	padding: 0;
+	padding-top: 1rem;
 }
 
 .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
 	background-color: var(--body-background-color);
 }
 
-.ql-snow.ql-toolbar button:hover, .ql-snow .ql-toolbar button:hover, .ql-snow.ql-toolbar button:focus, .ql-snow .ql-toolbar button:focus, .ql-snow.ql-toolbar button.ql-active, .ql-snow .ql-toolbar button.ql-active, .ql-snow.ql-toolbar .ql-picker-label:hover, .ql-snow .ql-toolbar .ql-picker-label:hover, .ql-snow.ql-toolbar .ql-picker-label.ql-active, .ql-snow .ql-toolbar .ql-picker-label.ql-active, .ql-snow.ql-toolbar .ql-picker-item:hover, .ql-snow .ql-toolbar .ql-picker-item:hover, .ql-snow.ql-toolbar .ql-picker-item.ql-selected, .ql-snow .ql-toolbar .ql-picker-item.ql-selected {
-    color: #8D95E6;
-    filter: brightness(0) saturate(100%) invert(59%) sepia(48%) saturate(450%) hue-rotate(197deg) brightness(94%) contrast(91%);
+.ql-snow.ql-toolbar button:hover,
+.ql-snow .ql-toolbar button:hover,
+.ql-snow.ql-toolbar button:focus,
+.ql-snow .ql-toolbar button:focus,
+.ql-snow.ql-toolbar button.ql-active,
+.ql-snow .ql-toolbar button.ql-active,
+.ql-snow.ql-toolbar .ql-picker-label:hover,
+.ql-snow .ql-toolbar .ql-picker-label:hover,
+.ql-snow.ql-toolbar .ql-picker-label.ql-active,
+.ql-snow .ql-toolbar .ql-picker-label.ql-active,
+.ql-snow.ql-toolbar .ql-picker-item:hover,
+.ql-snow .ql-toolbar .ql-picker-item:hover,
+.ql-snow.ql-toolbar .ql-picker-item.ql-selected,
+.ql-snow .ql-toolbar .ql-picker-item.ql-selected {
+	color: #8d95e6;
+	filter: brightness(0) saturate(100%) invert(59%) sepia(48%) saturate(450%) hue-rotate(197deg) brightness(94%) contrast(91%);
 }
 
 .code-block-container {
-    position: relative;
-    border: 1px solid #ccc; /* Add border for visibility */
-    padding: 10px;
-    margin-bottom: 10px;
+	position: relative;
+	border: 1px solid #ccc; /* Add border for visibility */
+	padding: 10px;
+	margin-bottom: 10px;
 }
 
 #toolbar-wrapper {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 #toolbar-container {
-    margin: 0 auto;
+	margin: 0 auto;
 }
-
 
 /* ----------- Overview ------------ */
 #search {
@@ -417,14 +441,14 @@ span.codicon.codicon-folder {
 }
 
 #buttons-container {
-    width: 100%;
-    position: sticky;
-    bottom: 0px;
-    background-color: var(--body-background-color);
-    padding-top: 20px;
-    padding-bottom: 20px;
+	width: 100%;
+	position: sticky;
+	bottom: 0px;
+	background-color: var(--body-background-color);
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
-#buttons-container svg {
-    cursor: pointer;
+#buttons-container .codicon {
+	cursor: pointer;
 }
