@@ -83,13 +83,17 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                         const path = crumb.getAttribute('folder-path');
                         if(folderName == "Overview"){
                             vscode.postMessage({
-                                page: "overview",
+                                command: 'navigate',
+                                destinationFolderName: folderName,
+                                destinationFolderUri: path,
+                                webviewToRender: 'overview'
                             });
-                        } else{
+                        } else {
                             vscode.postMessage({
-                                page: 'subfolder',
-                                folderName: folderName,
-                                folderPath: path
+                                command: 'navigate',
+                                destinationFolderName: folderName,
+                                destinationFolderUri: path,
+                                webviewToRender: 'subfolder'
                             });
                         }
                     });
@@ -138,22 +142,26 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                 const parentFolder = parentUri.substr(parentUri.lastIndexOf("/") + 1);
                 if(parentFolder == "entry.entry"){
                     vscode.postMessage({
-                        page: "overview",
+                        command: 'navigate',
+                        destinationFolderName: parentFolder,
+                        destinationFolderUri: parentUri,
+                        webviewToRender: 'overview'
                     });
                 } else{
                     vscode.postMessage({
-                        page: 'subfolder',
-                        folderName: parentFolder,
-                        folderPath: parentUri
+                        command: 'navigate',
+                        destinationFolderName: parentFolder,
+                        destinationFolderUri: parentUri,
+                        webviewToRender: 'subfolder'
                     });
                 }
             });
 
                 document.querySelectorAll(".move").forEach((moveButton)=>{
                     moveButton.addEventListener("mouseover", (button)=>{
-                        const data = ${JSON.stringify(allFolders)}
-                        const sourcePath = moveButton.getAttribute("value")
-                        const sourceFoldername = moveButton.getAttribute("name")
+                        const data = ${JSON.stringify(allFolders)};
+                        const sourcePath = moveButton.getAttribute("value");
+                        const sourceFoldername = moveButton.getAttribute("name");
                         moveButton.appendChild(list(data, sourcePath, sourceFoldername));
                     }, { once: true })
                 });
@@ -191,18 +199,19 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
                                         command: 'deleteFolder',
                                         folderName: folderName,
                                         folderPath: folderPath,
-                                        setPage: 'subfolder',
                                         currentFolderName: ${JSON.stringify(folderData.folderName)},
-                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)},
+                                        webviewToRender: 'subfolder'
+
                                     });                            
                                 } else {
                                     vscode.postMessage({
                                         command: 'deleteFile',
                                         fileName: deleteButton.getAttribute("data-file-name"),
                                         filePath: deleteButton.getAttribute("data-file-path"),
-                                        setPage: 'subfolder',
                                         currentFolderName: ${JSON.stringify(folderData.folderName)},
-                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)}
+                                        currentFolderPath: ${JSON.stringify(folderData.uriPath)},
+                                        webviewToRender: 'subfolder'
                                     }); 
                                 }
                             });
