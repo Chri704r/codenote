@@ -1,16 +1,6 @@
 import * as vscode from "vscode";
 import * as fse from "fs-extra";
 
-// interface Files {
-// 	dateCreated: string;
-// 	fileName: string;
-// 	firstLine: string;
-// 	folderItem: {};
-// 	lastModified: string;
-// 	mtime: number;
-// 	uriPath: string;
-// }
-
 export async function deleteFolder(folderName: string, folderPath: string): Promise<void> {
 	try {
 		if (await fse.pathExists(folderPath)) {
