@@ -25,7 +25,7 @@ let fileContent: any;
 export async function activate(context: vscode.ExtensionContext) {
 	await initializeFileAndFolder(context);
 
-	let disposable = vscode.commands.registerCommand("entry.entry", async () => {
+	const disposable = vscode.commands.registerCommand("entry.entry", async () => {
 		const panel = vscode.window.createWebviewPanel("entry", "entry", vscode.ViewColumn.One, {
 			enableScripts: true,
 		});
@@ -152,13 +152,13 @@ export async function activate(context: vscode.ExtensionContext) {
 			panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 		});
 
-		let addDecorator = vscode.commands.registerCommand("entry.addDecorator", () => {
+		const addDecorator = vscode.commands.registerCommand("entry.addDecorator", () => {
 			addDecoratorToLine(panel.webview, context, currentOpenFile, currentOpenFilePath);
 		});
 
 		context.subscriptions.push(addDecorator);
 
-		let saveNotes = vscode.commands.registerCommand("entry.saveNotes", () => {
+		const saveNotes = vscode.commands.registerCommand("entry.saveNotes", () => {
 			saveFile(filePath, fileContent);
 		});
 
@@ -167,7 +167,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	vscode.window.onDidChangeActiveTextEditor(() => {
 		// Trigger the registered command when the active text editor changes
-		// vscode.commands.executeCommand("extension.onDidChangeActiveTextEditor");
 		displayDecorators(context, currentOpenFile, currentOpenFilePath);
 	});
 

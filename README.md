@@ -1,3 +1,0 @@
-# codenote README
-
-Note extension
