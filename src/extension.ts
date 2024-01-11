@@ -66,7 +66,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await search(message.searchTerm, panel.webview, context);
 						return;
 					case "addFolder":
-						await addFolder(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
+						await addFolder(message.destinationFolderUri);
 						panel.webview.html = await updateWebview(
 							message.destinationFolderName,
 							message.destinationFolderUri,
@@ -80,7 +80,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						panel.webview.html = await updateWebview(message.parentFolder, message.parentPath, message.webviewToRender, panel.webview, context);
 						return;
 					case "addNote":
-						await addNote(message.destinationFolderName, message.destinationFolderUri, message.webviewToRender, context, panel);
+						await addNote(message.destinationFolderUri);
 						panel.webview.html = await updateWebview(
 							message.destinationFolderName,
 							message.destinationFolderUri,
@@ -90,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						);
 						return;
 					case "save":
-						await saveFile(message.fileName, message.filePath, message.data.fileContent, context);
+						await saveFile(message.filePath, message.data.fileContent);
 						panel.webview.html = await updateWebview(
 							message.destinationFolderName,
 							message.destinationFolderUri,
@@ -102,11 +102,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						currentOpenFilePath = "";
 						return;
 					case "deleteFile":
-						await deleteFile(
-							message.fileName,
-							message.filePath,
-							context
-						);
+						await deleteFile(message.filePath);
 						panel.webview.html = await updateWebview(
 							message.currentFolderName,
 							message.currentFolderPath,
@@ -116,18 +112,14 @@ export async function activate(context: vscode.ExtensionContext) {
 						);
 						return;
 					case "deleteFolder":
-						await deleteFolder(
-							message.folderName,
-							message.folderPath,
+						await deleteFolder(message.folderName, message.folderPath);
+						panel.webview.html = await updateWebview(
+							message.currentFolderName,
+							message.currentFolderPath,
+							message.webviewToRender,
+							panel.webview,
 							context
-							);
-							panel.webview.html = await updateWebview(
-								message.currentFolderName,
-								message.currentFolderPath,
-								message.webviewToRender,
-								panel.webview,
-								context
-							);
+						);
 						return;
 					case "comment":
 						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath);
@@ -141,12 +133,12 @@ export async function activate(context: vscode.ExtensionContext) {
 							context
 						);
 						return;
-					case "saveOnKey": 
+					case "saveOnKey":
 						fileName = message.fileName;
 						filePath = message.filePath;
 						fileContent = message.data.fileContent;
 
-						await vscode.commands.executeCommand('entry.saveNotes', fileName, filePath, fileContent);
+						await vscode.commands.executeCommand("entry.saveNotes", fileName, filePath, fileContent);
 
 						currentOpenFile = "";
 						currentOpenFilePath = "";
@@ -167,7 +159,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		context.subscriptions.push(addDecorator);
 
 		let saveNotes = vscode.commands.registerCommand("entry.saveNotes", () => {
-			saveFile(fileName, filePath, fileContent, context);
+			saveFile(filePath, fileContent);
 		});
 
 		context.subscriptions.push(saveNotes);
