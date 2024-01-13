@@ -7,7 +7,7 @@ export function addDecoratorToLine(
 	currentFileName: string = "",
 	currentFilePath: string = ""
 ) {
-	let activeEditor = vscode.window.activeTextEditor;
+	const activeEditor = vscode.window.activeTextEditor;
 
 	if (activeEditor && currentFileName !== "" && currentFilePath !== "") {
 		// Create a decoration type with a gutter icon
@@ -30,7 +30,7 @@ export function addDecoratorToLine(
 		}
 
 		//Retrieve the existing array or initialize a new one
-		let allDecoratorsInNote = globalState.get<any[]>(`decorators-${currentFileName}`) || [];
+		const allDecoratorsInNote = globalState.get<any[]>(`decorators-${currentFileName}`) || [];
 
 		//check if there is already a decorator on same line in active file
 		const hasDecorator = allDecoratorsInNote?.some((decorator) => line === decorator.line && file === decorator.file);
