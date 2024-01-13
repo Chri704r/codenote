@@ -1,12 +1,11 @@
 import * as vscode from "vscode";
-const fs = require('fs').promises;
-const path = require('path');
+const fs = require("fs").promises;
+const path = require("path");
 
-export async function addFolder(destinationFolderName: string, destinationFolderUri: string, webviewToRender: string, context: vscode.ExtensionContext, panel: vscode.WebviewPanel): Promise<void> {
-
+export async function addFolder(destinationFolderUri: string): Promise<void> {
 	const newFolderName = await vscode.window.showInputBox({
-		placeHolder: 'Enter folder name',
-		prompt: 'Provide a name for the new folder'
+		placeHolder: "Enter folder name",
+		prompt: "Provide a name for the new folder",
 	});
 
 	if (!newFolderName) {
@@ -18,9 +17,8 @@ export async function addFolder(destinationFolderName: string, destinationFolder
 	try {
 		await fs.mkdir(newFolderPath, Error);
 		vscode.window.showInformationMessage(`Folder "${newFolderName}" created successfully.`);
-
 	} catch (error: any) {
-		if (error.code === 'EEXIST') {
+		if (error.code === "EEXIST") {
 			vscode.window.showWarningMessage(`Folder "${newFolderName}" already exists.`);
 		} else {
 			vscode.window.showErrorMessage(`Error creating folder: ${error.message}`);
