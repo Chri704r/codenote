@@ -159,7 +159,7 @@ async function searchFilesInStorage(rootUri: vscode.Uri, searchTerm: string) {
 					const uriPath = vscode.Uri.joinPath(dirUri, name);
 					const stats = await fsp.stat(uriPath.path);
 
-					let date = new Date(stats.mtimeMs);
+					const date = new Date(stats.mtimeMs);
 					dateStr = date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
 					firstLine = await readFirstLine(uriPath.path);
 				} catch (error) {

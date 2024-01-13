@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 export async function displayDecorators(context: vscode.ExtensionContext, currentOpenFile: string = "", currentOpenFilePath: string = "") {
-	let activeEditor = vscode.window.activeTextEditor;
+	const activeEditor = vscode.window.activeTextEditor;
 
 	if (activeEditor && currentOpenFile !== "" && currentOpenFilePath !== "") {
 		// Create a decoration type with a gutter icon

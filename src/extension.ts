@@ -25,7 +25,7 @@ let fileContent: any;
 export async function activate(context: vscode.ExtensionContext) {
 	await initializeFileAndFolder(context);
 
-	let disposable = vscode.commands.registerCommand("entry.entry", async () => {
+	const disposable = vscode.commands.registerCommand("entry.entry", async () => {
 		const panel = vscode.window.createWebviewPanel("entry", "entry", vscode.ViewColumn.One, {
 			enableScripts: true,
 		});
@@ -102,11 +102,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						currentOpenFilePath = "";
 						return;
 					case "deleteFile":
-						await deleteFile(
-							message.fileName,
-							message.filePath,
-							context
-						);
+						await deleteFile(message.fileName, message.filePath, context);
 						panel.webview.html = await updateWebview(
 							message.currentFolderName,
 							message.currentFolderPath,
@@ -116,18 +112,14 @@ export async function activate(context: vscode.ExtensionContext) {
 						);
 						return;
 					case "deleteFolder":
-						await deleteFolder(
-							message.folderName,
-							message.folderPath,
+						await deleteFolder(message.folderName, message.folderPath, context);
+						panel.webview.html = await updateWebview(
+							message.currentFolderName,
+							message.currentFolderPath,
+							message.webviewToRender,
+							panel.webview,
 							context
-							);
-							panel.webview.html = await updateWebview(
-								message.currentFolderName,
-								message.currentFolderPath,
-								message.webviewToRender,
-								panel.webview,
-								context
-							);
+						);
 						return;
 					case "comment":
 						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath);
@@ -141,12 +133,12 @@ export async function activate(context: vscode.ExtensionContext) {
 							context
 						);
 						return;
-					case "saveOnKey": 
+					case "saveOnKey":
 						fileName = message.fileName;
 						filePath = message.filePath;
 						fileContent = message.data.fileContent;
 
-						await vscode.commands.executeCommand('entry.saveNotes', fileName, filePath, fileContent);
+						await vscode.commands.executeCommand("entry.saveNotes", fileName, filePath, fileContent);
 
 						currentOpenFile = "";
 						currentOpenFilePath = "";
@@ -160,13 +152,13 @@ export async function activate(context: vscode.ExtensionContext) {
 			panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 		});
 
-		let addDecorator = vscode.commands.registerCommand("entry.addDecorator", () => {
+		const addDecorator = vscode.commands.registerCommand("entry.addDecorator", () => {
 			addDecoratorToLine(panel.webview, context, currentOpenFile, currentOpenFilePath);
 		});
 
 		context.subscriptions.push(addDecorator);
 
-		let saveNotes = vscode.commands.registerCommand("entry.saveNotes", () => {
+		const saveNotes = vscode.commands.registerCommand("entry.saveNotes", () => {
 			saveFile(fileName, filePath, fileContent, context);
 		});
 
