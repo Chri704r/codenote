@@ -47,7 +47,7 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
             </div> 
             <div id="files-container" class="container">
                 <div class="plain">
-                    <h2>Folders</h2>
+                    <h2>Notes</h2>
                 </div>
                 ${notesHTML}
             </div> 
