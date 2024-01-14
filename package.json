@@ -2,12 +2,15 @@
 	"name": "entry",
 	"displayName": "Entry",
 	"publisher": "Entry",
-	"icon": "out/assets/icon.png",
-	"description": "Write notes for your code",
-	"version": "0.0.992",
+	"description": "Makes it easy to write and organize notes for your code directly in VSC.",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.83.0"
 	},
+	"repository": {
+        "type": "GitHub",
+        "url": "https://github.com/Chri704r/entry)"
+    },
 	"categories": [
 		"Other"
 	],
@@ -43,7 +46,7 @@
 			},
 			{
 				"view": "entry-documentation",
-				"contents": "Entry was built to supercharge the notetaking experience in VSCode. \nLearn more about the project on [GitHub](https://github.com/Chri704r/entry)."
+				"contents": "Entry was built to supercharge the notetaking experience in VS Code. \nLearn more about the project on [GitHub](https://github.com/Chri704r/entry)."
 			}
 		],
 		"commands": [
@@ -88,7 +91,7 @@
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js",
-		"copy-assets": "xcopy /E /I /Y \"src\\style\\*\" \"out\\style\\\" && xcopy /E /I /Y \"src\\utils\\*\" \"out\\utils\\\" && xcopy /E /I /Y \"src\\assets\\*\" \"out\\assets\\\"",
+		"copy-assets": "cp -R src/style/* out/style && cp -R src/utils/* out/utils && cp -R src/assets/* out/assets",
 		"deploy": "vsce publish --yarn"
 	},
 	"devDependencies": {

@@ -1,30 +1,27 @@
 {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-        "@typescript-eslint/naming-convention": [
-            "warn",
-            {
-                "selector": "import",
-                "format": [ "camelCase", "PascalCase" ]
-            }
-        ],
-        "@typescript-eslint/semi": "warn",
-        "curly": "warn",
-        "eqeqeq": "warn",
-        "no-throw-literal": "warn",
-        "semi": "off"
-    },
-    "ignorePatterns": [
-        "out",
-        "dist",
-        "**/*.d.ts"
-    ]
+	"root": true,
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 6,
+		"sourceType": "module"
+	},
+	"plugins": ["@typescript-eslint"],
+	"rules": {
+		"@typescript-eslint/naming-convention": [
+			"warn",
+			{
+				"selector": "import",
+				"format": ["camelCase", "PascalCase"]
+			}
+		],
+		"@typescript-eslint/semi": "warn",
+		"curly": "warn",
+		"eqeqeq": "warn",
+		"semi": "off",
+		"camelcase": "error", // use camelcase when naming
+		"no-empty-function": "warn", // dont have empty functions
+		"no-var": "error", // use let or const instead of var
+		"prefer-const": "warn" // require const if variable never got reassigned after declared
+	},
+	"ignorePatterns": ["out", "dist", "**/*.d.ts"]
 }

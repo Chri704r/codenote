@@ -13,12 +13,18 @@
 
 * {
 	color: var(--text-color);
-	font-family: sans-serif;
+	box-sizing: border-box;
 }
 
 body {
+	width: 100%;
+	height: 100%;
 	padding: 2em;
 	background-color: var(--body-background-color);
+	font-family: sans-serif;
+	max-width: 800px;
+	/* min-width: 280px; */
+	margin: 0 auto;
 }
 /* -----text------- */
 
@@ -29,6 +35,7 @@ h1 {
 
 h2 {
 	font-size: 16px;
+	margin-bottom: 0px;
 	color: var(--text-color);
 }
 /* -----search bar------- */
@@ -57,13 +64,6 @@ h2 {
 	color: var(--primary-accent-color);
 }
 
-span.codicon.codicon-new-folder {
-	font-size: 22px;
-}
-span.codicon.codicon-new-file {
-	font-size: 22px;
-}
-
 /* ------multi dropdown--------- */
 
 .settings-container {
@@ -84,7 +84,7 @@ span.codicon.codicon-kebab-vertical {
 	z-index: 1;
 }
 
-ul {
+.dropdown ul {
 	padding: 0;
 	margin: 0;
 	list-style: none;
@@ -92,7 +92,7 @@ ul {
 	width: 150px;
 }
 
-ul li {
+.dropdown ul li {
 	display: block;
 	background-color: var(--modal-background-color);
 	padding: 3px;
@@ -102,18 +102,18 @@ ul li {
 	cursor: pointer;
 }
 
-ul li:first-child {
+.dropdown ul li:first-child {
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
 	border-top: 1px solid var(--hover-background-color);
 }
-ul li:last-child {
+.dropdown ul li:last-child {
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 	border-bottom: 1px solid var(--hover-background-color);
 }
 
-a {
+.dropdown a {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -123,26 +123,26 @@ a {
 	padding: 0 10px;
 }
 
-a:hover {
+.dropdown  a:hover {
 	background-color: var(--hover-background-color);
 	border-radius: 8px;
 }
 
 /* Hide Dropdowns by Default */
-ul ul {
+.dropdown ul ul {
 	display: none;
 	position: absolute;
 	left: 20px;
 }
 
 /* Display Dropdowns on Hover */
-ul li:hover > ul {
+.dropdown ul li:hover > ul {
 	display: inherit;
 	z-index: 2;
 }
 
 /* First Tier Dropdown */
-ul ul li {
+.dropdown ul ul li {
 	width: 150px;
 	float: none;
 	display: list-item;
@@ -152,7 +152,7 @@ ul ul li {
 }
 
 /* Second, Third and more Tiers	*/
-ul ul ul li {
+.dropdown ul ul ul li {
 	position: relative;
 	top: 0px;
 	left: 0px;
@@ -218,12 +218,15 @@ ul ul ul li {
 }
 
 .back-button {
-	padding: 5px;
+	padding: 7px 10px;
 	border-radius: 8px;
-	height: 21px;
-	width: 21px;
+	height: 2rem;
+	width: 2rem;
 	background-color: var(--item-background-color);
 	border: 2px solid transparent;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .back-button:hover {
@@ -231,10 +234,9 @@ ul ul ul li {
 	cursor: pointer;
 }
 
-.back-button .codicon-chevron-left {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+span.back-button .codicon-chevron-left {
+	width: 100%;
+	height: 100%;
 }
 
 button {
@@ -263,6 +265,7 @@ button {
 .foldername-container {
 	display: flex;
 	align-items: center;
+	padding-left: 10px;
 }
 
 span.codicon.codicon-folder {
@@ -272,16 +275,31 @@ span.codicon.codicon-folder {
 /* --------- BREADCRUMB ----------- */
 .breadcrumb-container {
 	display: flex;
+	cursor: default;
 }
 
-.breadcrumb {
+.breadcrumb span.folder-link {
 	font-size: 12px;
 	color: var(--secondary-text-color);
 }
 
-.breadcrumb:hover {
+.breadcrumb span.folder-link:hover {
 	text-decoration: underline;
 	cursor: pointer;
+}
+
+.breadcrumb:last-child span.folder-link:hover {
+	text-decoration: none;
+	cursor: default;
+}
+
+span.separator {
+	color: var(--secondary-text-color);
+	text-decoration: none;
+}
+
+.breadcrumb:last-child span.separator {
+	display: none;
 }
 
 /* --------- TOOLBAR ----------- */
@@ -292,7 +310,11 @@ span.codicon.codicon-folder {
 
 .toolbar-container {
 	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	column-gap: 1rem;
 	align-items: center;
+	/* min-width: 500px; */
 }
 
 .ql-toolbar.ql-snow,
@@ -317,6 +339,7 @@ span.codicon.codicon-folder {
 .ql-toolbar.ql-snow {
 	background-color: var(--item-background-color);
 	border-radius: 0 0 8px 8px;
+	/* min-width: 458px; */
 }
 
 .ql-editor.ql-blank::before {
@@ -326,7 +349,12 @@ span.codicon.codicon-folder {
 
 .ql-editor {
 	padding: 0;
-	padding-top: 1rem;
+	padding-top: 2rem;
+	height: 90vh;
+}
+
+.ql-editor::-webkit-scrollbar {
+	display: none;
 }
 
 .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
@@ -358,6 +386,12 @@ span.codicon.codicon-folder {
 	margin-bottom: 10px;
 }
 
+#editor.ql-snow div.ql-editor pre.ql-syntax {
+	background-color: var(--item-background-color);
+	color: var(--text-color);
+	font-family: 'Monaco';
+}
+
 #toolbar-wrapper {
 	display: flex;
 	align-items: center;
@@ -385,12 +419,12 @@ span.codicon.codicon-folder {
 	justify-content: space-between;
 	row-gap: 10px;
 	align-items: center;
+	padding-top: 1.5rem;
 }
 
 .item,
 .item-file {
 	width: 100%;
-	padding: 5px;
 	display: grid;
 	grid-template-columns: 1fr 35px;
 	justify-content: space-between;
@@ -402,7 +436,6 @@ span.codicon.codicon-folder {
 
 .plain {
 	width: 100%;
-	padding: 0;
 	margin: 0 auto;
 	display: flex;
 	flex-direction: row;
@@ -432,6 +465,8 @@ span.codicon.codicon-folder {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	justify-content: center;
+	width: 35px;
 }
 
 .mtime {
@@ -445,10 +480,11 @@ span.codicon.codicon-folder {
 	position: sticky;
 	bottom: 0px;
 	background-color: var(--body-background-color);
-	padding-top: 20px;
-	padding-bottom: 20px;
+	padding-top: 1.5rem;
+	padding-bottom: 1rem;
 }
 
 #buttons-container .codicon {
 	cursor: pointer;
+	font-size: 1.25rem;
 }

@@ -8,6 +8,7 @@ const updateTheme = (isDark) => {
 	document.documentElement.style.setProperty("--item-background-color", isDark ? "#262626" : "#F8F8F8");
 	document.documentElement.style.setProperty("--hover-background-color", isDark ? "#444444" : "#F8F8F8");
 };
+
 // ------ delete modal ------
 document.querySelectorAll(".secondary-button").forEach((cancelButton) => {
 	cancelButton.addEventListener("click", () => {

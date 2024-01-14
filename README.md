@@ -1,14 +1,9 @@
-<font color="#8D95E6">
-
 # Entry
-</font>
 
 Entry was built to supercharge the notetaking experience in Visual Studio Code.
 
-<font color="#8D95E6">
 
 ## Features
-</font>
 
 Makes taking notes for your code simple and easy with the following features:
 
@@ -18,21 +13,18 @@ Makes taking notes for your code simple and easy with the following features:
 * Search notes and folders directly in your IDE
 * Provides a classic WYSIWG-editor experience inside your IDE
 
-<font color="#8D95E6">
 
 ## Installation
-</font>
 
 Simply search for 'Entry' under the extensions tab in Visual Studio Code, and click the 'Install' button:
 
-*[Image Coming Soon]*
+![Installation Guide](/out/assets/installation.gif)
 
 Otherwise, you can easily download Entry from the Visual Studio Code Marketplace. Click [here](https://marketplace.visualstudio.com/items?itemName=Entry.entry) to be brought to the extension page.<br>
 
-<font color="#8D95E6">
 
 ## Behind Entry
-</font>
+
 
 Entry was built by three students who couldn't find any good setup that would allow us to take notes directly in our code editor in an easy and intuitive manner, with all the features expected from a modern WYSIWG-notetaking app.
 

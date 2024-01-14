@@ -2,12 +2,18 @@ import * as vscode from "vscode";
 import { loadFile } from "../../utils/saveFile";
 import { header } from "../../utils/header";
 
-export async function getWebviewNote(webview: vscode.Webview, context: vscode.ExtensionContext, fileName: string, filePath: string, currentPage?: string) {
+export async function getWebviewNote(
+	webview: vscode.Webview,
+	context: vscode.ExtensionContext,
+	fileName: string,
+	filePath: string,
+	currentPage?: string
+) {
 	const script = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "out/utils", "script.js"));
 
 	const isDark = vscode.window.activeColorTheme?.kind === vscode.ColorThemeKind.Dark;
 
-	const loadedContent = await loadFile(fileName, filePath, context);
+	const loadedContent = await loadFile(filePath);
 
 	const htmlHeader = await header(webview, context);
 

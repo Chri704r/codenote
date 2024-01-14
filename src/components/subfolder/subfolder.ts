@@ -39,12 +39,16 @@ export async function getWebviewSubfolder(folderData: any, webview: vscode.Webvi
             </div>
             <div class="breadcrumb-container">${htmlBreadcrumb}</div>     
             ${searchInput("")}
-            <h2>Folders</h2>
             <div id="folders-container" class="container">
+                <div class="plain">
+                    <h2>Folders</h2>
+                </div>
                 ${folderContentsHTML}
             </div> 
-            <h2>Files</h2>
-            <div id="folders-container" class="container">
+            <div id="files-container" class="container">
+                <div class="plain">
+                    <h2>Notes</h2>
+                </div>
                 ${notesHTML}
             </div> 
 
@@ -232,12 +236,13 @@ async function clickBreadcrumb(folderData: Folder, context: vscode.ExtensionCont
     const breadcrumb = relativePath.replace(/\\/g, '/');
 
 	const breadcrumbFolders = breadcrumb.split("/");
+    const separator = " /&nbsp";
 	let pathmaker = globalStorageMainUri;
 
 	return ["Overview", ...breadcrumbFolders]
 		.map((folder: string) => {
             pathmaker = path.join(pathmaker, folder).replace("Overview", "");
-			return `<p class="breadcrumb" data-folder-name="${folder}" folder-path="${pathmaker}">${folder}/</p>`;
+			return `<p class="breadcrumb" data-folder-name="${folder}" folder-path="${pathmaker}"> <span class="folder-link">${folder}</span><span class="separator">${separator}</span></p>`;
 		})
 		.join("");
 }
