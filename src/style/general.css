@@ -353,6 +353,10 @@ span.separator {
 	height: 90vh;
 }
 
+.ql-editor::-webkit-scrollbar {
+	display: none;
+}
+
 .ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
 	background-color: var(--body-background-color);
 }
