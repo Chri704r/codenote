@@ -13,7 +13,6 @@
 
 * {
 	color: var(--text-color);
-	font-family: sans-serif;
 	box-sizing: border-box;
 }
 
@@ -22,6 +21,7 @@ body {
 	height: 100%;
 	padding: 2em;
 	background-color: var(--body-background-color);
+	font-family: sans-serif;
 	max-width: 800px;
 	/* min-width: 280px; */
 	margin: 0 auto;
@@ -380,6 +380,12 @@ span.separator {
 	border: 1px solid #ccc; /* Add border for visibility */
 	padding: 10px;
 	margin-bottom: 10px;
+}
+
+#editor.ql-snow div.ql-editor pre.ql-syntax {
+	background-color: var(--item-background-color);
+	color: var(--text-color);
+	font-family: 'Monaco';
 }
 
 #toolbar-wrapper {
