@@ -389,7 +389,7 @@ span.separator {
 #editor.ql-snow div.ql-editor pre.ql-syntax {
 	background-color: var(--item-background-color);
 	color: var(--text-color);
-	font-family: 'Monaco';
+	font-family: 'Monaco', monospace;
 }
 
 #toolbar-wrapper {

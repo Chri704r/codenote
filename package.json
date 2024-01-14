@@ -3,7 +3,8 @@
 	"displayName": "Entry",
 	"publisher": "Entry",
 	"description": "Makes it easy to write and organize notes for your code directly in VSC.",
-	"version": "0.1.0",
+	"version": "0.1.2",
+	"icon": "out/assets/icon.png",
 	"engines": {
 		"vscode": "^1.83.0"
 	},
