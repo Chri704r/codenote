@@ -39,18 +39,18 @@ export async function getWebviewOverview(webview: vscode.Webview, context: vscod
 		<body>
             ${searchInput("")}
             <div>
-                <div class="plain">
-                    <h2>Last edited</h2>
-                </div>
-                <div id="folders-container" class="container">
+                <div id="files-container" class="container">
+                    <div class="plain">
+                        <h2>Last edited</h2>
+                    </div>
                     ${notesHTML}
                 </div>
             </div>
             <div>
-                <div class="plain">
-                    <h2>All folders</h2>
-                </div>
                 <div id="folders-container" class="container">
+                    <div class="plain">
+                        <h2>All folders</h2>
+                    </div>
                     ${folderContentsHTML}
                 </div>
             </div>
