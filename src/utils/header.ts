@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { getSyntaxTheme } from "../utils/getSyntaxTheme";
 
 export async function header(webview: vscode.Webview, context: vscode.ExtensionContext) {
-    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src/style", "general.css"));
+    const generalStyles = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "out/style", "general.css"));
 	const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "node_modules", "@vscode/codicons", "dist", "codicon.css"));
     const syntaxTheme = await getSyntaxTheme();
 
