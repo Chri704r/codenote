@@ -162,12 +162,12 @@ async function searchFilesInStorage(rootUri: vscode.Uri, searchTerm: string) {
 					const date = new Date(stats.mtimeMs);
 					dateStr = date.getDate() + "." + date.getMonth() + "." + date.getFullYear();
 					firstLine = await readFirstLine(uriPath.path);
+
+					if (name.toLowerCase().includes(searchTerm.toLowerCase()) || contentStr.toLowerCase().includes(searchTerm.toLowerCase())) {
+						result.push({ uriPath: uriPath.path, name, type, date: dateStr, firstLine });
+					}
 				} catch (error) {
 					console.error("Error getting file stats:", error);
-				}
-
-				if (name.toLowerCase().includes(searchTerm.toLowerCase()) || contentStr.toLowerCase().includes(searchTerm.toLowerCase())) {
-					result.push({ uriPath: uriPath.path, name, type, date: dateStr, firstLine });
 				}
 			}
 		}
