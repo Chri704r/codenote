@@ -18,7 +18,7 @@ Makes taking notes for your code simple and easy with the following features:
 
 Simply search for 'Entry' under the extensions tab in Visual Studio Code, and click the 'Install' button:
 
-![Installation Guide](/out/assets/installation.gif)
+![Installation Guide](https://raw.githubusercontent.com/Chri704r/entry/master/src/assets/installation.gif)
 
 Otherwise, you can easily download Entry from the Visual Studio Code Marketplace. Click [here](https://marketplace.visualstudio.com/items?itemName=Entry.entry) to be brought to the extension page.<br>
 

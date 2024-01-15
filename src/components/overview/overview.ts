@@ -22,7 +22,7 @@ interface Files {
 	uriPath: string;
 }
 
-export async function getWebviewOverview(webview: vscode.Webview, context: vscode.ExtensionContext, folders: Folders[], files: Files[]) {
+export async function getWebviewOverview(webview: vscode.Webview, context: any, folders: Folders[], files: Files[]) {
 	const globalStoragePath = context.globalStorageUri.fsPath;
 	const allFolders = await getAllFolderContents(context);
 
