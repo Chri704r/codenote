@@ -35,6 +35,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 
+		// Create a decoration type with a gutter icon
+		const decorationType = vscode.window.createTextEditorDecorationType({
+			gutterIconPath: context.asAbsolutePath("src/assets/pencil.png"), // Use the pencil icon
+			gutterIconSize: "20px", // Adjust size as needed
+		});
+
 		panel.webview.onDidReceiveMessage(
 			async (message) => {
 				switch (message.page) {
@@ -122,7 +128,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						);
 						return;
 					case "comment":
-						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath);
+						addDecoratorToLine(panel.webview, context, message.fileName, message.filePath, decorationType);
 						return;
 					case "navigate":
 						panel.webview.html = await updateWebview(
@@ -137,11 +143,10 @@ export async function activate(context: vscode.ExtensionContext) {
 						fileName = message.fileName;
 						filePath = message.filePath;
 						fileContent = message.data.fileContent;
+						currentOpenFile = message.fileName;
+						currentOpenFilePath = message.filePath;
 
 						await vscode.commands.executeCommand("entry.saveNotes", fileName, filePath, fileContent);
-
-						currentOpenFile = "";
-						currentOpenFilePath = "";
 				}
 			},
 			undefined,
@@ -152,23 +157,21 @@ export async function activate(context: vscode.ExtensionContext) {
 			panel.webview.html = await getWebviewOverview(panel.webview, context, folders, files);
 		});
 
-		const addDecorator = vscode.commands.registerCommand("entry.addDecorator", () => {
-			addDecoratorToLine(panel.webview, context, currentOpenFile, currentOpenFilePath);
-		});
-
-		context.subscriptions.push(addDecorator);
-
 		const saveNotes = vscode.commands.registerCommand("entry.saveNotes", () => {
 			saveFile(filePath, fileContent);
 		});
 
-		context.subscriptions.push(saveNotes);
-	});
+		const addDecorator = vscode.commands.registerCommand("entry.addDecorator", () => {
+			addDecoratorToLine(panel.webview, context, currentOpenFile, currentOpenFilePath, decorationType);
+		});
 
-	vscode.window.onDidChangeActiveTextEditor(() => {
-		// Trigger the registered command when the active text editor changes
-		// vscode.commands.executeCommand("extension.onDidChangeActiveTextEditor");
-		displayDecorators(context, currentOpenFile, currentOpenFilePath);
+		context.subscriptions.push(addDecorator, saveNotes);
+
+		vscode.window.onDidChangeActiveTextEditor(() => {
+			// Trigger the registered command when the active text editor changes
+			// vscode.commands.executeCommand("extension.onDidChangeActiveTextEditor");
+			displayDecorators(context, currentOpenFile, currentOpenFilePath, decorationType);
+		});
 	});
 
 	context.subscriptions.push(disposable);

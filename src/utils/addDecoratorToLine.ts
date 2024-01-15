@@ -1,20 +1,17 @@
 import * as vscode from "vscode";
 import { getWebviewNote } from "../components/note/note";
+import path from "path";
 
 export function addDecoratorToLine(
 	webview: vscode.Webview,
 	context: vscode.ExtensionContext,
 	currentFileName: string = "",
-	currentFilePath: string = ""
+	currentFilePath: string = "",
+	decorationType: any
 ) {
 	const activeEditor = vscode.window.activeTextEditor;
 
 	if (activeEditor && currentFileName !== "" && currentFilePath !== "") {
-		// Create a decoration type with a gutter icon
-		const decorationType = vscode.window.createTextEditorDecorationType({
-			gutterIconPath: context.asAbsolutePath("src/assets/pencil.png"),
-			gutterIconSize: "20px",
-		});
 		const globalState = context.globalState;
 		const file = activeEditor.document.fileName;
 		const line = activeEditor.selection.active.line;
@@ -63,9 +60,11 @@ export function addDecoratorToLine(
 			// split selected text after each line
 			const lines = text.split(/\r?\n/);
 
+			// push object with empty line and push object containg 'reference' with filname and line number
 			jsonData.ops.push({ insert: "\n" });
-			jsonData.ops.push({ insert: `</> (${file.substr(file.lastIndexOf("/") + 1)}, Ln ${line + 1})\n`, attributes: { color: "#575757" } });
+			jsonData.ops.push({ insert: `</> (${path.basename(file)}, Ln ${line + 1})\n`, attributes: { color: "#575757" } });
 
+			// map trough each line in text from json, to add codeblock to each line from selected text
 			lines.map((line) => {
 				jsonData.ops.push(
 					{ insert: `${line}` },
@@ -78,8 +77,10 @@ export function addDecoratorToLine(
 				);
 			});
 
+			// update content in note to include the selected code
 			fs.writeFileSync(currentFilePath, JSON.stringify(jsonData));
 
+			// update note webview to see the changes immediately
 			webview.html = await getWebviewNote(webview, context, currentFileName, currentFilePath);
 		}
 	} else {

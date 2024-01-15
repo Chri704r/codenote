@@ -1,42 +1,46 @@
+import path from "path";
 import * as vscode from "vscode";
-export async function displayDecorators(context: vscode.ExtensionContext, currentOpenFile: string = "", currentOpenFilePath: string = "") {
+export async function displayDecorators(
+	context: vscode.ExtensionContext,
+	currentOpenFile: string = "",
+	currentOpenFilePath: string = "",
+	decorationType: any
+) {
 	const activeEditor = vscode.window.activeTextEditor;
 
 	// if there is an active editor and the user has a note open (the current open file is not an empty string)
 	if (activeEditor && currentOpenFile !== "" && currentOpenFilePath !== "") {
-		// Create a decoration type with a gutter icon
-		const decorationType = vscode.window.createTextEditorDecorationType({
-			gutterIconPath: context.asAbsolutePath("src/assets/pencil.png"), // Use the pencil icon
-			gutterIconSize: "20px", // Adjust size as needed
-		});
-
-		const activeEditorFilename = activeEditor.document.fileName.substr(activeEditor.document.fileName.lastIndexOf("/") + 1);
+		// get name of current active editor
+		const activeEditorFilename = path.basename(activeEditor.document.fileName);
 
 		const fs = require("fs");
 
 		function getJsondata(filePath: string) {
 			return new Promise((resolve, reject) => {
+				// read content in note
 				fs.readFile(filePath, "utf8", (error: any, data: any) => {
 					if (error) {
 						reject(`Error reading the JSON file: ${error}`);
 						return;
 					}
+					// parse the data into json
 					const jsonData = JSON.parse(data);
 					resolve(jsonData);
 				});
 			});
 		}
 
+		// call getJsonData() with the path of the currently open note
 		getJsondata(currentOpenFilePath)
 			.then((data: any) => {
-				// Log the parsed JSON data to the console outside the readFile callback
+				// filter each 'ops' object, and return those that includes the name of the current active editor
 				const decoratorsInFile = data?.ops.filter((ops: any) => {
 					if (ops.insert.includes(activeEditorFilename)) {
 						return ops;
 					}
 				});
 
-				// lines of decorators in current open note
+				// line number (placement of decorator) of decorators in current open note
 				const decoratorLines = decoratorsInFile?.map((decorator: any) => {
 					const opsLine = decorator.insert.substring(decorator.insert.indexOf("Ln") + 3, decorator.insert.indexOf(")"));
 					return parseInt(opsLine) - 1;
@@ -54,7 +58,7 @@ export async function displayDecorators(context: vscode.ExtensionContext, curren
 						// if 'reference' has been deleted from note but not globalstate, remove decorator from globalstate
 						if (decorator.file.includes(activeEditorFilename)) {
 							// if the decorators filename (from globalstate) matches the current open file in editor
-							// (but has been removed from not, and therefore is not included in the 'decoratorLines' array)
+							// (but has been removed from note, and therefore is not included in the 'decoratorLines' array)
 							// then remove it from globalstate
 
 							const globalState = context.globalState;
@@ -86,5 +90,7 @@ export async function displayDecorators(context: vscode.ExtensionContext, curren
 			.catch((error) => {
 				console.error(error);
 			});
+	} else {
+		activeEditor?.setDecorations(decorationType, []);
 	}
 }
