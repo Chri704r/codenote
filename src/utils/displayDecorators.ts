@@ -90,5 +90,7 @@ export async function displayDecorators(
 			.catch((error) => {
 				console.error(error);
 			});
+	} else {
+		activeEditor?.setDecorations(decorationType, []);
 	}
 }
